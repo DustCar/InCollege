@@ -39,7 +39,6 @@ def loginAuthorization(usr, passwd):
     printMessage("Incorrect username/password, please try again")
     end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
     if end == 'q' or end == 'Q':
-      printMessage("Exited InCollege.")
       inCollege()
     login()
 
@@ -47,9 +46,9 @@ def loginAuthorization(usr, passwd):
 # function for screen after logging in
 def loggedin():
   pageTitle("Home")
-  option = input("Press J for Job Search.\n"
-                 "Press F to Find Someone.\n"
-                 "Press S to Learn a New Skill.\n"
+  option = input("Press J for Job Search or\n"
+                 "Press F to Find Someone or\n"
+                 "Press S to Learn a New Skill or\n"
                  "Press O to log out.\n"
                  "Input: ")
   if option == 'J' or option == 'j':
@@ -70,11 +69,11 @@ def createAcct():
 # function to learn a skill
 def learnSkill():
   pageTitle("Learn a New Skill")
-  option = input("Press 1 to learn Skill 1.\n"
-                 "Press 2 to learn Skill 2.\n"
-                 "Press 3 to learn Skill 3.\n"
-                 "Press 4 to learn Skill 4.\n"
-                 "Press 5 to learn Skill 5.\n"
+  option = input("Press 1 to learn Skill 1 or\n"
+                 "Press 2 to learn Skill 2 or\n"
+                 "Press 3 to learn Skill 3 or\n"
+                 "Press 4 to learn Skill 4 or\n"
+                 "Press 5 to learn Skill 5 or\n"
                  "Press B to go back.\n"
                  "Input: ")
   if option == '1':
@@ -93,8 +92,8 @@ def learnSkill():
 # function for initial InCollege screen
 def inCollege():
   pageTitle("Welcome to InCollege!")
-  option = input("Press L to log in.\n"
-                 "Press C to create an account.\n"
+  option = input("Press L to log in or\n"
+                 "Press C to create an account or\n"
                  "Press E to exit InCollege.\n"
                  "Input: ")
   if option == 'L' or option == 'l':
@@ -102,6 +101,7 @@ def inCollege():
   elif option == 'C' or option == 'c':
     createAcct()
   elif option == 'E' or option == 'e':
+    printMessage("Exited InCollege.")
     return
 
 

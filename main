@@ -1,3 +1,7 @@
+# imports
+import sqlite3
+
+
 # global variables
 minUsr = 1
 maxUsr = 20
@@ -33,9 +37,9 @@ def login():
 
 # function for authorizing login info
 def loginAuthorization(usr, passwd):
-  badusr = len(usr) < minUsr or len(usr) > maxUsr
-  badpasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
-  if badusr or badpasswd:
+  badUsr = len(usr) < minUsr or len(usr) > maxUsr
+  badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
+  if badUsr or badPasswd:
     printMessage("Incorrect username/password, please try again")
     end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
     if end == 'q' or end == 'Q':
@@ -64,17 +68,17 @@ def loggedin():
 # function for creating an account
 def createAcct():
   pageTitle("Create An Account")
-
+  
 
 # function to learn a skill
 def learnSkill():
   pageTitle("Learn a New Skill")
-  option = input("Press 1 to learn Skill 1 or\n"
-                 "Press 2 to learn Skill 2 or\n"
-                 "Press 3 to learn Skill 3 or\n"
-                 "Press 4 to learn Skill 4 or\n"
-                 "Press 5 to learn Skill 5 or\n"
-                 "Press B to go back.\n"
+  option = input("Press 1 to learn Skill1 or\n"
+                 "Press 2 to learn Skill2 or\n"
+                 "Press 3 to learn Skill3 or\n"
+                 "Press 4 to learn Skill4 or\n"
+                 "Press 5 to learn Skill5 or\n"
+                 "Press H to go Home.\n"
                  "Input: ")
   if option == '1':
     construction()
@@ -86,8 +90,9 @@ def learnSkill():
     construction()
   elif option == '5':
     construction()
-  elif option == 'B' or option == 'b':
+  elif option == 'H' or option == 'h':
     loggedin()
+
 
 # function for initial InCollege screen
 def inCollege():
@@ -102,7 +107,7 @@ def inCollege():
     createAcct()
   elif option == 'E' or option == 'e':
     printMessage("Exited InCollege.")
-    return
+    exit(0)
 
 
 # call/open InCollege

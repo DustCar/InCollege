@@ -21,6 +21,7 @@ def printMessage(message):
   print("* " + message + " *")
 
 
+# function to print message for incomplete pages
 def construction():
   print("Under Construction.")
 

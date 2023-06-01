@@ -1,5 +1,10 @@
+"""This file contains the main code for InCollege,
+including the different pages and relevant functions."""
+
+
 # imports
 import sqlite3
+import utility
 
 
 # global variables
@@ -9,106 +14,102 @@ minPasswd = 8
 maxPasswd = 12
 
 
-# function to print the given title of a page
-def pageTitle(title):
-  print("----------")
-  print(title)
-  print("----------")
+# function for initial InCollege screen
+def inCollege():
+  utility.pageTitle("Welcome to InCollege!")
+  
+  welcome = {"Log In": login, 
+             "Create An Account": createAcct, 
+             "Exit InCollege": closeApp}
+  
+  utility.printMenu(welcome)
+  
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
 
-
-# function to print a system message
-def printMessage(message):
-  print("* " + message + " *")
-
-
-# function to print message for incomplete pages
-def construction():
-  print("Under Construction.")
-
+  utility.call(optionNum, welcome)
+  return
+  
 
 # function for log in page
 def login():
-  pageTitle("Log In")
+  utility.pageTitle("Log In")
+  
   usr = input("Username: ")
   passwd = input("Password: ")
   loginAuthorization(usr, passwd)
-  printMessage("You have successfully logged in")
+  
+  utility.printMessage("You have successfully logged in")
   loggedin()
+  return
 
 
-# function for authorizing login info
+# function for authorizing login info -- INCOMPLETE
 def loginAuthorization(usr, passwd):
   badUsr = len(usr) < minUsr or len(usr) > maxUsr
   badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
-  if badUsr or badPasswd:
-    printMessage("Incorrect username/password, please try again")
+  
+  while badUsr or badPasswd:
+    utility.printMessage("Incorrect username/password, please try again")
     end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
     if end == 'q' or end == 'Q':
-      inCollege()
-    login()
+      return
+    utility.pageTitle("Log In")
+    usr = input("Username: ")
+    passwd = input("Password: ")
+    badUsr = len(usr) < minUsr or len(usr) > maxUsr
+    badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
+  return
 
 
 # function for screen after logging in
 def loggedin():
-  pageTitle("Home")
-  option = input("Press J for Job Search or\n"
-                 "Press F to Find Someone or\n"
-                 "Press S to Learn a New Skill or\n"
-                 "Press O to log out.\n"
-                 "Input: ")
-  if option == 'J' or option == 'j':
-    construction()
-  elif option == 'F' or option == 'f':
-    construction()
-  elif option == 'S' or option == 's':
-    learnSkill()
-  elif option == 'O' or option == 'o':
-    inCollege()
-
-
-# function for creating an account
-def createAcct():
-  pageTitle("Create An Account")
+  utility.pageTitle("Home")
   
+  home = {"Job Search" : utility.construction,
+          "Find Someone" : utility.construction,
+          "Learn a New Skill" : learnSkill,
+          "Log out" : inCollege}
+
+  utility.printMenu(home)
+
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
+  
+  utility.call(optionNum, home)
+  return
+
+
+# function for exiting InCollege
+def closeApp():
+  utility.printMessage("Exited InCollege.")
+  exit(0)
+  
+
+# function for creating an account -- INCOMPLETE
+def createAcct():
+  utility.pageTitle("Create An Account")
+  return
+
 
 # function to learn a skill
 def learnSkill():
-  pageTitle("Learn a New Skill")
-  option = input("Press 1 to learn Skill1 or\n"
-                 "Press 2 to learn Skill2 or\n"
-                 "Press 3 to learn Skill3 or\n"
-                 "Press 4 to learn Skill4 or\n"
-                 "Press 5 to learn Skill5 or\n"
-                 "Press H to go Home.\n"
-                 "Input: ")
-  if option == '1':
-    construction()
-  elif option == '2':
-    construction()
-  elif option == '3':
-    construction()
-  elif option == '4':
-    construction()
-  elif option == '5':
-    construction()
-  elif option == 'H' or option == 'h':
-    loggedin()
+  utility.pageTitle("Learn a New Skill")
+  
+  skills = {"Skill1" : utility.construction,
+            "Skill2" : utility.construction,
+            "Skill3" : utility.construction,
+            "Skill4" : utility.construction,
+            "Skill5" : utility.construction,
+            "Home" : loggedin}
+  
+  utility.printMenu(skills)
 
-
-# function for initial InCollege screen
-def inCollege():
-  pageTitle("Welcome to InCollege!")
-  option = input("Press L to log in or\n"
-                 "Press C to create an account or\n"
-                 "Press E to exit InCollege.\n"
-                 "Input: ")
-  if option == 'L' or option == 'l':
-    login()
-  elif option == 'C' or option == 'c':
-    createAcct()
-  elif option == 'E' or option == 'e':
-    printMessage("Exited InCollege.")
-    exit(0)
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
+  
+  utility.call(optionNum, skills)
+  return
 
 
 # call/open InCollege

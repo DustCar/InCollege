@@ -1,20 +1,43 @@
+import maskpass as mp
+import sqlite3 as sql
+
+
+# SQLite database
+userData = sql.connect("User_Data.db")
+UDCursor = userData.cursor()
+UDCursor.execute("CREATE TABLE User_Data(Username, Password)")
+
+
 def createAccount():
     """
     Creates a new account for the user
     """
 
-    username = input("Enter your username: ")
-    password = passwordCreation()
+    # checks if max number of accounts have been made
+    if(len(UDCursor.execute("SELECT Username FROM User_Data").fetchall()) < 5):
+        username = usernameCreation()
+        password = passwordCreation() 
 
-    return username, password
-
+        UDCursor.execute(f"""
+        INSERT INTO User_Data VALUES
+            ({username}, {password})
+        """)
+    else:
+        print("Maximum amount of accounts have been made")
 
 def usernameCreation():
     """
     new username creation, verifies new username is unique
     """
-    
+    username = input("Enter your desired username: ")
 
+    # Checks if username already exists
+    for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
+        if username == users:
+            print(f'The username "{username}" is already in use\n')
+            return usernameCreation()
+    return username
+    
 def passwordCreation():
     """
     Password creation function, calls itself if new user password does not
@@ -52,7 +75,6 @@ def passwordCreation():
     # If password meets all requirements, returns password
     return password
 
-
 def hasCapitalLetter(password):
     """
     password: attempted new user password
@@ -86,3 +108,37 @@ def hasSpecialCharacter(password):
         if character in specialCharacters:
             return True
     return False
+
+def login():
+    """
+    Verify user login information
+    """
+
+    print("USER LOGIN\n----------")
+
+    username = input("USERNAME: ")
+    password = mp.askpass(prompt="PASSWORD: ", mask="*")
+
+    # Username and password verification
+    if not userVerification(username, password):
+        # Incorrect information
+        print("Either Username or Password is incorrect\n")
+        return login()
+    
+
+    # Login information is correct
+    print('Login Success!\n')
+    return 
+    
+def userVerification(username, password):
+    """
+    username: attempted username associated with attempted password
+    password: attempted password
+
+    verifies that inputted username and password both exists and are correct
+    """
+    for users, passwrds in UDCursor.execute("SELECT Username, Password FROM User_Data").fetchall():
+        if username == users and password == passwrds:
+            return True
+    return False
+    

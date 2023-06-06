@@ -100,6 +100,7 @@ def passwordCreation():
 	# If password meets all requirements, returns password
 	return password
 
+
 def createAccount():
 	"""
 	Creates a new account for the user
@@ -118,26 +119,16 @@ def createAccount():
 		utility.printMessage("Maximum amount of accounts have been made")
 
 
-def login():
+def login(username, password):
 	"""
 	Verify user login information
 	"""
 
-	print("USER LOGIN\n----------")
-
-	username = input("USERNAME: ")
-	password = input("PASSWORD: ")
-
 	# Username and password verification
-	if not userVerification(username, password):
-		# Incorrect information
-		utility.printMessage("Either Username or Password is incorrect\n")
-		return
-
-
-	# Login information is correct
-	utility.printMessage('Login Success!\n')
-	return
+  if not userVerification(username, password):
+    # Incorrect information
+    return True
+  return False
 
 def userVerification(username, password):
 	"""

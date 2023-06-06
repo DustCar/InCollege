@@ -1,5 +1,5 @@
-import maskpass as mp
 import sqlite3 as sql
+import utility
 
 # SQLite database
 userData = sql.connect("User_Data_Test.db")
@@ -58,7 +58,7 @@ def usernameCreation():
 	# Checks if username already exists
 	for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
 		if username == users[0]:
-			print(f'The username "{username}" is already in use\n')
+			utility.printMessage(f'The username "{username}" is already in use\n')
 			return
 	return username
 
@@ -76,25 +76,25 @@ def passwordCreation():
 
 	# Checks if the password fits the character count
 	if len(password) > 12:
-		print("Password is greater than 12 characters, try removing some characters!\n")
+		utility.printMessage("Password is greater than 12 characters, try removing some characters!\n")
 		return
 	elif len(password) < 8:
-		print("Password is less than 8 characters, try adding some more characters!\n")
+		utility.printMessage("Password is less than 8 characters, try adding some more characters!\n")
 		return
 
 	# Checks for Capital
 	if not hasCapitalLetter(password):
-		print("Password must include a capital letter, try again\n")
+		utility.printMessage("Password must include a capital letter, try again\n")
 		return
 
 	# Checks for digit
 	if not hasDigit(password):
-		print("Password must include a digit, try again\n")
+		utility.printMessage("Password must include a digit, try again\n")
 		return
 
 	# Checks for Special character
 	if not hasSpecialCharacter(password):
-		print("Password must include a special character, try again\n")
+		utility.printMessage("Password must include a special character, try again\n")
 		return
 
 	# If password meets all requirements, returns password
@@ -115,7 +115,7 @@ def createAccount():
 		""")
 		userData.commit()
 	else:
-		print("Maximum amount of accounts have been made")
+		utility.printMessage("Maximum amount of accounts have been made")
 
 
 def login():
@@ -131,12 +131,12 @@ def login():
 	# Username and password verification
 	if not userVerification(username, password):
 		# Incorrect information
-		print("Either Username or Password is incorrect\n")
+		utility.printMessage("Either Username or Password is incorrect\n")
 		return
 
 
 	# Login information is correct
-	print('Login Success!\n')
+	utility.printMessage('Login Success!\n')
 	return
 
 def userVerification(username, password):

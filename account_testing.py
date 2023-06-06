@@ -58,7 +58,7 @@ def usernameCreation():
 	# Checks if username already exists
 	for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
 		if username == users[0]:
-			utility.printMessage(f'The username "{username}" is already in use\n')
+			utility.printMessage(f'The username "{username}" is already in use')
 			return
 	return username
 
@@ -76,25 +76,25 @@ def passwordCreation():
 
 	# Checks if the password fits the character count
 	if len(password) > 12:
-		utility.printMessage("Password is greater than 12 characters, try removing some characters!\n")
+		utility.printMessage("Password is greater than 12 characters, try removing some characters!")
 		return
 	elif len(password) < 8:
-		utility.printMessage("Password is less than 8 characters, try adding some more characters!\n")
+		utility.printMessage("Password is less than 8 characters, try adding some more characters!")
 		return
 
 	# Checks for Capital
 	if not hasCapitalLetter(password):
-		utility.printMessage("Password must include a capital letter, try again\n")
+		utility.printMessage("Password must include a capital letter, try again")
 		return
 
 	# Checks for digit
 	if not hasDigit(password):
-		utility.printMessage("Password must include a digit, try again\n")
+		utility.printMessage("Password must include a digit, try again")
 		return
 
 	# Checks for Special character
 	if not hasSpecialCharacter(password):
-		utility.printMessage("Password must include a special character, try again\n")
+		utility.printMessage("Password must include a special character, try again")
 		return
 
 	# If password meets all requirements, returns password

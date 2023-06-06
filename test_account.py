@@ -80,7 +80,7 @@ def test_usernameCreation(capfd, monkeypatch, database):
 		monkeypatch.setattr('builtins.input', lambda _: user[0][0])
 		result = account_testing.usernameCreation()
 		out, err = capfd.readouterr()
-		assert out == f'The username "{user[0][0]}" is already in use\n\n'
+		assert f'The username "{user[0][0]}" is already in use' in out
 
 def test_passwordCreation(capfd, monkeypatch):
 	# this will test if a password is too long

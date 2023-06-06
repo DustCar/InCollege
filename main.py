@@ -4,6 +4,7 @@ including the different pages and relevant functions."""
 # imports
 import account
 import utility
+import getpass as gp
 
 # global variables
 minUsr = 1
@@ -17,7 +18,7 @@ def inCollege():
   utility.pageTitle("Welcome to InCollege!")
 
   welcome = {
-    "Log In": login,
+    "Log In": loginPage,
     "Create An Account": createAcctPage,
     "Exit InCollege": closeApp
   }
@@ -32,34 +33,36 @@ def inCollege():
 
 
 # function for log in page
-def login():
+def loginPage():
   utility.pageTitle("Log In")
 
   usr = input("Username: ")
-  passwd = input("Password: ")
-  loginAuthorization(usr, passwd)
+  passwd = gp.getpass(prompt="Password: ")
 
-  utility.printMessage("You have successfully logged in")
-  loggedin()
+  goodLogin = loginAuthorization(usr, passwd)
+  if goodLogin:
+    utility.printMessage("You have successfully logged in")
+    loggedin()
   return
 
 
-# function for authorizing login info -- INCOMPLETE
+# function for initial login info check
 def loginAuthorization(usr, passwd):
   badUsr = len(usr) < minUsr or len(usr) > maxUsr
   badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
 
-  while badUsr or badPasswd:
+  incorrectInfo = account.login(usr, passwd)
+
+  while badUsr or badPasswd or incorrectInfo:
     utility.printMessage("Incorrect username/password, please try again")
-    end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
-    if end == 'q' or end == 'Q':
-      return
+    quitOption()
     utility.pageTitle("Log In")
-    usr = input("Username: ")
-    passwd = input("Password: ")
-    badUsr = len(usr) < minUsr or len(usr) > maxUsr
-    badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
-  return
+    newUsr = input("Username: ")
+    newPasswd = gp.getpass(prompt="Password: ")
+    badUsr = len(newUsr) < minUsr or len(newUsr) > maxUsr
+    badPasswd = len(newPasswd) < minPasswd or len(newPasswd) > maxPasswd
+    incorrectInfo = account.login(newUsr, newPasswd)
+  return True
 
 
 # function for screen after logging in
@@ -82,16 +85,25 @@ def loggedin():
   return
 
 
+# function to quit back to initial screen
+def quitOption():
+  end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
+  if end == 'q' or end == 'Q':
+    inCollege()
+  return
+
+
 # function for exiting InCollege
 def closeApp():
   utility.printMessage("Exited InCollege.")
   exit(0)
 
 
-# function for creating an account -- INCOMPLETE
+# function for creating an account
 def createAcctPage():
   utility.pageTitle("Create An Account")
   account.createAccount()
+  inCollege()
   return
 
 

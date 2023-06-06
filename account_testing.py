@@ -69,7 +69,7 @@ def passwordCreation():
 	meet the requiremnts
 	"""
 	print("PASSWORD REQUIREMENTS\n----------------------------")
-	print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
+	print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special   Character")
 	print("----------------------------")
 
 	password = input("Enter your desired Password: ")

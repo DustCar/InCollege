@@ -1,5 +1,5 @@
-import maskpass as mp
 import sqlite3 as sql
+import utility
 
 # SQLite database
 userData = sql.connect("User_Data.db")
@@ -58,7 +58,7 @@ def usernameCreation():
 	# Checks if username already exists
 	for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
 		if username == users[0]:
-			print(f'The username "{username}" is already in use\n')
+			utility.printMessage(f'The username "{username}" is already in use')
 			return usernameCreation()
 	return username
 
@@ -76,29 +76,30 @@ def passwordCreation():
 
 	# Checks if the password fits the character count
 	if len(password) > 12:
-		print("Password is greater than 12 characters, try removing some characters!\n")
+		utility.printMessage("Password is greater than 12 characters, try removing some characters!")
 		return passwordCreation()
 	elif len(password) < 8:
-		print("Password is less than 8 characters, try adding some more characters!\n")
+		utility.printMessage("Password is less than 8 characters, try adding some more characters!")
 		return passwordCreation()
 
 	# Checks for Capital
 	if not hasCapitalLetter(password):
-		print("Password must include a capital letter, try again\n")
+		utility.printMessage("Password must include a capital letter, try again")
 		return passwordCreation()
 
 	# Checks for digit
 	if not hasDigit(password):
-		print("Password must include a digit, try again\n")
+		utility.printMessage("Password must include a digit, try again")
 		return passwordCreation()
 
 	# Checks for Special character
 	if not hasSpecialCharacter(password):
-		print("Password must include a special character, try again\n")
+		utility.printMessage("Password must include a special character, try again")
 		return passwordCreation()
 
 	# If password meets all requirements, returns password
 	return password
+
 
 def createAccount():
 	"""
@@ -115,29 +116,20 @@ def createAccount():
 		""")
 		userData.commit()
 	else:
-		print("Maximum amount of accounts have been made")
+		utility.printMessage("Maximum amount of accounts have been made")
 
 
-def login():
+def login(username, password):
 	"""
 	Verify user login information
 	"""
 
-	print("USER LOGIN\n----------")
-
-	username = input("USERNAME: ")
-	password = mp.askpass(prompt="PASSWORD: ", mask="*")
-
 	# Username and password verification
 	if not userVerification(username, password):
 		# Incorrect information
-		print("Either Username or Password is incorrect\n")
-		return login()
+		return True
+	return False
 
-
-	# Login information is correct
-	print('Login Success!\n')
-	return
 
 def userVerification(username, password):
 	"""

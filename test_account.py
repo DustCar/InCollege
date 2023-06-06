@@ -1,6 +1,21 @@
 import pytest, account_testing
 import sqlite3 as sql
 
+'''
+This file utilizes pytest to run unit tests for all of the
+functions located in account_testing.py
+
+account_testing.py is the exact same as account.py which
+we are using in our main program besides utilizing a test
+database for testing and the recursive calls to functions
+are removed due to the pytest getting stuck in an
+infinite recursive loop when testing the expected behavior
+of fail test cases
+
+to run the test cases type pytest -v test_account.py in your terminal
+
+'''
+
 # Define a fixture to set up and tear down the database for testing
 @pytest.fixture
 def database():
@@ -58,6 +73,9 @@ def test_usernameCreation(capfd, monkeypatch, database):
 	cursor.execute("SELECT Username FROM User_Data")
 	user = cursor.fetchall()
 
+	# if a username exists, test that the function returns
+	# the username is taken by supplying the same username
+	# as a mock input
 	if user:
 		monkeypatch.setattr('builtins.input', lambda _: user[0][0])
 		result = account_testing.usernameCreation()

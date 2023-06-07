@@ -26,7 +26,7 @@ def inCollege():
   utility.printMenu(welcome)
 
   option = input("Input: ")
-  optionNum = utility.choiceValidation(option)
+  optionNum = utility.choiceValidation(option, welcome)
 
   utility.call(optionNum, welcome)
   return
@@ -79,7 +79,7 @@ def loggedin():
   utility.printMenu(home)
 
   option = input("Input: ")
-  optionNum = utility.choiceValidation(option)
+  optionNum = utility.choiceValidation(option, home)
 
   utility.call(optionNum, home)
   return
@@ -123,7 +123,7 @@ def learnSkill():
   utility.printMenu(skills)
 
   option = input("Input: ")
-  optionNum = utility.choiceValidation(option)
+  optionNum = utility.choiceValidation(option, skills)
 
   utility.call(optionNum, skills)
   return

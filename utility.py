@@ -36,12 +36,31 @@ def call(input, menu):
       return
 
 
-# function for input validation
-def choiceValidation(usrInput):
-  while (not usrInput.isnumeric() or len(usrInput) > 1):
+# function for menu selection validation
+def choiceValidation(usrInput, menu):
+  menuLength = len(menu)
+  menuRange = range(1, menuLength + 1)
+  
+  isValid = inputValidation(usrInput, menuRange)
+  
+  while (not isValid):
     print("Invalid input.")
     usrInput = input("Input: ")
+    isValid = inputValidation(usrInput, menuRange)
     
   inputNum = int(usrInput)
   return inputNum
-  
+
+
+# function for validating input
+def inputValidation(usrInput, menuRange):
+  isNumeric = usrInput.isnumeric()
+  isOneCharacter = (len(usrInput) == 1)
+  if isNumeric:
+    inRange = int(usrInput) in menuRange
+  else:
+    inRange = False
+  if (isNumeric and isOneCharacter and inRange):
+    return True
+  else:
+    return False

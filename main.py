@@ -23,6 +23,7 @@ def inCollege():
     "Exit InCollege": closeApp
   }
 
+  utility.printSuccessStory()
   utility.printMenu(welcome)
 
   option = input("Input: ")

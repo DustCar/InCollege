@@ -1,5 +1,8 @@
 """This file contains utility functions for InCollege main."""
 
+# imports
+import textwrap
+
 
 # function to print the given title of a page
 def pageTitle(title):
@@ -27,6 +30,7 @@ def printMenu(listOptions):
   for choice in range(1, numOptions+1):
     print(f"Press {choice} for {list(listOptions)[choice-1]}.")
   return
+
 
 # function for selecting from menu 
 def call(input, menu):
@@ -64,3 +68,21 @@ def inputValidation(usrInput, menuRange):
     return True
   else:
     return False
+
+
+# function for printing user success story
+def printSuccessStory():
+  userStory = """
+          \"Thanks to InCollege, I got my dream job as a 
+          college student! The app helped me to connect with 
+          students like me, search for suitable jobs, personalize 
+          my profile, and learn skills that make me valuable to 
+          employers. With a streamlined application process, my 
+          transition from student to jobholder was smooth sailing! 
+          If you're in college and seeking employment, InCollege 
+          is something you can't afford to miss.\""""
+  story = textwrap.dedent(userStory).strip()
+  print(story)
+  print("\t - InCollege User \t\n")
+  
+  

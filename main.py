@@ -3,6 +3,7 @@ including the different pages and relevant functions."""
 
 # imports
 import account
+import jobsearch
 import utility
 import getpass as gp
 
@@ -11,7 +12,7 @@ minUsr = 1
 maxUsr = 20
 minPasswd = 8
 maxPasswd = 12
-
+currUser = None
 
 # function for initial InCollege screen
 def inCollege():
@@ -35,6 +36,7 @@ def inCollege():
 
 # function for log in page
 def loginPage():
+  global currUser
   utility.pageTitle("Log In")
 
   usr = input("Username: ")
@@ -43,6 +45,7 @@ def loginPage():
   goodLogin = loginAuthorization(usr, passwd)
   if goodLogin:
     utility.printMessage("You have successfully logged in")
+    currUser = usr
     loggedin()
   return
 
@@ -68,10 +71,11 @@ def loginAuthorization(usr, passwd):
 
 # function for screen after logging in
 def loggedin():
+  global currUser
   utility.pageTitle("Home")
 
   home = {
-    "Job Search": utility.construction,
+    "Job Search": jobsearch.JobSearchPage,
     "Find Someone": utility.construction,
     "Learn a New Skill": learnSkill,
     "Log out": inCollege
@@ -81,6 +85,9 @@ def loggedin():
 
   option = input("Input: ")
   optionNum = utility.choiceValidation(option, home)
+
+  if optionNum == 4:
+    currUser = None
 
   utility.call(optionNum, home)
   return

@@ -1,3 +1,5 @@
+"""This file contains all functions relating to the Job Search option for logged in users"""
+
 import sqlite3 as sql
 import utility
 import main
@@ -26,69 +28,69 @@ except:
   pass
 
 # Checks if word has special key characters that may affect SQLite
-def hasSpecialChar(word):
+def HasSpecialChar(word):
 	specialCharacters = ['#', ';', '\\', '`']
 	for character in word:
 		if character in specialCharacters:
 			return True
 	return False
 
-def confirmDetails():
+def ConfirmDetails():
   confirm = input("Confirm detail? (y or n): ")
   if confirm != 'y' or confirm != 'n':
     utility.printMessage("'y' or 'n' only.")
-    confirmDetails()
+    ConfirmDetails()
   else:
     return confirm
   return
   
 # Customized input for title (PostJob)
-def titleInput():
+def TitleInput():
   global cancelPost
   cTitle = input("Title of Job (type 'c' to cancel): ")
   if (cTitle == 'c'):
     cancelPost = True
     return
 
-  if hasSpecialChar(cTitle):
+  if HasSpecialChar(cTitle):
     utility.printMessage("Special characters are not allowed!")
-    titleInput()
+    TitleInput()
   elif len(cTitle) > 100:
     utility.printMessage("Title is too long! Try again.")
-    titleInput()
+    TitleInput()
 
   print(f"Given title: {cTitle}")
-  confirmation = confirmDetails()
+  confirmation = ConfirmDetails()
 
   if confirmation == 'y':
     return cTitle
   elif confirmation == 'n':
-    titleInput()
+    TitleInput()
   return
 
 # Customized input for description (PostJob)
-def descInput():
+def DescInput():
   global cancelPost
   cDesc = input("Description of Job (type 'c' to cancel posting): ")
   if (cDesc == 'c'):
     cancelPost = True
     return
 
-  if hasSpecialChar(cDesc):
+  if HasSpecialChar(cDesc):
     utility.printMessage("Special characters are not allowed!")
-    descInput()
+    DescInput()
 
   print(f"Given description: {cDesc}")
-  confirmation = confirmDetails()
+  confirmation = ConfirmDetails()
 
   if confirmation == 'y':
     return cDesc
   elif confirmation == 'n':
-    titleInput()
+    TitleInput()
   return
 
 # Customized input for employer name (PostJob)
-def empInput():
+def EmpInput():
   global cancelPost
   cEmployer = input("Employer for Job (type 'c' to cancel posting): ")
   if (cEmployer == 'c'):
@@ -97,46 +99,46 @@ def empInput():
 
   if account.hasSpecialCharacter(cEmployer):
     utility.printMessage("Special characters are not allowed!")
-    empInput()
+    EmpInput()
   elif len(cEmployer) > 25:
     utility.printMessage("Employer name is too long! Try again.")
-    empInput()
+    EmpInput()
 
   print(f"Given employer name: {cEmployer}")
-  confirmation = confirmDetails()
+  confirmation = ConfirmDetails()
 
   if confirmation == 'y':
     return cEmployer
   elif confirmation == 'n':
-    empInput()
+    EmpInput()
   return
 
 # Customized input for location (PostJob)
-def locInput():
+def LocInput():
   global cancelPost
   cLocation = input("Location of Job (type 'c' to cancel posting): ")
   if (cLocation == 'c'):
     cancelPost = True
     return
 
-  if hasSpecialChar(cLocation):
+  if HasSpecialChar(cLocation):
     utility.printMessage("#, ;, \, ` characters are not allowed!")
-    locInput()
+    LocInput()
   elif len(cLocation) > 255:
     utility.printMessage("Name of Location is too long! Try again.")
-    locInput()
+    LocInput()
 
   print(f"Given location: {cLocation}")
-  confirmation = confirmDetails()
+  confirmation = ConfirmDetails()
 
   if confirmation == 'y':
     return cLocation
   elif confirmation == 'n':
-    locInput()
+    LocInput()
   return
   
 # Customized input for salary (PostJob)
-def salInput():
+def SalInput():
   global cancelPost
   cSalary = input("Salary of Job (type 'c' to cancel posting): ")
   if (cSalary == 'c'):
@@ -145,15 +147,15 @@ def salInput():
 
   if not account.hasDigit(cSalary) or account.hasSpecialCharacter(cSalary):
     utility.printMessage("Only positive numbers allowed.")
-    salInput()
+    SalInput()
 
   print(f"Given salary: {cSalary}")
-  confirmation = confirmDetails()
+  confirmation = ConfirmDetails()
 
   if confirmation == 'y':
     return cSalary
   elif confirmation == 'n':
-    salInput()
+    SalInput()
   return
 
 # Allows user to post a job if there is < 5 jobs currently saved
@@ -167,11 +169,11 @@ def PostJob():
   utility.printMessage("Please enter the required details.")
 
   if cancelPost is False:
-    title = titleInput()
-    description = descInput()
-    employer = empInput()
-    location = locInput()
-    salary = salInput()
+    title = TitleInput()
+    description = DescInput()
+    employer = EmpInput()
+    location = LocInput()
+    salary = SalInput()
   else:
     JobSearchPage()
 

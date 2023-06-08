@@ -21,6 +21,7 @@ def inCollege():
   welcome = {
     "Log In": loginPage,
     "Create An Account": createAcctPage,
+    "Video About InCollege": videoPage,
     "Exit InCollege": closeApp
   }
 
@@ -125,7 +126,7 @@ def learnSkill():
     "Skill3": utility.construction,
     "Skill4": utility.construction,
     "Skill5": utility.construction,
-    "Home": loggedin
+    "Back": loggedin
   }
 
   utility.printMenu(skills)
@@ -134,6 +135,12 @@ def learnSkill():
   optionNum = utility.choiceValidation(option, skills)
 
   utility.call(optionNum, skills)
+  return
+
+
+# function for video page
+def videoPage():
+  utility.printMessage("Video is now playing")
   return
 
 

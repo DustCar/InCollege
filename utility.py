@@ -6,9 +6,9 @@ import textwrap
 
 # function to print the given title of a page
 def pageTitle(title):
-  print("----------")
+  print("--------------------")
   print(title)
-  print("----------")
+  print("--------------------")
   return
 
 

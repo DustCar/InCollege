@@ -63,7 +63,8 @@ def loginAuthorization(usr, passwd):
     utility.printMessage("Incorrect username/password, please try again")
     leave = quitOption()
     if leave:
-      exit(0)
+      inCollege()
+      return
     utility.pageTitle("Log In")
     newUsr = input("Username: ")
     newPasswd = gp.getpass(prompt="Password: ")
@@ -110,7 +111,7 @@ def quitOption():
 # function for exiting InCollege
 def closeApp():
   utility.printMessage("Exited InCollege.")
-  exit(0)
+  return
 
 
 # function for creating an account

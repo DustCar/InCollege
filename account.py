@@ -68,11 +68,8 @@ def passwordCreation():
   Password creation function, calls itself if new user password does not
   meet the requiremnts
   """
-  print("PASSWORD REQUIREMENTS\n----------------------------")
-  print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
-  print("----------------------------")
 
-  password = input("Enter your desired Password: ")
+  password = input("Enter your desired password: ")
 
   # Checks if the password fits the character count
   if len(password) > 12:
@@ -107,14 +104,14 @@ def createAccount():
   """
   # checks if max number of accounts have been made
   if(len(UDCursor.execute("SELECT Username FROM User_Data").fetchall()) < 5):
+    print("PASSWORD REQUIREMENTS\n----------------------------")
+    print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
+    print("----------------------------")
     username = usernameCreation()
     password = passwordCreation()
-    firstName = input("Enter your first name: ")
-    if firstName[0].islower():
-      firstName = firstName.capitalize()
-    lastName = input("Enter your last name: ")
-    if lastName[0].islower():
-      lastName = lastName.capitalize()
+    firstName = input("Enter your first name: ").capitalize()
+    lastName = input("Enter your last name: ").capitalize()
+
 
     UDCursor.execute(f"""
     INSERT INTO User_Data VALUES

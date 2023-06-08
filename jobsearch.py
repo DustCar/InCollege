@@ -21,8 +21,8 @@ try:
                     Employer VARCHAR(25), 
                     Location VARCHAR(255), 
                     Salary INT
-                  );""")
-  UDCursor.commit()
+                  )""")
+  userData.commit()
 except:
   pass
 
@@ -172,7 +172,7 @@ def SalInput():
 def PostJob():
   global currUser
   
-  if (len(UDCursor.execute("SELECT Title FROM jobsData;")) > 5):
+  if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) > 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
     JobSearchPage()
     return
@@ -195,11 +195,11 @@ def PostJob():
 
   sqlStatement = """ INSERT INTO 
       jobsData(Issuer, Title, Description, Employer, Location, Salary)
-      VALUES(?,?,?,?,?,?); """
+      VALUES(?,?,?,?,?,?) """
   jobInfo = (currUser, title, description, employer, location, salary)
   
   UDCursor.execute(sqlStatement, jobInfo)
-  UDCursor.commit()
+  userData.commit()
 
   utility.printMessage("Job successfully posted!")
   JobSearchPage()

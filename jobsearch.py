@@ -26,7 +26,7 @@ try:
 except:
   pass
 
-def SetCurrUser(username):
+def JSSetCurrUser(username):
   global currUser
   currUser = username
   return
@@ -233,10 +233,10 @@ def JobSearchPage():
   }
 
   utility.printMenu(menuOptions)
-  print(f"Press {len(menuOptions)} for Back.")
+  print(f"Press {len(menuOptions)+1} for Back.")
   
   choice = input("Input: ")
-  if int(choice) == len(menuOptions):
+  if int(choice) == len(menuOptions)+1:
     return
   else:
     choiceNum = utility.choiceValidation(choice, menuOptions)

@@ -42,7 +42,7 @@ def HasSpecialChar(word):
 # function that recursively asks to confirm until 'y' or 'n' is typed
 def ConfirmDetails():
   confirm = input("Confirm detail? (y or n): ")
-  if confirm != 'y' or confirm != 'n':
+  if confirm != 'y' and confirm != 'n':
     utility.printMessage("'y' or 'n' only.")
     ConfirmDetails()
   else:
@@ -61,9 +61,11 @@ def TitleInput():
   if HasSpecialChar(cTitle):
     utility.printMessage("Special characters are not allowed!")
     TitleInput()
-  elif len(cTitle) > 100:
+    return
+  elif len(cTitle) > 50:
     utility.printMessage("Title is too long! Try again.")
     TitleInput()
+    return
 
   print(f"Given title: {cTitle}")
   confirmation = ConfirmDetails()
@@ -86,6 +88,7 @@ def DescInput():
   if HasSpecialChar(cDesc):
     utility.printMessage("Special characters are not allowed!")
     DescInput()
+    return
 
   print(f"Given description: {cDesc}")
   confirmation = ConfirmDetails()
@@ -108,9 +111,11 @@ def EmpInput():
   if account.hasSpecialCharacter(cEmployer):
     utility.printMessage("Special characters are not allowed!")
     EmpInput()
+    return
   elif len(cEmployer) > 25:
     utility.printMessage("Employer name is too long! Try again.")
     EmpInput()
+    return
 
   print(f"Given employer name: {cEmployer}")
   confirmation = ConfirmDetails()
@@ -133,9 +138,11 @@ def LocInput():
   if HasSpecialChar(cLocation):
     utility.printMessage("#, ;, \, ` characters are not allowed!")
     LocInput()
+    return
   elif len(cLocation) > 255:
     utility.printMessage("Name of Location is too long! Try again.")
     LocInput()
+    return
 
   print(f"Given location: {cLocation}")
   confirmation = ConfirmDetails()
@@ -158,6 +165,7 @@ def SalInput():
   if not account.hasDigit(cSalary) or account.hasSpecialCharacter(cSalary):
     utility.printMessage("Only positive numbers allowed.")
     SalInput()
+    return
 
   print(f"Given salary: {cSalary}")
   confirmation = ConfirmDetails()
@@ -179,16 +187,17 @@ def PostJob():
     
   utility.pageTitle("Post a Job")
   utility.printMessage("Please enter the required details.")
-
+  utility.printSeparator()
+  
   if cancelPost is False:
     title = TitleInput()
-  if cancelPost is False:
-    description = DescInput()
-  if cancelPost is False:  
+    utility.printSeparator()
+    description = DescInput() 
+    utility.printSeparator()
     employer = EmpInput()
-  if cancelPost is False:
+    utility.printSeparator()
     location = LocInput()
-  if cancelPost is False:
+    utility.printSeparator()
     salary = SalInput()
   if cancelPost is True:
     JobSearchPage()

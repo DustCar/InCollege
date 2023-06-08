@@ -32,6 +32,12 @@ def printMenu(listOptions):
   return
 
 
+# function for printing separator
+def printSeparator():
+  print("---")
+  return
+
+
 # function for selecting from menu 
 def call(input, menu):
   for choice in menu:

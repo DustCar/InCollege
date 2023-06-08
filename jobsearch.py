@@ -217,7 +217,7 @@ def JobSearchPage():
   }
 
   utility.printMenu(menuOptions)
-  print("Press 3 for Back")
+  print("Press 3 for Back.")
   
   choice = input("Input: ")
   if int(choice) == 3:

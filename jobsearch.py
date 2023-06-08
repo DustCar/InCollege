@@ -182,11 +182,15 @@ def PostJob():
 
   if cancelPost is False:
     title = TitleInput()
+  if cancelPost is False:
     description = DescInput()
+  if cancelPost is False:  
     employer = EmpInput()
+  if cancelPost is False:
     location = LocInput()
+  if cancelPost is False:
     salary = SalInput()
-  else:
+  if cancelPost is True:
     JobSearchPage()
 
   sqlStatement = """ INSERT INTO 
@@ -201,7 +205,7 @@ def PostJob():
   JobSearchPage()
   return
 
-def JobSearchPage(username):
+def JobSearchPage():
   global cancelPost
   
   cancelPost = False

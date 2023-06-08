@@ -53,7 +53,7 @@ def ConfirmDetails():
 def TitleInput():
   global cancelPost
   
-  cTitle = input("Title of Job (type 'c' to cancel): ")
+  cTitle = input("Title of Job: ")
   if (cTitle == 'c'):
     cancelPost = True
     return
@@ -80,7 +80,7 @@ def TitleInput():
 def DescInput():
   global cancelPost
   
-  cDesc = input("Description of Job (type 'c' to cancel posting): ")
+  cDesc = input("Description of Job: ")
   if (cDesc == 'c'):
     cancelPost = True
     return
@@ -103,7 +103,7 @@ def DescInput():
 def EmpInput():
   global cancelPost
   
-  cEmployer = input("Employer for Job (type 'c' to cancel posting): ")
+  cEmployer = input("Employer for Job: ")
   if (cEmployer == 'c'):
     cancelPost = True
     return
@@ -130,7 +130,7 @@ def EmpInput():
 def LocInput():
   global cancelPost
   
-  cLocation = input("Location of Job (type 'c' to cancel posting): ")
+  cLocation = input("Location of Job: ")
   if (cLocation == 'c'):
     cancelPost = True
     return
@@ -157,7 +157,7 @@ def LocInput():
 def SalInput():
   global cancelPost
   
-  cSalary = input("Salary of Job (type 'c' to cancel posting): ")
+  cSalary = input("Salary of Job: ")
   if (cSalary == 'c'):
     cancelPost = True
     return
@@ -187,20 +187,27 @@ def PostJob():
     
   utility.pageTitle("Post a Job")
   utility.printMessage("Please enter the required details.")
+  utility.printMessage("If at any time you want to cancel the posting, enter 'c'")
   utility.printSeparator()
-  
+
+  # checks for cancel posting after every detail
   if cancelPost is False:
     title = TitleInput()
     utility.printSeparator()
+  if cancelPost is False:
     description = DescInput() 
     utility.printSeparator()
+  if cancelPost is False:
     employer = EmpInput()
     utility.printSeparator()
+  if cancelPost is False:
     location = LocInput()
     utility.printSeparator()
+  if cancelPost is False:
     salary = SalInput()
   if cancelPost is True:
     JobSearchPage()
+    return
 
   sqlStatement = """ INSERT INTO 
       jobsData(Issuer, Title, Description, Employer, Location, Salary)

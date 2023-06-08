@@ -47,6 +47,7 @@ def loginPage():
   if goodLogin:
     utility.printMessage("You have successfully logged in")
     currUser = usr
+    jobsearch.SetCurrUser(currUser)
     loggedin()
   return
 
@@ -91,6 +92,7 @@ def loggedin():
 
   if optionNum == 4:
     currUser = None
+    jobsearch.SetCurrUser(currUser)
 
   utility.call(optionNum, home)
   return

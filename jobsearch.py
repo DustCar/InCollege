@@ -2,10 +2,9 @@
 
 import sqlite3 as sql
 import utility
-import main
 import account
 
-currUser = main.currUser
+currUser = None
 cancelPost = False
 
 # Connect to SQL database
@@ -27,6 +26,11 @@ try:
 except:
   pass
 
+def SetCurrUser(username):
+  global currUser
+  currUser = username
+  return
+  
 # Checks if word has special key characters that may affect SQLite
 def HasSpecialChar(word):
 	specialCharacters = ['#', ';', '\\', '`']
@@ -35,6 +39,7 @@ def HasSpecialChar(word):
 			return True
 	return False
 
+# function that recursively asks to confirm until 'y' or 'n' is typed
 def ConfirmDetails():
   confirm = input("Confirm detail? (y or n): ")
   if confirm != 'y' or confirm != 'n':
@@ -47,6 +52,7 @@ def ConfirmDetails():
 # Customized input for title (PostJob)
 def TitleInput():
   global cancelPost
+  
   cTitle = input("Title of Job (type 'c' to cancel): ")
   if (cTitle == 'c'):
     cancelPost = True
@@ -71,6 +77,7 @@ def TitleInput():
 # Customized input for description (PostJob)
 def DescInput():
   global cancelPost
+  
   cDesc = input("Description of Job (type 'c' to cancel posting): ")
   if (cDesc == 'c'):
     cancelPost = True
@@ -92,6 +99,7 @@ def DescInput():
 # Customized input for employer name (PostJob)
 def EmpInput():
   global cancelPost
+  
   cEmployer = input("Employer for Job (type 'c' to cancel posting): ")
   if (cEmployer == 'c'):
     cancelPost = True
@@ -116,6 +124,7 @@ def EmpInput():
 # Customized input for location (PostJob)
 def LocInput():
   global cancelPost
+  
   cLocation = input("Location of Job (type 'c' to cancel posting): ")
   if (cLocation == 'c'):
     cancelPost = True
@@ -140,6 +149,7 @@ def LocInput():
 # Customized input for salary (PostJob)
 def SalInput():
   global cancelPost
+  
   cSalary = input("Salary of Job (type 'c' to cancel posting): ")
   if (cSalary == 'c'):
     cancelPost = True
@@ -161,6 +171,7 @@ def SalInput():
 # Allows user to post a job if there is < 5 jobs currently saved
 def PostJob():
   global currUser
+  
   if (len(UDCursor.execute("SELECT Title FROM jobsData;")) > 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
     JobSearchPage()
@@ -190,9 +201,9 @@ def PostJob():
   JobSearchPage()
   return
 
-# Page holding all options dealing with Job Searching
-def JobSearchPage():
+def JobSearchPage(username):
   global cancelPost
+  
   cancelPost = False
   utility.pageTitle("Job Search")
 

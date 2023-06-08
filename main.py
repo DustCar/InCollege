@@ -79,7 +79,7 @@ def loggedin():
   utility.pageTitle("Home")
 
   home = {
-    "Job Search": jobsearch.JobSearchPage,
+    "Job Search": jobSearch,
     "Find Someone": utility.construction,
     "Learn a New Skill": learnSkill,
     "Log Out": inCollege
@@ -120,6 +120,10 @@ def createAcctPage():
   inCollege()
   return
 
+def jobSearch():
+  jobsearch.JobSearchPage()
+  loggedin()
+  return
 
 # function to learn a skill
 def learnSkill():

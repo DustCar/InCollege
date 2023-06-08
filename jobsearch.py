@@ -214,13 +214,16 @@ def JobSearchPage():
   menuOptions = {
     "Search For Job": utility.construction,
     "Post a Job": PostJob,
-    "Back": utility.construction,
   }
 
   utility.printMenu(menuOptions)
-
+  print("Press 3 for Back")
+  
   choice = input("Input: ")
-  choiceNum = utility.choiceValidation(choice)
+  if int(choice) == 3:
+    return
+  else:
+    choiceNum = utility.choiceValidation(choice)
 
   utility.call(choiceNum, menuOptions)
   return

@@ -60,7 +60,9 @@ def loginAuthorization(usr, passwd):
 
   while badUsr or badPasswd or incorrectInfo:
     utility.printMessage("Incorrect username/password, please try again")
-    quitOption()
+    leave = quitOption()
+    if leave:
+      exit(0)
     utility.pageTitle("Log In")
     newUsr = input("Username: ")
     newPasswd = gp.getpass(prompt="Password: ")
@@ -79,7 +81,7 @@ def loggedin():
     "Job Search": jobsearch.JobSearchPage,
     "Find Someone": utility.construction,
     "Learn a New Skill": learnSkill,
-    "Log out": inCollege
+    "Log Out": inCollege
   }
 
   utility.printMenu(home)
@@ -99,6 +101,7 @@ def quitOption():
   end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
   if end == 'q' or end == 'Q':
     inCollege()
+    return 1
   return
 
 

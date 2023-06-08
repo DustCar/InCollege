@@ -223,7 +223,7 @@ def JobSearchPage():
   if int(choice) == 3:
     return
   else:
-    choiceNum = utility.choiceValidation(choice)
+    choiceNum = utility.choiceValidation(choice, menuOptions)
 
   utility.call(choiceNum, menuOptions)
   return

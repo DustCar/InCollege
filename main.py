@@ -105,7 +105,7 @@ def quitOption():
   if end == 'q' or end == 'Q':
     inCollege()
     return 1
-  return
+  return 0 
 
 
 # function for exiting InCollege

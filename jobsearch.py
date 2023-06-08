@@ -5,7 +5,7 @@ import utility
 import main
 import account
 
-user = main.currUser
+currUser = main.currUser
 cancelPost = False
 
 # Connect to SQL database
@@ -160,6 +160,7 @@ def SalInput():
 
 # Allows user to post a job if there is < 5 jobs currently saved
 def PostJob():
+  global currUser
   if (len(UDCursor.execute("SELECT Title FROM jobsData;")) > 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
     JobSearchPage()
@@ -177,7 +178,16 @@ def PostJob():
   else:
     JobSearchPage()
 
+  sqlStatement = """ INSERT INTO 
+      jobsData(Issuer, Title, Description, Employer, Location, Salary)
+      VALUES(?,?,?,?,?,?); """
+  jobInfo = (currUser, title, description, employer, location, salary)
   
+  UDCursor.execute(sqlStatement, jobInfo)
+  UDCursor.commit()
+
+  utility.printMessage("Job successfully posted!")
+  JobSearchPage()
   return
 
 # Page holding all options dealing with Job Searching

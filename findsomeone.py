@@ -4,38 +4,68 @@ import sqlite3 as sql
 import utility
 import config
 
-cancel = False
+cancelInput = False
+inSystem = False
 
 # Connect to SQL database
-userData = sql.connect("User_Data.db")
+userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
-def FNameInput():
+def NameInput(typeName):
+  global cancelInput
   
-  return
+  cName = input(f"Enter {typeName} name of other User: ")
+  if (cName == 'c'):
+    cancelInput = True
+    return
 
-def LNameInput():
-  
+  if utility.hasSpecialCharacter(cName):
+    utility.printMessage("Special characters are not allowed!")
+    NameInput(typeName)
+    return
+  elif len(cName) > 25:
+    utility.printMessage(f"{typeName.capitalize()} name is too long! Try again.")
+    NameInput(typeName)
+    return
+  else:
+    return cName.capitalize()
+    
   return
 
 def SearchStudent():
-  global cancel
-
+  global inSystem, cancelInput
+  inSystem = False
+  cancelInput = False
+  
   utility.pageTitle("Search for another Student")
   utility.printMessage("To search for someone simply enter their first and last name. To cancel, press 'c' anytime")
   utility.printSeparator()
 
-  if cancel is False:
-    first = FNameInput()
+  if cancelInput is False:
+    first = NameInput("first")
     utility.printSeparator()
-  if cancel is False:
-    last = LNameInput()
-  
-  
+  if cancelInput is False:
+    last = NameInput("last")
+    utility.printSeparator()
+
+  for fnames, lnames in UDCursor.execute("SELECT FirstName, LastName FROM userData").fetchall():
+    if first == fnames and last == lnames:
+      inSystem = True
+
+  if inSystem:
+    utility.printMessage("They are a part of the inCollege system")
+    if config.currUser == "None":
+      return
+    FindSomeonePage()
+  else:
+    utility.printMessage("They are not a part of the inCollege system yet")
+    if config.currUser == "None":
+      return
+    FindSomeonePage()
   return
 
 def FindSomeonePage():
-
+  
   utility.pageTitle("Find Someone")
 
   findMenuOptions = {
@@ -43,6 +73,12 @@ def FindSomeonePage():
   }
   utility.printMenu(findMenuOptions)
   print(f"Press {len(findMenuOptions)+1} for Back.")
-  
-  
+
+  choice = input("Input: ")
+  if int(choice) == len(findMenuOptions)+1:
+    return
+  else:
+    choiceNum = utility.choiceValidation(choice, findMenuOptions)
+
+  utility.call(choiceNum, findMenuOptions)
   return

@@ -1,2 +1,2 @@
-currUser = None
+currUser = "None"
 database = "inCollege_Data.db"

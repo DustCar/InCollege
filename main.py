@@ -4,6 +4,7 @@ including the different pages and relevant functions."""
 # imports
 import account
 import jobsearch
+import findsomeone
 import utility
 import config
 import getpass as gp
@@ -22,6 +23,7 @@ def inCollege():
     "Log In": loginPage,
     "Create An Account": createAcctPage,
     "Video About InCollege": videoPage,
+    "Find Someone": newUserFind,
     "Exit InCollege": closeApp
   }
 
@@ -37,7 +39,6 @@ def inCollege():
 
 # function for log in page
 def loginPage():
-  global currUser
   utility.pageTitle("Log In")
 
   usr = input("Username: ")
@@ -80,8 +81,8 @@ def loggedin():
   utility.printMessage(f"Current user: {config.currUser}")
 
   home = {
-    "Job Search": jobSearch,
-    "Find Someone": utility.construction,
+    "Job Search": jobSearchMain,
+    "Find Someone": findSomeoneMain,
     "Learn a New Skill": learnSkill,
     "Log Out": inCollege
   }
@@ -92,7 +93,7 @@ def loggedin():
   optionNum = utility.choiceValidation(option, home)
 
   if optionNum == len(home)+1:
-    config.currUser = None
+    config.currUser = "None"
 
   utility.call(optionNum, home)
   return
@@ -121,10 +122,13 @@ def createAcctPage():
   return
 
 # function to call Job Search page
-def jobSearch():
+def jobSearchMain():
   jobsearch.JobSearchPage()
   loggedin()
-  return
+
+def findSomeoneMain():
+  findsomeone.FindSomeonePage()
+  loggedin()
 
 # function to learn a skill
 def learnSkill():
@@ -147,12 +151,33 @@ def learnSkill():
   utility.call(optionNum, skills)
   return
 
-
 # function for video page
 def videoPage():
   utility.printMessage("Video is now playing")
   return
 
+def newUserFind():
+  findsomeone.SearchStudent()
+  if findsomeone.inSystem == True:
+    utility.printSeparator()
+    utility.printMessage("Would you like to join your friend in inCollege? Or have an account already?")
+    utility.printSeparator()
+    
+    shortMenu = {
+      "Create an Account": createAcctPage,
+      "Login": loginPage,
+      "Back": inCollege
+    }
+    utility.printMenu(shortMenu)
+
+    option = input("Input: ")
+    optionNum = utility.choiceValidation(option, shortMenu)
+
+    utility.call(optionNum, shortMenu)
+    return
+  else:
+    inCollege()
+  return
 
 # call/open InCollege
 inCollege()

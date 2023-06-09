@@ -39,7 +39,6 @@ def inCollege():
     else:
       optionNum = utility.choiceValidation(option, welcome)
       utility.call(optionNum, welcome)
-      return
   return
 
 
@@ -102,7 +101,6 @@ def loggedin():
     else:
       optionNum = utility.choiceValidation(option, home)
       utility.call(optionNum, home)
-      return
   return
 
 

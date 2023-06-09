@@ -7,7 +7,7 @@ import config
 cancelPost = False
 
 # Connect to SQL database
-userData = sql.connect("User_Data.db")
+userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
 # Create table for jobs if table does not exist
@@ -21,8 +21,8 @@ try:
                     Location VARCHAR(255), 
                     Salary INT
                   )""")
-  userData.commit()
 except:
+  print("Error")
   pass
   
 # Checks if word has special key characters that may affect SQLite
@@ -46,6 +46,8 @@ def ConfirmDetails():
 # Customized input for title (PostJob)
 def TitleInput():
   global cancelPost
+  if cancelPost is True:
+    return
   
   cTitle = input("Title of Job: ")
   if (cTitle == 'c'):
@@ -73,6 +75,8 @@ def TitleInput():
 # Customized input for description (PostJob)
 def DescInput():
   global cancelPost
+  if cancelPost is True:
+    return
   
   cDesc = input("Description of Job: ")
   if (cDesc == 'c'):
@@ -96,6 +100,8 @@ def DescInput():
 # Customized input for employer name (PostJob)
 def EmpInput():
   global cancelPost
+  if cancelPost is True:
+    return
   
   cEmployer = input("Employer for Job: ")
   if (cEmployer == 'c'):
@@ -123,6 +129,8 @@ def EmpInput():
 # Customized input for location (PostJob)
 def LocInput():
   global cancelPost
+  if cancelPost is True:
+    return
   
   cLocation = input("Location of Job: ")
   if (cLocation == 'c'):
@@ -150,6 +158,8 @@ def LocInput():
 # Customized input for salary (PostJob)
 def SalInput():
   global cancelPost
+  if cancelPost is True:
+    return
   
   cSalary = input("Salary of Job: ")
   if (cSalary == 'c'):
@@ -185,20 +195,20 @@ def PostJob():
   utility.printSeparator()
 
   # checks for cancel posting after every detail
-  if cancelPost is False:
-    title = TitleInput()
-    utility.printSeparator()
-  if cancelPost is False:
-    description = DescInput() 
-    utility.printSeparator()
-  if cancelPost is False:
-    employer = EmpInput()
-    utility.printSeparator()
-  if cancelPost is False:
-    location = LocInput()
-    utility.printSeparator()
-  if cancelPost is False:
-    salary = SalInput()
+  title = TitleInput()
+  utility.printSeparator()
+
+  description = DescInput() 
+  utility.printSeparator()
+
+  employer = EmpInput()
+  utility.printSeparator()
+
+  location = LocInput()
+  utility.printSeparator()
+
+  salary = SalInput()
+  
   if cancelPost is True:
     JobSearchPage()
     return

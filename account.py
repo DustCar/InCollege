@@ -1,13 +1,14 @@
 import sqlite3 as sql
 import utility
+import config
 
 # SQLite database
-userData = sql.connect("User_Data.db")
+userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
 # check if the table exists and if not create it
 try:
-  UDCursor.execute("CREATE TABLE User_Data(Username, Password, FirstName, LastName)")
+  UDCursor.execute("CREATE TABLE userData(Username, Password, FirstName, LastName)")
 except:
   pass
 
@@ -20,7 +21,7 @@ def usernameCreation():
   username = input("Enter your desired username: ")
 
   # Checks if username already exists
-  for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
+  for users in UDCursor.execute("SELECT Username FROM userData").fetchall():
     if username == users[0]:
       utility.printMessage(f'The username "{username}" is already in use')
       return usernameCreation()
@@ -67,7 +68,7 @@ def createAccount():
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if(len(UDCursor.execute("SELECT Username FROM User_Data").fetchall()) < 5):
+  if(len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
     print("----------------------------")
@@ -78,7 +79,7 @@ def createAccount():
 
 
     UDCursor.execute(f"""
-    INSERT INTO User_Data VALUES
+    INSERT INTO userData VALUES
       ('{username}', '{password}', '{firstName}', '{lastName}')
     """)
     userData.commit()
@@ -105,7 +106,7 @@ def userVerification(username, password):
 
   verifies that inputted username and password both exists and are correct
   """
-  for users, passwrds in UDCursor.execute("SELECT Username, Password FROM User_Data").fetchall():
+  for users, passwrds in UDCursor.execute("SELECT Username, Password FROM userData").fetchall():
     if username == users and password == passwrds:
       return True
   return False

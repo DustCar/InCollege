@@ -30,7 +30,7 @@ def inCollege():
   
     utility.printSuccessStory()
     utility.printMenu(welcome)
-    print(f"Press {len(welcome)+1} for Exit InCollege")
+    print(f"Press {len(welcome)+1} for Exit InCollege.")
   
     option = input("Input: ")
     if int(option) == len(welcome)+1:
@@ -92,7 +92,7 @@ def loggedin():
     }
   
     utility.printMenu(home)
-    print(f"Press {len(home)+1} for Log Out")
+    print(f"Press {len(home)+1} for Log Out.")
   
     option = input("Input: ")
     if int(option) == len(home)+1:
@@ -168,7 +168,7 @@ def newUserFind():
       "Login": loginPage
     }
     utility.printMenu(shortMenu)
-    print(f"Press {len(shortMenu)+1} for Back")
+    print(f"Press {len(shortMenu)+1} for Back.")
 
     option = input("Input: ")
     if int(option) == len(shortMenu)+1:

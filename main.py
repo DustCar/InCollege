@@ -181,4 +181,5 @@ def newUserFind():
   return
 
 # call/open InCollege
-inCollege()
+if __name__ == "__main__":
+  inCollege()

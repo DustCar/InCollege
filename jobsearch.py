@@ -178,7 +178,7 @@ def SalInput():
 def PostJob():
   global cancelPost
   
-  if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) > 5):
+  if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) >= 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
     return
     

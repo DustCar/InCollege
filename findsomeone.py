@@ -82,6 +82,6 @@ def FindSomeonePage():
     return
   else:
     choiceNum = utility.choiceValidation(choice, findMenuOptions)
-
-  utility.call(choiceNum, findMenuOptions)
+    utility.call(choiceNum, findMenuOptions)
+  
   return

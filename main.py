@@ -124,34 +124,29 @@ def createAcctPage():
   account.createAccount()
   return
 
-# function to call Job Search page
-#def jobSearchMain():
-  #jobsearch.JobSearchPage()
-  #loggedin()
-
-#def findSomeoneMain():
-  #findsomeone.FindSomeonePage()
-  #loggedin()
-
 # function to learn a skill
 def learnSkill():
-  utility.pageTitle("Learn a New Skill")
+  while True:
+    utility.pageTitle("Learn a New Skill")
+  
+    skills = {
+      "Skill1": utility.construction,
+      "Skill2": utility.construction,
+      "Skill3": utility.construction,
+      "Skill4": utility.construction,
+      "Skill5": utility.construction
+    }
+  
+    utility.printMenu(skills)
+    print(f"Press {len(skills)+1} for Back.")
+  
+    option = input("Input: ")
 
-  skills = {
-    "Skill1": utility.construction,
-    "Skill2": utility.construction,
-    "Skill3": utility.construction,
-    "Skill4": utility.construction,
-    "Skill5": utility.construction,
-    "Back": loggedin
-  }
-
-  utility.printMenu(skills)
-
-  option = input("Input: ")
-  optionNum = utility.choiceValidation(option, skills)
-
-  utility.call(optionNum, skills)
+    if int(option) == len(skills)+1:
+      break
+    else:
+      optionNum = utility.choiceValidation(option, skills)  
+      utility.call(optionNum, skills)
   return
 
 # function for video page

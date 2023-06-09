@@ -5,6 +5,7 @@ including the different pages and relevant functions."""
 import account
 import jobsearch
 import utility
+import config
 import getpass as gp
 
 # global variables
@@ -12,7 +13,6 @@ minUsr = 1
 maxUsr = 20
 minPasswd = 8
 maxPasswd = 12
-currUser = None
 
 # function for initial InCollege screen
 def inCollege():
@@ -46,8 +46,7 @@ def loginPage():
   goodLogin = loginAuthorization(usr, passwd)
   if goodLogin:
     utility.printMessage("You have successfully logged in")
-    currUser = usr
-    jobsearch.JSSetCurrUser(currUser)
+    config.currUser = usr
     loggedin()
   return
 
@@ -78,6 +77,7 @@ def loginAuthorization(usr, passwd):
 def loggedin():
   global currUser
   utility.pageTitle("Home")
+  utility.printMessage(f"Current user: {config.currUser}")
 
   home = {
     "Job Search": jobSearch,
@@ -91,9 +91,8 @@ def loggedin():
   option = input("Input: ")
   optionNum = utility.choiceValidation(option, home)
 
-  if optionNum == 4:
-    currUser = None
-    jobsearch.JSSetCurrUser(currUser)
+  if optionNum == len(home)+1:
+    config.currUser = None
 
   utility.call(optionNum, home)
   return
@@ -121,6 +120,7 @@ def createAcctPage():
   inCollege()
   return
 
+# function to call Job Search page
 def jobSearch():
   jobsearch.JobSearchPage()
   loggedin()

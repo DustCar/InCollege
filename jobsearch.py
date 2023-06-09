@@ -3,8 +3,8 @@
 import sqlite3 as sql
 import utility
 import account
+import config
 
-currUser = None
 cancelPost = False
 
 # Connect to SQL database
@@ -25,11 +25,6 @@ try:
   userData.commit()
 except:
   pass
-
-def JSSetCurrUser(username):
-  global currUser
-  currUser = username
-  return
   
 # Checks if word has special key characters that may affect SQLite
 def HasSpecialChar(word):
@@ -212,7 +207,7 @@ def PostJob():
   sqlStatement = """ INSERT INTO 
       jobsData(Issuer, Title, Description, Employer, Location, Salary)
       VALUES(?,?,?,?,?,?) """
-  jobInfo = (currUser, title, description, employer, location, salary)
+  jobInfo = (config.currUser, title, description, employer, location, salary)
   
   UDCursor.execute(sqlStatement, jobInfo)
   userData.commit()
@@ -227,19 +222,19 @@ def JobSearchPage():
   cancelPost = False
   utility.pageTitle("Job Search")
 
-  menuOptions = {
-    "Search For Job": utility.construction,
+  jobsMenuOptions = {
+    "Search for Job": utility.construction,
     "Post a Job": PostJob,
   }
 
-  utility.printMenu(menuOptions)
-  print(f"Press {len(menuOptions)+1} for Back.")
+  utility.printMenu(jobsMenuOptions)
+  print(f"Press {len(jobsMenuOptions)+1} for Back.")
   
   choice = input("Input: ")
-  if int(choice) == len(menuOptions)+1:
+  if int(choice) == len(jobsMenuOptions)+1:
     return
   else:
-    choiceNum = utility.choiceValidation(choice, menuOptions)
+    choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
 
-  utility.call(choiceNum, menuOptions)
+  utility.call(choiceNum, jobsMenuOptions)
   return

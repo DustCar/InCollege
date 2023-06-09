@@ -156,6 +156,7 @@ def videoPage():
   utility.printMessage("Video is now playing")
   return
 
+# function for search specific to users not logged in
 def newUserFind():
   findsomeone.SearchStudent()
   if findsomeone.inSystem == True:

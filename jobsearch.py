@@ -2,7 +2,6 @@
 
 import sqlite3 as sql
 import utility
-import account
 import config
 
 cancelPost = False
@@ -103,7 +102,7 @@ def EmpInput():
     cancelPost = True
     return
 
-  if account.hasSpecialCharacter(cEmployer):
+  if utility.hasSpecialCharacter(cEmployer):
     utility.printMessage("Special characters are not allowed!")
     EmpInput()
     return
@@ -157,7 +156,7 @@ def SalInput():
     cancelPost = True
     return
 
-  if not account.hasDigit(cSalary) or account.hasSpecialCharacter(cSalary):
+  if not utility.hasDigit(cSalary) or utility.hasSpecialCharacter(cSalary):
     utility.printMessage("Only positive numbers allowed.")
     SalInput()
     return
@@ -166,7 +165,7 @@ def SalInput():
   confirmation = ConfirmDetails()
 
   if confirmation == 'y':
-    return cSalary
+    return int(cSalary)
   elif confirmation == 'n':
     SalInput()
   return

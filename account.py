@@ -11,42 +11,6 @@ try:
 except:
   pass
 
-# function to check if a string contains a capital letter
-def hasCapitalLetter(password):
-  """
-  password: attempted new user password
-
-  Checks for capital letters in new user password
-  """
-  for character in password:
-    if character.isupper():
-      return True
-  return False
-
-# function to check if a string has a digit
-def hasDigit(password):
-  """
-  password: attempted new user password
-
-  Checks for digits in new user password
-  """
-  for character in password:
-    if character.isdigit():
-      return True
-  return False
-
-#function to check if a string contains a special character
-def hasSpecialCharacter(password):
-  """
-  password: attempted new user password
-
-  Checks for special characters in new user password
-  """
-  specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
-  for character in password:
-    if character in specialCharacters:
-      return True
-  return False
 
 # Create new username and verify it is unique
 def usernameCreation():
@@ -80,17 +44,17 @@ def passwordCreation():
     return passwordCreation()
 
   # Checks for Capital
-  if not hasCapitalLetter(password):
+  if not utility.hasCapitalLetter(password):
     utility.printMessage("Password must include a capital letter, try again")
     return passwordCreation()
 
   # Checks for digit
-  if not hasDigit(password):
+  if not utility.hasDigit(password):
     utility.printMessage("Password must include a digit, try again")
     return passwordCreation()
 
   # Checks for Special character
-  if not hasSpecialCharacter(password):
+  if not utility.hasSpecialCharacter(password):
     utility.printMessage("Password must include a special character, try again")
     return passwordCreation()
 

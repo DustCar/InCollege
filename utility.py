@@ -90,5 +90,41 @@ def printSuccessStory():
   story = textwrap.dedent(userStory).strip()
   print(story)
   print("\t - InCollege User \t\n")
-  
+
+# function to check if a string contains a capital letter
+def hasCapitalLetter(password):
+  """
+  password: attempted new user password
+
+  Checks for capital letters in new user password
+  """
+  for character in password:
+    if character.isupper():
+      return True
+  return False
+
+# function to check if a string has a digit
+def hasDigit(password):
+  """
+  password: attempted new user password
+
+  Checks for digits in new user password
+  """
+  for character in password:
+    if character.isdigit():
+      return True
+  return False
+
+#function to check if a string contains a special character
+def hasSpecialCharacter(password):
+  """
+  password: attempted new user password
+
+  Checks for special characters in new user password
+  """
+  specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+  for character in password:
+    if character in specialCharacters:
+      return True
+  return False
   

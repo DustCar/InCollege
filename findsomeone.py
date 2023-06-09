@@ -11,10 +11,11 @@ inSystem = False
 userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
+# function for taking input of names
 def NameInput(typeName):
   global cancelInput
   
-  cName = input(f"Enter {typeName} name of other User: ")
+  cName = input(f"Enter {typeName} name of User: ")
   if (cName == 'c'):
     cancelInput = True
     return
@@ -32,6 +33,7 @@ def NameInput(typeName):
     
   return
 
+# function to search for student
 def SearchStudent():
   global inSystem, cancelInput
   inSystem = False
@@ -64,6 +66,7 @@ def SearchStudent():
     FindSomeonePage()
   return
 
+# main page for find someone functionality
 def FindSomeonePage():
   
   utility.pageTitle("Find Someone")

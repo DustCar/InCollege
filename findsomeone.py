@@ -29,7 +29,6 @@ def NameInput(typeName):
       continue
     else:
       return cName.capitalize()
-    
   return
 
 # function to search for student
@@ -73,10 +72,10 @@ def FindSomeonePage():
     print(f"Press {len(findMenuOptions)+1} for Back.")
   
     choice = input("Input: ")
-    if int(choice) == len(findMenuOptions)+1:
+    choiceNum = utility.choiceValidation(choice, findMenuOptions)
+    
+    if choiceNum == len(findMenuOptions)+1:
       break
     else:
-      choiceNum = utility.choiceValidation(choice, findMenuOptions)
       utility.call(choiceNum, findMenuOptions)
-      
   return

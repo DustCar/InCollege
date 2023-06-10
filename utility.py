@@ -49,7 +49,7 @@ def call(input, menu):
 # function for menu selection validation
 def choiceValidation(usrInput, menu):
   menuLength = len(menu)
-  menuRange = range(1, menuLength + 1)
+  menuRange = range(1, menuLength + 2)
   
   isValid = inputValidation(usrInput, menuRange)
   
@@ -66,10 +66,12 @@ def choiceValidation(usrInput, menu):
 def inputValidation(usrInput, menuRange):
   isNumeric = usrInput.isnumeric()
   isOneCharacter = (len(usrInput) == 1)
+  
   if isNumeric:
     inRange = int(usrInput) in menuRange
   else:
     inRange = False
+    
   if (isNumeric and isOneCharacter and inRange):
     return True
   else:

@@ -235,10 +235,9 @@ def JobSearchPage():
     print(f"Press {len(jobsMenuOptions)+1} for Back.")
     
     choice = input("Input: ")
-    if int(choice) == len(jobsMenuOptions)+1:
+    choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
+    if choiceNum == len(jobsMenuOptions)+1:
       break
     else:
-      choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
       utility.call(choiceNum, jobsMenuOptions)
-      
   return

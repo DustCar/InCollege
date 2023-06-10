@@ -109,7 +109,6 @@ def createAccount():
     print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
     print("----------------------------")
     utility.printMessage("To cancel, press 'c' at any time")
-    utility.printSeparator()
     
     username = usernameCreation()
     if username == "c":

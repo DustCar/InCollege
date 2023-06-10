@@ -1,4 +1,5 @@
 import sqlite3 as sql
+import getpass as gp
 import utility
 import config
 
@@ -27,6 +28,7 @@ def usernameCreation():
       utility.printMessage(f'The username "{username}" is already in use')
       return usernameCreation()
   return username
+  
 
 # function to enforce password criteria on new password
 def passwordCreation():
@@ -35,37 +37,68 @@ def passwordCreation():
   meet the requiremnts
   """
 
-  password = input("Enter your desired password: ")
+  password = gp.getpass(prompt = "Enter your desired password: ")
   if password == "c":
     return password
-
+  
   # Checks if the password fits the character count
+  isGoodLength = True
   if len(password) > 12:
-    utility.printMessage("Password is greater than 12 characters, try removing some characters!")
-    return passwordCreation()
+    utility.printMessage("Password is greater than 12 characters")
+    isGoodLength = False
   elif len(password) < 8:
-    utility.printMessage("Password is less than 8 characters, try adding some more characters!")
-    return passwordCreation()
+    utility.printMessage("Password is less than 8 characters")
+    isGoodLength = False
 
+  hasCapital = utility.hasCapitalLetter(password)
+  hasDigit = utility.hasDigit(password)
+  hasSpecialChar = utility.hasSpecialCharacter(password)
+  
   # Checks for Capital
-  if not utility.hasCapitalLetter(password):
-    utility.printMessage("Password must include a capital letter, try again")
-    return passwordCreation()
+  if not hasCapital:
+    utility.printMessage("Password must include a capital letter")
+    hasCapital = False
 
   # Checks for digit
-  if not utility.hasDigit(password):
-    utility.printMessage("Password must include a digit, try again")
-    return passwordCreation()
+  if not hasDigit:
+    utility.printMessage("Password must include a digit")
+    hasDigit = False
 
   # Checks for Special character
-  if not utility.hasSpecialCharacter(password):
-    utility.printMessage("Password must include a special character, try again")
+  if not hasSpecialChar:
+    utility.printMessage("Password must include a special character")
+    hasSpecialChar = False
+
+  # If any requirement not met, try again
+  if not (isGoodLength and hasCapital and hasDigit and hasSpecialChar):
     return passwordCreation()
 
   # If password meets all requirements, returns password
-  return password
+  confirmPass = gp.getpass(prompt = "Confirm password: ")
+  while (confirmPass != password):
+    utility.printMessage("Passwords do not match.")
+    confirmPass = gp.getpass(prompt = "Confirm password: ")
+  return confirmPass
 
 
+# function to ensure unique first,last combo
+def name():
+  first = input("Enter your first name: ").capitalize()
+  if first == "c":
+    return [first, "c"]
+  last = input("Enter your last name: ").capitalize()
+  if last == "c":
+    return ["c", last]
+  # Checks if first,last pair already exists
+  for users in UDCursor.execute("SELECT FirstName,LastName FROM userData").fetchall():
+    if first == users[0] and last == users[1]:
+      utility.printMessage('The full name is already in use')
+      return name()
+  # if it doesn't, return name
+  return [first, last]
+  
+
+# function to create a user account
 def createAccount():
   """
   Creates a new account for the user
@@ -75,7 +108,7 @@ def createAccount():
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
     print("----------------------------")
-    print("Enter 'c' to cancel")
+    utility.printMessage("To cancel, press 'c' at any time")
     utility.printSeparator()
     
     username = usernameCreation()
@@ -84,9 +117,11 @@ def createAccount():
     password = passwordCreation()
     if password == "c":
       return
-    firstName = input("Enter your first name: ").capitalize()
-    lastName = input("Enter your last name: ").capitalize()
-
+    fullName = name()
+    firstName = fullName[0]
+    lastName = fullName[1]
+    if firstName == "c" or lastName == "c":
+      return
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES

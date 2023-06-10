@@ -39,12 +39,11 @@ def SearchStudent():
   cancelInput = False
   
   utility.pageTitle("Search for another Student")
-  utility.printMessage("To search for someone simply enter their first and last name. To cancel, press 'c' anytime")
+  utility.printMessage("To search for someone, simply enter their first and last name. To cancel, press 'c' at any time")
   utility.printSeparator()
 
   if cancelInput is False:
     first = NameInput("first")
-    utility.printSeparator()
   if cancelInput is False:
     last = NameInput("last")
     utility.printSeparator()
@@ -60,7 +59,6 @@ def SearchStudent():
     utility.printMessage("They are a part of the inCollege system")
   else:
     utility.printMessage("They are not a part of the inCollege system yet")
-    
   return
 
 # main page for find someone functionality

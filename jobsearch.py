@@ -184,7 +184,7 @@ def PostJob():
     
   utility.pageTitle("Post a Job")
   utility.printMessage("Please enter the required details.")
-  utility.printMessage("If at any time you want to cancel the posting, enter 'c'")
+  utility.printMessage("To cancel, press 'c' at any time")
   utility.printSeparator()
 
   # checks for cancel posting after every detail

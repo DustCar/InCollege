@@ -240,4 +240,5 @@ def JobSearchPage():
     else:
       choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
       utility.call(choiceNum, jobsMenuOptions)
+      
   return

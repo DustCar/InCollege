@@ -19,7 +19,8 @@ def usernameCreation():
   new username creation, verifies new username is unique
   """
   username = input("Enter your desired username: ")
-
+  if username == "c":
+    return username
   # Checks if username already exists
   for users in UDCursor.execute("SELECT Username FROM userData").fetchall():
     if username == users[0]:
@@ -35,6 +36,8 @@ def passwordCreation():
   """
 
   password = input("Enter your desired password: ")
+  if password == "c":
+    return password
 
   # Checks if the password fits the character count
   if len(password) > 12:
@@ -72,8 +75,15 @@ def createAccount():
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
     print("----------------------------")
+    print("Enter 'c' to cancel")
+    utility.printSeparator()
+    
     username = usernameCreation()
+    if username == "c":
+      return
     password = passwordCreation()
+    if password == "c":
+      return
     firstName = input("Enter your first name: ").capitalize()
     lastName = input("Enter your last name: ").capitalize()
 

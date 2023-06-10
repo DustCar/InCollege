@@ -35,41 +35,41 @@ def HasSpecialChar(word):
 
 # function that recursively asks to confirm until 'y' or 'n' is typed
 def ConfirmDetails():
-  confirm = input("Confirm detail? (y or n): ")
-  if confirm != 'y' and confirm != 'n':
-    utility.printMessage("'y' or 'n' only.")
-    ConfirmDetails()
-  else:
-    return confirm
-  return
+  while True:
+    confirm = input("Confirm detail? (y or n): ")
+    if confirm == "y" or confirm == "n":
+      break
+    else:
+      utility.printMessage("'y' or 'n' only.")
+      continue
+  return confirm
   
 # Customized input for title (PostJob)
 def TitleInput():
   global cancelPost
   if cancelPost is True:
     return
+  while True:
+    cTitle = input("Title of Job: ")
+    if (cTitle == 'c'):
+      cancelPost = True
+      break
   
-  cTitle = input("Title of Job: ")
-  if (cTitle == 'c'):
-    cancelPost = True
-    return
-
-  if HasSpecialChar(cTitle):
-    utility.printMessage("Special characters are not allowed!")
-    TitleInput()
-    return
-  elif len(cTitle) > 50:
-    utility.printMessage("Title is too long! Try again.")
-    TitleInput()
-    return
-
-  print(f"Given title: {cTitle}")
-  confirmation = ConfirmDetails()
-
-  if confirmation == 'y':
-    return cTitle
-  elif confirmation == 'n':
-    TitleInput()
+    if HasSpecialChar(cTitle):
+      utility.printMessage("Special characters are not allowed!")
+      continue
+    elif len(cTitle) > 50:
+      utility.printMessage("Title is too long! Try again.")
+      continue
+  
+    print(f"Given title: {cTitle}")
+    confirmation = ConfirmDetails()
+  
+    if confirmation == 'y':
+      return cTitle
+    elif confirmation == 'n':
+      utility.printSeparator()
+      continue
   return
 
 # Customized input for description (PostJob)
@@ -77,24 +77,23 @@ def DescInput():
   global cancelPost
   if cancelPost is True:
     return
+  while True:
+    cDesc = input("Description of Job: ")
+    if (cDesc == 'c'):
+      cancelPost = True
+      break
   
-  cDesc = input("Description of Job: ")
-  if (cDesc == 'c'):
-    cancelPost = True
-    return
-
-  if HasSpecialChar(cDesc):
-    utility.printMessage("Special characters are not allowed!")
-    DescInput()
-    return
-
-  print(f"Given description: {cDesc}")
-  confirmation = ConfirmDetails()
-
-  if confirmation == 'y':
-    return cDesc
-  elif confirmation == 'n':
-    TitleInput()
+    if HasSpecialChar(cDesc):
+      utility.printMessage("Special characters are not allowed!")
+      continue
+  
+    print(f"Given description: {cDesc}")
+    confirmation = ConfirmDetails()
+  
+    if confirmation == 'y':
+      return cDesc
+    elif confirmation == 'n':
+      continue
   return
 
 # Customized input for employer name (PostJob)
@@ -102,28 +101,26 @@ def EmpInput():
   global cancelPost
   if cancelPost is True:
     return
+  while True:
+    cEmployer = input("Employer for Job: ")
+    if (cEmployer == 'c'):
+      cancelPost = True
+      break
   
-  cEmployer = input("Employer for Job: ")
-  if (cEmployer == 'c'):
-    cancelPost = True
-    return
-
-  if utility.hasSpecialCharacter(cEmployer):
-    utility.printMessage("Special characters are not allowed!")
-    EmpInput()
-    return
-  elif len(cEmployer) > 25:
-    utility.printMessage("Employer name is too long! Try again.")
-    EmpInput()
-    return
-
-  print(f"Given employer name: {cEmployer}")
-  confirmation = ConfirmDetails()
-
-  if confirmation == 'y':
-    return cEmployer
-  elif confirmation == 'n':
-    EmpInput()
+    if utility.hasSpecialCharacter(cEmployer):
+      utility.printMessage("Special characters are not allowed!")
+      continue
+    elif len(cEmployer) > 25:
+      utility.printMessage("Employer name is too long! Try again.")
+      continue
+  
+    print(f"Given employer name: {cEmployer}")
+    confirmation = ConfirmDetails()
+  
+    if confirmation == 'y':
+      return cEmployer
+    elif confirmation == 'n':
+      continue
   return
 
 # Customized input for location (PostJob)
@@ -131,28 +128,26 @@ def LocInput():
   global cancelPost
   if cancelPost is True:
     return
+  while True:
+    cLocation = input("Location of Job: ")
+    if (cLocation == 'c'):
+      cancelPost = True
+      break
   
-  cLocation = input("Location of Job: ")
-  if (cLocation == 'c'):
-    cancelPost = True
-    return
-
-  if HasSpecialChar(cLocation):
-    utility.printMessage("#, ;, \, ` characters are not allowed!")
-    LocInput()
-    return
-  elif len(cLocation) > 255:
-    utility.printMessage("Name of Location is too long! Try again.")
-    LocInput()
-    return
-
-  print(f"Given location: {cLocation}")
-  confirmation = ConfirmDetails()
-
-  if confirmation == 'y':
-    return cLocation
-  elif confirmation == 'n':
-    LocInput()
+    if HasSpecialChar(cLocation):
+      utility.printMessage("#, ;, \, ` characters are not allowed!")
+      continue
+    elif len(cLocation) > 255:
+      utility.printMessage("Name of Location is too long! Try again.")
+      continue
+  
+    print(f"Given location: {cLocation}")
+    confirmation = ConfirmDetails()
+  
+    if confirmation == 'y':
+      return cLocation
+    elif confirmation == 'n':
+      continue
   return
   
 # Customized input for salary (PostJob)
@@ -160,33 +155,31 @@ def SalInput():
   global cancelPost
   if cancelPost is True:
     return
+  while True:
+    cSalary = input("Salary of Job: ")
+    if (cSalary == 'c'):
+      cancelPost = True
+      break
   
-  cSalary = input("Salary of Job: ")
-  if (cSalary == 'c'):
-    cancelPost = True
-    return
-
-  if not utility.hasDigit(cSalary) or utility.hasSpecialCharacter(cSalary):
-    utility.printMessage("Only positive numbers allowed.")
-    SalInput()
-    return
-
-  print(f"Given salary: {cSalary}")
-  confirmation = ConfirmDetails()
-
-  if confirmation == 'y':
-    return int(cSalary)
-  elif confirmation == 'n':
-    SalInput()
+    if not utility.hasDigit(cSalary) or utility.hasSpecialCharacter(cSalary):
+      utility.printMessage("Only positive numbers allowed.")
+      continue
+  
+    print(f"Given salary: {cSalary}")
+    confirmation = ConfirmDetails()
+  
+    if confirmation == 'y':
+      return int(cSalary)
+    elif confirmation == 'n':
+      continue
   return
 
 # Allows user to post a job if there is < 5 jobs currently saved
 def PostJob():
-  global currUser
+  global cancelPost
   
-  if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) > 5):
+  if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) >= 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
-    JobSearchPage()
     return
     
   utility.pageTitle("Post a Job")
@@ -196,21 +189,24 @@ def PostJob():
 
   # checks for cancel posting after every detail
   title = TitleInput()
-  utility.printSeparator()
+  if cancelPost is False:
+    utility.printSeparator()
 
   description = DescInput() 
-  utility.printSeparator()
+  if cancelPost is False:
+    utility.printSeparator()
 
   employer = EmpInput()
-  utility.printSeparator()
+  if cancelPost is False:
+    utility.printSeparator()
 
   location = LocInput()
-  utility.printSeparator()
+  if cancelPost is False:
+    utility.printSeparator()
 
   salary = SalInput()
   
   if cancelPost is True:
-    JobSearchPage()
     return
 
   sqlStatement = """ INSERT INTO 
@@ -222,28 +218,27 @@ def PostJob():
   userData.commit()
 
   utility.printMessage("Job successfully posted!")
-  JobSearchPage()
   return
 
 def JobSearchPage():
   global cancelPost
+  while True:
+    cancelPost = False
+    utility.pageTitle("Job Search")
   
-  cancelPost = False
-  utility.pageTitle("Job Search")
-
-  jobsMenuOptions = {
-    "Search for Job": utility.construction,
-    "Post a Job": PostJob,
-  }
-
-  utility.printMenu(jobsMenuOptions)
-  print(f"Press {len(jobsMenuOptions)+1} for Back.")
+    jobsMenuOptions = {
+      "Search for Job": utility.construction,
+      "Post a Job": PostJob,
+    }
   
-  choice = input("Input: ")
-  if int(choice) == len(jobsMenuOptions)+1:
-    return
-  else:
-    choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
-    utility.call(choiceNum, jobsMenuOptions)
-  
+    utility.printMenu(jobsMenuOptions)
+    print(f"Press {len(jobsMenuOptions)+1} for Back.")
+    
+    choice = input("Input: ")
+    if int(choice) == len(jobsMenuOptions)+1:
+      break
+    else:
+      choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
+      utility.call(choiceNum, jobsMenuOptions)
+      
   return

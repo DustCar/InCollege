@@ -6,6 +6,7 @@ import account
 import jobsearch
 import findsomeone
 import utility
+import time
 import config
 import getpass as gp
 
@@ -17,23 +18,27 @@ maxPasswd = 12
 
 # function for initial InCollege screen
 def inCollege():
-  utility.pageTitle("Welcome to InCollege!")
-
-  welcome = {
-    "Log In": loginPage,
-    "Create An Account": createAcctPage,
-    "Video About InCollege": videoPage,
-    "Find Someone": newUserFind,
-    "Exit InCollege": closeApp
-  }
-
-  utility.printSuccessStory()
-  utility.printMenu(welcome)
-
-  option = input("Input: ")
-  optionNum = utility.choiceValidation(option, welcome)
-
-  utility.call(optionNum, welcome)
+  
+  while True:
+    utility.pageTitle("Welcome to InCollege!")
+    welcome = {
+      "Log In": loginPage,
+      "Create An Account": createAcctPage,
+      "Video About InCollege": videoPage,
+      "Find Someone": newUserFind
+    }
+  
+    utility.printSuccessStory()
+    utility.printMenu(welcome)
+    print(f"Press {len(welcome)+1} for Exit InCollege.")
+  
+    option = input("Input: ")
+    if int(option) == len(welcome)+1:
+      closeApp()
+      break
+    else:
+      optionNum = utility.choiceValidation(option, welcome)
+      utility.call(optionNum, welcome)
   return
 
 
@@ -63,8 +68,7 @@ def loginAuthorization(usr, passwd):
     utility.printMessage("Incorrect username/password, please try again")
     leave = quitOption()
     if leave:
-      inCollege()
-      return
+      return False
     utility.pageTitle("Log In")
     newUsr = input("Username: ")
     newPasswd = gp.getpass(prompt="Password: ")
@@ -77,25 +81,26 @@ def loginAuthorization(usr, passwd):
 # function for screen after logging in
 def loggedin():
   global currUser
-  utility.pageTitle("Home")
-  utility.printMessage(f"Current user: {config.currUser}")
-
-  home = {
-    "Job Search": jobSearchMain,
-    "Find Someone": findSomeoneMain,
-    "Learn a New Skill": learnSkill,
-    "Log Out": inCollege
-  }
-
-  utility.printMenu(home)
-
-  option = input("Input: ")
-  optionNum = utility.choiceValidation(option, home)
-
-  if optionNum == len(home)+1:
-    config.currUser = "None"
-
-  utility.call(optionNum, home)
+  while True:
+    utility.pageTitle("Home")
+    utility.printMessage(f"Current user: {config.currUser}")
+  
+    home = {
+      "Job Search": jobsearch.JobSearchPage,
+      "Find Someone": findsomeone.FindSomeonePage,
+      "Learn a New Skill": learnSkill
+    }
+  
+    utility.printMenu(home)
+    print(f"Press {len(home)+1} for Log Out.")
+  
+    option = input("Input: ")
+    if int(option) == len(home)+1:
+      config.currUser = "None"
+      break
+    else:
+      optionNum = utility.choiceValidation(option, home)
+      utility.call(optionNum, home)
   return
 
 
@@ -103,7 +108,6 @@ def loggedin():
 def quitOption():
   end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
   if end == 'q' or end == 'Q':
-    inCollege()
     return 1
   return 0 
 
@@ -118,42 +122,37 @@ def closeApp():
 def createAcctPage():
   utility.pageTitle("Create An Account")
   account.createAccount()
-  inCollege()
   return
-
-# function to call Job Search page
-def jobSearchMain():
-  jobsearch.JobSearchPage()
-  loggedin()
-
-def findSomeoneMain():
-  findsomeone.FindSomeonePage()
-  loggedin()
 
 # function to learn a skill
 def learnSkill():
-  utility.pageTitle("Learn a New Skill")
+  while True:
+    utility.pageTitle("Learn a New Skill")
+  
+    skills = {
+      "Skill1": utility.construction,
+      "Skill2": utility.construction,
+      "Skill3": utility.construction,
+      "Skill4": utility.construction,
+      "Skill5": utility.construction
+    }
+  
+    utility.printMenu(skills)
+    print(f"Press {len(skills)+1} for Back.")
+  
+    option = input("Input: ")
 
-  skills = {
-    "Skill1": utility.construction,
-    "Skill2": utility.construction,
-    "Skill3": utility.construction,
-    "Skill4": utility.construction,
-    "Skill5": utility.construction,
-    "Back": loggedin
-  }
-
-  utility.printMenu(skills)
-
-  option = input("Input: ")
-  optionNum = utility.choiceValidation(option, skills)
-
-  utility.call(optionNum, skills)
+    if int(option) == len(skills)+1:
+      break
+    else:
+      optionNum = utility.choiceValidation(option, skills)  
+      utility.call(optionNum, skills)
   return
 
 # function for video page
 def videoPage():
   utility.printMessage("Video is now playing")
+  time.sleep(5)
   return
 
 # function for search specific to users not logged in
@@ -166,18 +165,17 @@ def newUserFind():
     
     shortMenu = {
       "Create an Account": createAcctPage,
-      "Login": loginPage,
-      "Back": inCollege
+      "Login": loginPage
     }
     utility.printMenu(shortMenu)
+    print(f"Press {len(shortMenu)+1} for Back.")
 
     option = input("Input: ")
-    optionNum = utility.choiceValidation(option, shortMenu)
-
-    utility.call(optionNum, shortMenu)
-    return
-  else:
-    inCollege()
+    if int(option) == len(shortMenu)+1:
+      return
+    else:
+      optionNum = utility.choiceValidation(option, shortMenu)
+      utility.call(optionNum, shortMenu)
   return
 
 # call/open InCollege

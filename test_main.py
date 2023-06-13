@@ -70,11 +70,11 @@ def test_inCollege(password, capfd, monkeypatch, database):
 
 
 	# This test that video plays when selected
-	'''inputs = iter(['3', '5'])
+	inputs = iter(['3', '5'])
 	monkeypatch.setattr('builtins.input', lambda _: next(inputs))
 	result = main.inCollege()
 	out, err = capfd.readouterr()
-	assert "* Video is now playing *" in out'''
+	assert "* Video is now playing *" in out
 
 	#
 

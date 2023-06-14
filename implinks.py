@@ -16,6 +16,7 @@ def ImportantLinksPage():
       "Cookie Policy": utility.construction,
       "Copyright Policy": utility.construction,
       "Brand Policy": utility.construction,
+      "Languages": utility.construction
     }
     utility.printMenu(impLinksOptions)
     print(f"Press {len(impLinksOptions)+1} for Back.")

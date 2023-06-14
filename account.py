@@ -1,144 +1,156 @@
 import sqlite3 as sql
+import getpass as gp
 import utility
+import config
 
 # SQLite database
-userData = sql.connect("User_Data.db")
+userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
 # check if the table exists and if not create it
 try:
-	UDCursor.execute("CREATE TABLE User_Data(Username, Password)")
+  UDCursor.execute("CREATE TABLE userData(Username, Password, FirstName, LastName)")
 except:
-	pass
+  pass
 
-# function to check if a string contains a capital letter
-def hasCapitalLetter(password):
-	"""
-	password: attempted new user password
-
-	Checks for capital letters in new user password
-	"""
-	for character in password:
-		if character.isupper():
-			return True
-	return False
-
-# function to check if a string has a digit
-def hasDigit(password):
-	"""
-	password: attempted new user password
-
-	Checks for digits in new user password
-	"""
-	for character in password:
-		if character.isdigit():
-			return True
-	return False
-
-#function to check if a string contains a special character
-def hasSpecialCharacter(password):
-	"""
-	password: attempted new user password
-
-	Checks for special characters in new user password
-	"""
-	specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
-	for character in password:
-		if character in specialCharacters:
-			return True
-	return False
 
 # Create new username and verify it is unique
 def usernameCreation():
-	"""
-	new username creation, verifies new username is unique
-	"""
-	username = input("Enter your desired username: ")
-
-	# Checks if username already exists
-	for users in UDCursor.execute("SELECT Username FROM User_Data").fetchall():
-		if username == users[0]:
-			utility.printMessage(f'The username "{username}" is already in use')
-			return usernameCreation()
-	return username
+  """
+  new username creation, verifies new username is unique
+  """
+  username = input("Enter your desired username: ")
+  if username == "c":
+    return username
+  # Checks if username already exists
+  for users in UDCursor.execute("SELECT Username FROM userData").fetchall():
+    if username == users[0]:
+      utility.printMessage(f'The username "{username}" is already in use')
+      return usernameCreation()
+  return username
+  
 
 # function to enforce password criteria on new password
 def passwordCreation():
-	"""
-	Password creation function, calls itself if new user password does not
-	meet the requiremnts
-	"""
-	print("PASSWORD REQUIREMENTS\n----------------------------")
-	print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
-	print("----------------------------")
+  """
+  Password creation function, calls itself if new user password does not
+  meet the requiremnts
+  """
 
-	password = input("Enter your desired Password: ")
+  password = gp.getpass(prompt = "Enter your desired password: ")
+  if password == "c":
+    return password
+  
+  # Checks if the password fits the character count
+  isGoodLength = True
+  if len(password) > 12:
+    utility.printMessage("Password is greater than 12 characters")
+    isGoodLength = False
+  elif len(password) < 8:
+    utility.printMessage("Password is less than 8 characters")
+    isGoodLength = False
 
-	# Checks if the password fits the character count
-	if len(password) > 12:
-		utility.printMessage("Password is greater than 12 characters, try removing some characters!")
-		return passwordCreation()
-	elif len(password) < 8:
-		utility.printMessage("Password is less than 8 characters, try adding some more characters!")
-		return passwordCreation()
+  hasCapital = utility.hasCapitalLetter(password)
+  hasDigit = utility.hasDigit(password)
+  hasSpecialChar = utility.hasSpecialCharacter(password)
+  
+  # Checks for Capital
+  if not hasCapital:
+    utility.printMessage("Password must include a capital letter")
+    hasCapital = False
 
-	# Checks for Capital
-	if not hasCapitalLetter(password):
-		utility.printMessage("Password must include a capital letter, try again")
-		return passwordCreation()
+  # Checks for digit
+  if not hasDigit:
+    utility.printMessage("Password must include a digit")
+    hasDigit = False
 
-	# Checks for digit
-	if not hasDigit(password):
-		utility.printMessage("Password must include a digit, try again")
-		return passwordCreation()
+  # Checks for Special character
+  if not hasSpecialChar:
+    utility.printMessage("Password must include a special character")
+    hasSpecialChar = False
 
-	# Checks for Special character
-	if not hasSpecialCharacter(password):
-		utility.printMessage("Password must include a special character, try again")
-		return passwordCreation()
+  # If any requirement not met, try again
+  if not (isGoodLength and hasCapital and hasDigit and hasSpecialChar):
+    return passwordCreation()
 
-	# If password meets all requirements, returns password
-	return password
+  # If password meets all requirements, returns password
+  confirmPass = gp.getpass(prompt = "Confirm password: ")
+  while (confirmPass != password):
+    utility.printMessage("Passwords do not match.")
+    confirmPass = gp.getpass(prompt = "Confirm password: ")
+  return confirmPass
 
 
+# function to ensure unique first,last combo
+def name():
+  first = input("Enter your first name: ").capitalize()
+  if first == "c":
+    return [first, "c"]
+  last = input("Enter your last name: ").capitalize()
+  if last == "c":
+    return ["c", last]
+  # Checks if first,last pair already exists
+  for users in UDCursor.execute("SELECT FirstName,LastName FROM userData").fetchall():
+    if first == users[0] and last == users[1]:
+      utility.printMessage('The full name is already in use')
+      return name()
+  # if it doesn't, return name
+  return [first, last]
+  
+
+# function to create a user account
 def createAccount():
-	"""
-	Creates a new account for the user
-	"""
-	# checks if max number of accounts have been made
-	if(len(UDCursor.execute("SELECT Username FROM User_Data").fetchall()) < 5):
-		username = usernameCreation()
-		password = passwordCreation()
+  """
+  Creates a new account for the user
+  """
+  # checks if max number of accounts have been made
+  if(len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
+    print("PASSWORD REQUIREMENTS\n----------------------------")
+    print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
+    print("----------------------------")
+    utility.printMessage("To cancel, press 'c' at any time")
+    
+    username = usernameCreation()
+    if username == "c":
+      return
+    password = passwordCreation()
+    if password == "c":
+      return
+    fullName = name()
+    firstName = fullName[0]
+    lastName = fullName[1]
+    if firstName == "c" or lastName == "c":
+      return
 
-		UDCursor.execute(f"""
-		INSERT INTO User_Data VALUES
-			('{username}', '{password}')
-		""")
-		userData.commit()
-	else:
-		utility.printMessage("Maximum amount of accounts have been made")
+    UDCursor.execute(f"""
+    INSERT INTO userData VALUES
+      ('{username}', '{password}', '{firstName}', '{lastName}')
+    """)
+    userData.commit()
+  else:
+    utility.printMessage("Maximum amount of accounts have been made")
 
 
 def login(username, password):
-	"""
-	Verify user login information
-	"""
+  """
+  Verify user login information
+  """
 
-	# Username and password verification
-	if not userVerification(username, password):
-		# Incorrect information
-		return True
-	return False
+  # Username and password verification
+  if not userVerification(username, password):
+    # Incorrect information
+    return True
+  return False
 
 
 def userVerification(username, password):
-	"""
-	username: attempted username associated with attempted password
-	password: attempted password
+  """
+  username: attempted username associated with attempted password
+  password: attempted password
 
-	verifies that inputted username and password both exists and are correct
-	"""
-	for users, passwrds in UDCursor.execute("SELECT Username, Password FROM User_Data").fetchall():
-		if username == users and password == passwrds:
-			return True
-	return False
+  verifies that inputted username and password both exists and are correct
+  """
+  for users, passwrds in UDCursor.execute("SELECT Username, Password FROM userData").fetchall():
+    if username == users and password == passwrds:
+      return True
+  return False

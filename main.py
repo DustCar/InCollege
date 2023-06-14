@@ -1,16 +1,10 @@
 """This file contains the main code for InCollege,
 including the different pages and relevant functions."""
 
-
 # imports
 import account
-import jobsearch
-import findsomeone
 import utility
-import time
-import config
 import getpass as gp
-
 
 # global variables
 minUsr = 1
@@ -21,48 +15,33 @@ maxPasswd = 12
 
 # function for initial InCollege screen
 def inCollege():
-  
-  while True:
-    utility.pageTitle("Welcome to InCollege!")
-    welcome = {
-      "Log In": loginPage,
-      "Create An Account": createAcctPage,
-      "Video About InCollege": videoPage,
-      "Find Someone": newUserFind
-    }
-  
-    utility.printSuccessStory()
-    utility.printMenu(welcome)
-    print(f"Press {len(welcome)+1} for Exit InCollege.")
-  
-    option = input("Input: ")
-    optionNum = utility.choiceValidation(option, welcome)
-    
-    if optionNum == len(welcome)+1:
-      closeApp()
-      break
-    else:
-      utility.call(optionNum, welcome)
+  utility.pageTitle("Welcome to InCollege!")
+
+  welcome = {
+    "Log In": loginPage,
+    "Create An Account": createAcctPage,
+    "Exit InCollege": closeApp
+  }
+
+  utility.printMenu(welcome)
+
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
+
+  utility.call(optionNum, welcome)
   return
 
 
 # function for log in page
 def loginPage():
   utility.pageTitle("Log In")
-  utility.printMessage("To cancel, press 'c' at any time")
-  utility.printSeparator()
-  
+
   usr = input("Username: ")
-  if usr == "c":
-    return
   passwd = gp.getpass(prompt="Password: ")
-  if passwd == "c":
-    return
 
   goodLogin = loginAuthorization(usr, passwd)
   if goodLogin:
     utility.printMessage("You have successfully logged in")
-    config.currUser = usr
     loggedin()
   return
 
@@ -76,14 +55,10 @@ def loginAuthorization(usr, passwd):
 
   while badUsr or badPasswd or incorrectInfo:
     utility.printMessage("Incorrect username/password, please try again")
+    quitOption()
     utility.pageTitle("Log In")
-    utility.printMessage("To cancel, press 'c' at any time")
     newUsr = input("Username: ")
-    if newUsr == "c":
-      return False
     newPasswd = gp.getpass(prompt="Password: ")
-    if newPasswd == "c": 
-      return False
     badUsr = len(newUsr) < minUsr or len(newUsr) > maxUsr
     badPasswd = len(newPasswd) < minPasswd or len(newPasswd) > maxPasswd
     incorrectInfo = account.login(newUsr, newPasswd)
@@ -92,102 +67,67 @@ def loginAuthorization(usr, passwd):
 
 # function for screen after logging in
 def loggedin():
-  global currUser
-  while True:
-    utility.pageTitle("Home")
-    utility.printMessage(f"Current user: {config.currUser}")
-  
-    home = {
-      "Job Search": jobsearch.JobSearchPage,
-      "Find Someone": findsomeone.FindSomeonePage,
-      "Learn a New Skill": learnSkill
-    }
-  
-    utility.printMenu(home)
-    print(f"Press {len(home)+1} for Log Out.")
-  
-    option = input("Input: ")
-    optionNum = utility.choiceValidation(option, home)
-    
-    if optionNum == len(home)+1:
-      config.currUser = "None"
-      break
-    else:
-      utility.call(optionNum, home)
+  utility.pageTitle("Home")
+
+  home = {
+    "Job Search": utility.construction,
+    "Find Someone": utility.construction,
+    "Learn a New Skill": learnSkill,
+    "Log out": inCollege
+  }
+
+  utility.printMenu(home)
+
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
+
+  utility.call(optionNum, home)
+  return
+
+
+# function to quit back to initial screen
+def quitOption():
+  end = input("Press Q to quit. Otherwise, press any key.\nInput: ")
+  if end == 'q' or end == 'Q':
+    inCollege()
   return
 
 
 # function for exiting InCollege
 def closeApp():
   utility.printMessage("Exited InCollege.")
-  return
+  exit(0)
 
 
 # function for creating an account
 def createAcctPage():
   utility.pageTitle("Create An Account")
   account.createAccount()
+  inCollege()
   return
 
 
 # function to learn a skill
 def learnSkill():
-  while True:
-    utility.pageTitle("Learn a New Skill")
-  
-    skills = {
-      "Skill1": utility.construction,
-      "Skill2": utility.construction,
-      "Skill3": utility.construction,
-      "Skill4": utility.construction,
-      "Skill5": utility.construction
-    }
-  
-    utility.printMenu(skills)
-    print(f"Press {len(skills)+1} for Back.")
-  
-    option = input("Input: ")
-    optionNum = utility.choiceValidation(option, skills) 
-    
-    if optionNum == len(skills)+1:
-      break
-    else: 
-      utility.call(optionNum, skills)
-  return
+  utility.pageTitle("Learn a New Skill")
 
+  skills = {
+    "Skill1": utility.construction,
+    "Skill2": utility.construction,
+    "Skill3": utility.construction,
+    "Skill4": utility.construction,
+    "Skill5": utility.construction,
+    "Home": loggedin
+  }
 
-# function for video page
-def videoPage():
-  utility.printMessage("Video is now playing")
-  time.sleep(5)
-  return
+  utility.printMenu(skills)
 
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option)
 
-# function for search specific to users not logged in
-def newUserFind():
-  findsomeone.SearchStudent()
-  if findsomeone.inSystem == True:
-    utility.printSeparator()
-    utility.printMessage("Would you like to join your friend in inCollege? Or have an account already?")
-    utility.printSeparator()
-    
-    shortMenu = {
-      "Create an Account": createAcctPage,
-      "Login": loginPage
-    }
-    utility.printMenu(shortMenu)
-    print(f"Press {len(shortMenu)+1} for Back.")
-
-    option = input("Input: ")
-    optionNum = utility.choiceValidation(option, shortMenu)
-    
-    if optionNum == len(shortMenu)+1:
-      return
-    else:
-      utility.call(optionNum, shortMenu)
+  utility.call(optionNum, skills)
   return
 
 
 # call/open InCollege
-if __name__ == "__main__":
-  inCollege()
+inCollege()

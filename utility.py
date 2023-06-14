@@ -2,6 +2,7 @@
 
 # imports
 import textwrap
+import os
 
 
 # function to print the given title of a page
@@ -42,8 +43,28 @@ def printSeparator():
 def call(input, menu):
   for choice in menu:
     if input == list(menu.keys()).index(choice) + 1:
+      clearConsole()
       menu[choice]()
+      clearConsole()
       return
+
+
+# function to clear console
+def clearConsole():
+  """
+  There are two ways to clear a console:
+  - The cls command in Windows (nt)
+  - The clear command in other OS
+  
+  This function should be called before and 
+  after function calls to other pages UNLESS
+  navigating through a menu using call() above
+  since it currently already implements this.
+  """
+  if os.name == 'nt':
+    os.system('cls')
+  else:
+    os.system('clear')
 
 
 # function for menu selection validation

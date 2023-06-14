@@ -3,10 +3,7 @@ including the different pages and relevant functions."""
 
 
 # imports
-import account
-import jobsearch
-import findsomeone
-import utility
+import account, jobsearch, findsomeone, usefullinks, implinks, utility
 import time
 import config
 import getpass as gp
@@ -28,7 +25,9 @@ def inCollege():
       "Log In": loginPage,
       "Create An Account": createAcctPage,
       "Video About InCollege": videoPage,
-      "Find Someone": newUserFind
+      "Find Someone": newUserFind,
+      "Useful Links": usefullinks.UsefulLinksPage,
+      "InCollege Important Links": implinks.ImportantLinksPage
     }
   
     utility.printSuccessStory()
@@ -100,7 +99,9 @@ def loggedin():
     home = {
       "Job Search": jobsearch.JobSearchPage,
       "Find Someone": findsomeone.FindSomeonePage,
-      "Learn a New Skill": learnSkill
+      "Learn a New Skill": learnSkill,
+      "Useful Links": usefullinks.UsefulLinksPage,
+      "InCollege Important Links": implinks.ImportantLinksPage
     }
   
     utility.printMenu(home)
@@ -111,6 +112,7 @@ def loggedin():
     
     if optionNum == len(home)+1:
       config.currUser = "None"
+      utility.clearConsole()
       break
     else:
       utility.call(optionNum, home)

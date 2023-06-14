@@ -45,7 +45,6 @@ def call(input, menu):
     if input == list(menu.keys()).index(choice) + 1:
       clearConsole()
       menu[choice]()
-      clearConsole()
       return
 
 

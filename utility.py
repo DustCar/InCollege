@@ -85,14 +85,13 @@ def choiceValidation(usrInput, menu):
 # function for validating input
 def inputValidation(usrInput, menuRange):
   isNumeric = usrInput.isnumeric()
-  isOneCharacter = (len(usrInput) == 1)
   
   if isNumeric:
     inRange = int(usrInput) in menuRange
   else:
     inRange = False
     
-  if (isNumeric and isOneCharacter and inRange):
+  if (isNumeric and inRange):
     return True
   else:
     return False

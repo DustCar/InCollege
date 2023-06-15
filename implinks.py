@@ -68,18 +68,29 @@ def user_agreement():
   return
 
 def privacy_policy():
-  utility.pageTitle("Privacy Policy")
-  utility.printMessage(
-    "We take your privacy seriously. Our policy details how we collect, use and protect your data."
-  )
-  # Needs configuration
-  if config.currUser is not None:
-    utility.printMessage("Would you like to access Guest Controls?")
-    answer = utility.confirmDetails()
-    if answer == "y":
-      guest_controls()
-      
-  utility.quickGoBack()
+  while True:
+    utility.pageTitle("Privacy Policy")
+    utility.printMessage(
+      "We take your privacy seriously. Our policy details how we collect, use and protect your data."
+    )
+    # Needs configuration
+    if config.currUser is not None:
+
+      ppolicyMenu = {
+        "Guest Controls": guest_controls
+      }
+      utility.printMenu(ppolicyMenu)
+      print(f"Press {len(ppolicyMenu)+1} for Back.")
+
+      choice = input("Input: ")
+      choiceNum = utility.choiceValidation(choice, ppolicyMenu)
+      if choiceNum == len(ppolicyMenu) + 1:
+        utility.clearConsole()
+        break
+      else:
+        utility.call(choiceNum, ppolicyMenu)
+    else:
+      utility.quickGoBack()
   return
 
 def cookie_policy():

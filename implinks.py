@@ -25,6 +25,7 @@ def ImportantLinksPage():
     choice = input("Input: ")
     choiceNum = utility.choiceValidation(choice, impLinksOptions)
     if choiceNum == len(impLinksOptions) + 1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, impLinksOptions)
@@ -73,7 +74,7 @@ def privacy_policy():
     utility.printMessage(
       "We take your privacy seriously. Our policy details how we collect, use and protect your data."
     )
-    # Needs configuration
+    # Needs configuration. Update: gives user a menu option to go to guest_controls or back, if they are signed in
     if config.currUser is not None:
 
       ppolicyMenu = {
@@ -89,6 +90,7 @@ def privacy_policy():
         break
       else:
         utility.call(choiceNum, ppolicyMenu)
+        
     else:
       utility.quickGoBack()
   return

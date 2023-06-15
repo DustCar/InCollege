@@ -22,6 +22,7 @@ def printMessage(message):
 # function to print message for incomplete pages
 def construction():
   print("Under Construction.")
+  quickGoBack()
   return
 
 
@@ -148,4 +149,26 @@ def hasSpecialCharacter(password):
     if character in specialCharacters:
       return True
   return False
-  
+
+# function that recursively asks to confirm until 'y' or 'n' is typed
+def confirmDetails():
+  while True:
+    confirm = input("Confirm? (y or n): ")
+    if confirm == "y" or confirm == "n":
+      break
+    else:
+      printMessage("'y' or 'n' only.")
+      continue
+  return confirm
+
+def quickGoBack():
+  print("Press 1 for Back")
+
+  while True:
+    usrInput = input("Input: ")
+    if usrInput == "1":
+      clearConsole()
+      break
+    else:
+      printMessage("Invalid input. Select again.")
+  return

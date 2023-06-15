@@ -9,7 +9,7 @@ UDCursor = userData.cursor()
 
 # check if the table exists and if not create it
 try:
-  UDCursor.execute("CREATE TABLE userData(Username, Password, FirstName, LastName)")
+  UDCursor.execute("CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language)")
 except:
   pass
 
@@ -112,9 +112,11 @@ def createAccount():
     
     username = usernameCreation()
     if username == "c":
+      utility.clearConsole()
       return
     password = passwordCreation()
     if password == "c":
+      utility.clearConsole()
       return
     fullName = name()
     firstName = fullName[0]
@@ -124,11 +126,20 @@ def createAccount():
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}')
+      ('{username}', '{password}', '{firstName}', '{lastName}', ON, ON, ON, English)
     """)
     userData.commit()
   else:
     utility.printMessage("Maximum amount of accounts have been made")
+
+# function for creating an account
+def createAcctPage():
+  if config.currUser is not None:
+    utility.printMessage("You are currently logged in!")
+    return
+  utility.pageTitle("Create An Account")
+  createAccount()
+  return
 
 
 def login(username, password):

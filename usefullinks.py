@@ -1,7 +1,6 @@
 """This file contains all functions relating to the Useful Links section of InCollege"""
 
-import utility
-import account
+import utility, generallinks
 
 
 def UsefulLinksPage():
@@ -10,7 +9,7 @@ def UsefulLinksPage():
     utility.pageTitle("Useful Links")
 
     usefulLinksOptions = {
-      "General": utility.construction,
+      "General": generallinks.GeneralLinksPage,
       "Browse InCollege": utility.construction,
       "Business Solutions": utility.construction,
       "Directories": utility.construction
@@ -21,6 +20,7 @@ def UsefulLinksPage():
     choice = input("Input: ")
     choiceNum = utility.choiceValidation(choice, usefulLinksOptions)
     if choiceNum == len(usefulLinksOptions)+1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, usefulLinksOptions)

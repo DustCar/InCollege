@@ -1,7 +1,11 @@
 """This file contains all functions involving the Important Links page"""
 
 import utility, config
+import sqlite3 as sql
 
+# SQLite database
+userData = sql.connect(config.database)
+UDCursor = userData.cursor()
 
 def ImportantLinksPage():
 
@@ -129,8 +133,13 @@ def languages():
   if config.currUser is None:
     utility.printMessage("To change Language settings, please log in.")
     return
-    
+  query = f"SELECT Language FROM userData WHERE Username = '{config.currUser}'"
+  sqlCurrUser = UDCursor.execute(query).fetchone()
+
+  currlanguage = sqlCurrUser[0]
+  
   utility.pageTitle("Languages")
+  utility.printMessage(f"Current Language: {currlanguage}")
   utility.printMessage("Select your preferred language")
   
   print("Press 1 for English")

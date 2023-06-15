@@ -51,13 +51,16 @@ def loginPage():
 
   usr = input("Username: ")
   if usr == "c":
+    utility.clearConsole()
     return
   passwd = gp.getpass(prompt="Password: ")
   if passwd == "c":
+    utility.clearConsole()
     return
 
   goodLogin = loginAuthorization(usr, passwd)
   if goodLogin:
+    utility.clearConsole()
     utility.printMessage("You have successfully logged in")
     config.currUser = usr
     loggedin()

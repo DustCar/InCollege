@@ -122,13 +122,15 @@ def createAccount():
     firstName = fullName[0]
     lastName = fullName[1]
     if firstName == "c" or lastName == "c":
+      utility.clearConsole()
       return
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}', ON, ON, ON, English)
+      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
     """)
     userData.commit()
+    utility.clearConsole()
   else:
     utility.printMessage("Maximum amount of accounts have been made")
 

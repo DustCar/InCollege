@@ -48,6 +48,7 @@ def SearchStudent():
     utility.printSeparator()
     
   if cancelInput is True:
+    utility.clearConsole()
     return
 
   for fnames, lnames in UDCursor.execute("SELECT FirstName, LastName FROM userData").fetchall():
@@ -75,6 +76,7 @@ def FindSomeonePage():
     choiceNum = utility.choiceValidation(choice, findMenuOptions)
     
     if choiceNum == len(findMenuOptions)+1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, findMenuOptions)

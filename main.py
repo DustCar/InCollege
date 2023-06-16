@@ -157,7 +157,8 @@ def learnSkill():
 # function for video page
 def videoPage():
   utility.printMessage("Video is now playing")
-  time.sleep(5)
+  utility.quickGoBack()
+  utility.clearConsole()
   return
 
 

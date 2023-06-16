@@ -26,10 +26,10 @@ def construction():
   return
 
 
-# function for printing menu 
+# function for printing menu
 def printMenu(listOptions):
   numOptions = len(listOptions)
-  for choice in range(1, numOptions+1):
+  for choice in range(1, numOptions + 1):
     print(f"Press {choice} for {list(listOptions)[choice-1]}.")
   return
 
@@ -40,12 +40,13 @@ def printSeparator():
   return
 
 
-# function for selecting from menu 
+# function for selecting from menu
 def call(input, menu):
   for choice in menu:
     if input == list(menu.keys()).index(choice) + 1:
       clearConsole()
       menu[choice]()
+      clearConsole()
       return
 
 
@@ -71,14 +72,14 @@ def clearConsole():
 def choiceValidation(usrInput, menu):
   menuLength = len(menu)
   menuRange = range(1, menuLength + 2)
-  
+
   isValid = inputValidation(usrInput, menuRange)
-  
+
   while (not isValid):
     print("Invalid input.")
     usrInput = input("Input: ")
     isValid = inputValidation(usrInput, menuRange)
-    
+
   inputNum = int(usrInput)
   return inputNum
 
@@ -86,12 +87,12 @@ def choiceValidation(usrInput, menu):
 # function for validating input
 def inputValidation(usrInput, menuRange):
   isNumeric = usrInput.isnumeric()
-  
+
   if isNumeric:
     inRange = int(usrInput) in menuRange
   else:
     inRange = False
-    
+
   if (isNumeric and inRange):
     return True
   else:
@@ -113,6 +114,7 @@ def printSuccessStory():
   print(story)
   print("\t - InCollege User \t\n")
 
+
 # function to check if a string contains a capital letter
 def hasCapitalLetter(password):
   """
@@ -124,6 +126,7 @@ def hasCapitalLetter(password):
     if character.isupper():
       return True
   return False
+
 
 # function to check if a string has a digit
 def hasDigit(password):
@@ -137,6 +140,7 @@ def hasDigit(password):
       return True
   return False
 
+
 #function to check if a string contains a special character
 def hasSpecialCharacter(password):
   """
@@ -144,11 +148,16 @@ def hasSpecialCharacter(password):
 
   Checks for special characters in new user password
   """
-  specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+  specialCharacters = [
+    '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',
+    ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',
+    '}', '~'
+  ]
   for character in password:
     if character in specialCharacters:
       return True
   return False
+
 
 # function that recursively asks to confirm until 'y' or 'n' is typed
 def confirmDetails():
@@ -160,6 +169,7 @@ def confirmDetails():
       printMessage("'y' or 'n' only.")
       continue
   return confirm
+
 
 def quickGoBack():
   print("Press 1 for Back")

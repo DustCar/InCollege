@@ -208,6 +208,7 @@ def PostJob():
   userData.commit()
 
   utility.printMessage("Job successfully posted!")
+  utility.clearConsole()
   return
 
 def JobSearchPage():
@@ -227,6 +228,7 @@ def JobSearchPage():
     choice = input("Input: ")
     choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
     if choiceNum == len(jobsMenuOptions)+1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, jobsMenuOptions)

@@ -139,15 +139,16 @@ def guest_controls():
 
 
 def languages():
+  utility.pageTitle("Languages")
   if config.currUser is None:
     utility.printMessage("To change Language settings, please log in.")
+    utility.quickGoBack()
     return
   query = f"SELECT Language FROM userData WHERE Username = '{config.currUser}'"
   sqlCurrUser = UDCursor.execute(query).fetchone()
 
   currlanguage = sqlCurrUser[0]
-
-  utility.pageTitle("Languages")
+  
   utility.printMessage(f"Current Language: {currlanguage}")
 
   if currlanguage.lower() == 'english':

@@ -3,7 +3,6 @@ including the different pages and relevant functions."""
 
 # imports
 import account, jobsearch, findsomeone, usefullinks, implinks, utility
-import time
 import config
 import getpass as gp
 

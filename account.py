@@ -138,12 +138,14 @@ def createAccount():
     utility.clearConsole()
   else:
     utility.printMessage("Maximum amount of accounts have been made")
+    utility.quickGoBack()
 
 
 # function for creating an account
 def createAcctPage():
   if config.currUser is not None:
     utility.printMessage("You are currently logged in!")
+    utility.quickGoBack()
     return
   utility.pageTitle("Create An Account")
   createAccount()

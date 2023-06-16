@@ -57,8 +57,11 @@ def SearchStudent():
 
   if inSystem:
     utility.printMessage("They are a part of the inCollege system")
+    if config.currUser is not None:
+      utility.quickGoBack()
   else:
     utility.printMessage("They are not a part of the inCollege system yet")
+    utility.quickGoBack()
   return
 
 # main page for find someone functionality

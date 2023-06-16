@@ -4,7 +4,6 @@ import utility, account
 
 
 def GeneralLinksPage():
-  """This function manages the display and user interaction for the General Links Page."""
   while True:
     utility.pageTitle("General Links")
     generalLinksOptions = {
@@ -30,34 +29,46 @@ def GeneralLinksPage():
 
 
 def helpCenter():
-  """This function provides a placeholder response to the Help Center option."""
-  print("We're here to help")
+
+  utility.pageTitle("Help Center")
+  utility.printMessage("We're here to help")
+  utility.quickGoBack()
+  return
 
 
 def about():
-  """This function provides a brief description about InCollege."""
-  print(
+
+  utility.pageTitle("About")
+  utility.printMessage(
     "In College: Welcome to In College, the world's largest college student network with many users in many countries and territories worldwide"
   )
+  utility.quickGoBack()
+  return
 
 
 def press():
-  """This function provides a placeholder response to the Press option."""
-  print(
+
+  utility.pageTitle("Press")
+  utility.printMessage(
     "In College Pressroom: Stay on top of the latest news, updates, and reports"
   )
+  utility.quickGoBack()
+  return
 
 
 def blog():
-  """This function calls the construction placeholder function for the Blog option."""
+  utility.pageTitle("Blog")
   utility.construction()
+  return
 
 
 def careers():
-  """This function calls the construction placeholder function for the Careers option."""
+  utility.pageTitle("Careers")
   utility.construction()
+  return
 
 
 def developers():
-  """This function calls the construction placeholder function for the Developers option."""
+  utility.pageTitle("Developers")
   utility.construction()
+  return

@@ -1,11 +1,12 @@
 """This file contains all functions involving the Important Links page"""
 
-import utility, config
+import utility, config, account
 import sqlite3 as sql
 
 # SQLite database
 userData = sql.connect(config.database)
 UDCursor = userData.cursor()
+
 
 def ImportantLinksPage():
 
@@ -42,8 +43,7 @@ def copyright_notice():
   utility.printMessage("Copyright 2023 InCollege. All rights reserved.")
   utility.quickGoBack()
   return
-    
-  
+
 
 def about():
   utility.pageTitle("About")
@@ -56,6 +56,7 @@ def about():
   utility.quickGoBack()
   return
 
+
 def accessibility():
   utility.pageTitle("Accessibility")
   utility.printMessage(
@@ -64,6 +65,7 @@ def accessibility():
   utility.quickGoBack()
   return
 
+
 def user_agreement():
   utility.pageTitle("User Agreement")
   utility.printMessage(
@@ -71,6 +73,7 @@ def user_agreement():
   )
   utility.quickGoBack()
   return
+
 
 def privacy_policy():
   while True:
@@ -81,9 +84,7 @@ def privacy_policy():
     # Needs configuration. Update: gives user a menu option to go to guest_controls or back, if they are signed in
     if config.currUser is not None:
 
-      ppolicyMenu = {
-        "Guest Controls": guest_controls
-      }
+      ppolicyMenu = {"Guest Controls": guest_controls}
       utility.printMenu(ppolicyMenu)
       print(f"Press {len(ppolicyMenu)+1} for Back.")
 
@@ -94,10 +95,13 @@ def privacy_policy():
         break
       else:
         utility.call(choiceNum, ppolicyMenu)
-        
+
     else:
       utility.quickGoBack()
+      return
+
   return
+
 
 def cookie_policy():
   utility.pageTitle("Cookie Policy")
@@ -107,6 +111,7 @@ def cookie_policy():
   utility.quickGoBack()
   return
 
+
 def copyright_policy():
   utility.pageTitle("Copyright Policy")
   utility.printMessage(
@@ -114,11 +119,14 @@ def copyright_policy():
   utility.quickGoBack()
   return
 
+
 def brand_policy():
   utility.pageTitle("Brand Policy")
-  utility.printMessage("Our brand policy outlines the appropriate use of our brand assets.")
+  utility.printMessage(
+    "Our brand policy outlines the appropriate use of our brand assets.")
   utility.quickGoBack()
   return
+
 
 # Will be called for privacy policy
 def guest_controls():
@@ -129,6 +137,7 @@ def guest_controls():
   utility.quickGoBack()
   return
 
+
 def languages():
   if config.currUser is None:
     utility.printMessage("To change Language settings, please log in.")
@@ -137,27 +146,29 @@ def languages():
   sqlCurrUser = UDCursor.execute(query).fetchone()
 
   currlanguage = sqlCurrUser[0]
-  
+
   utility.pageTitle("Languages")
   utility.printMessage(f"Current Language: {currlanguage}")
-  utility.printMessage("Select your preferred language")
-  
-  print("Press 1 for English")
-  print("Press 2 for Spanish")
-  print("Press 3 for Back")
+
+  if currlanguage.lower() == 'english':
+    print("Press 1 for Spanish")
+    new_lang = 'spanish'
+  else:
+    print("Press 1 for English")
+    new_lang = 'english'
+
+  print("Press 2 for Back")
 
   while True:
     language_choice = input("Input: ")
-  
+
     if language_choice == "1":
-      #update_user_language('english')
-      utility.printMessage("Your language has been set to English.")
+      account.update_user_language(
+        new_lang)  # Update the user's language in the database
+      utility.printMessage(
+        f"Your language has been set to {new_lang.capitalize()}.")
       return
     elif language_choice == "2":
-      #update_user_language('spanish')
-      utility.printMessage("Your language has been set to Spanish.")
-      return
-    elif language_choice == "3":
       utility.clearConsole()
       break
     else:

@@ -134,7 +134,60 @@ def guest_controls():
   utility.printMessage(
     "As a guest, you have certain controls over your data and privacy settings. Please use them responsibly."
   )
-  utility.quickGoBack()
+  utility.printSeparator()
+  
+  query = f"SELECT EmailFeat, SMSFeat, TargetAdFeat FROM userData WHERE Username = '{config.currUser}'"
+  resCurrUser = UDCursor.execute(query)
+  emailf, smsf, targetf = resCurrUser.fetchone()
+
+  print(f"""InCollege Email: {emailf}
+SMS: {smsf}
+Target Advertising: {targetf}""")
+  utility.printSeparator()
+
+  print("Press 1 to toggle Email feature.")
+  print("Press 2 to toggle SMS feature.")
+  print("Press 3 to toggle Targeted Advertising feature.")
+  print("Press 4 for Back.")
+
+  while True:
+    featureChoice = input("Input: ")
+
+    if featureChoice == "1":
+      if emailf == "ON":
+        account.toggleFeature("EmailFeat", 'OFF')
+      else:
+        account.toggleFeature("EmailFeat", 'ON')
+      utility.clearConsole()
+      utility.printMessage("Email feature has been toggled.")
+      utility.quickGoBack()
+      return
+      
+    elif featureChoice == "2":
+      if smsf == "ON":
+        account.toggleFeature("SMSFeat", 'OFF')
+      else:
+        account.toggleFeature("SMSFeat", 'ON')
+      utility.clearConsole()
+      utility.printMessage("SMS feature has been toggled.")
+      utility.quickGoBack()
+      return
+      
+    elif featureChoice == "3":
+      if targetf == "ON":
+        account.toggleFeature("TargetAdFeat", 'OFF')
+      else:
+        account.toggleFeature("TargetAdFeat", 'ON')
+      utility.clearConsole()
+      utility.printMessage("Targeted Advertising feature has been toggled.")
+      utility.quickGoBack()
+      return
+      
+    elif featureChoice == "4":
+      utility.clearConsole()
+      break
+    else:
+      utility.printMessage("Invalid input. Select again.")
   return
 
 
@@ -168,6 +221,7 @@ def languages():
         new_lang)  # Update the user's language in the database
       utility.printMessage(
         f"Your language has been set to {new_lang.capitalize()}.")
+      utility.quickGoBack()
       return
     elif language_choice == "2":
       utility.clearConsole()

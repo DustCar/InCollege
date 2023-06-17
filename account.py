@@ -182,3 +182,10 @@ def update_user_language(language):
   query = f"UPDATE userData SET Language = '{language}' WHERE Username = '{config.currUser}'"
   UDCursor.execute(query)
   userData.commit()
+  return
+
+def toggleFeature(feature, toggle):
+  query = f"UPDATE userData SET {feature} = '{toggle}' WHERE Username = '{config.currUser}'"
+  UDCursor.execute(query)
+  userData.commit()
+  return

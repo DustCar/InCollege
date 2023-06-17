@@ -169,6 +169,7 @@ def PostJob():
   
   if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) >= 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
+    utility.quickGoBack()
     return
     
   utility.pageTitle("Post a Job")
@@ -208,7 +209,7 @@ def PostJob():
   userData.commit()
 
   utility.printMessage("Job successfully posted!")
-  utility.clearConsole()
+  utility.quickGoBack()
   return
 
 def JobSearchPage():

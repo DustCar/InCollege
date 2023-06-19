@@ -57,7 +57,6 @@ def TitleInput():
     if confirmation == 'y':
       return cTitle
     elif confirmation == 'n':
-      utility.printSeparator()
       continue
   return
 

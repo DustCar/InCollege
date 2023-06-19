@@ -1,20 +1,30 @@
 """This file contains all functions involving the General Links page"""
 
-import utility, account
+import utility, account, config
 
 
 def GeneralLinksPage():
   while True:
     utility.pageTitle("General Links")
-    generalLinksOptions = {
-      "Sign Up": account.createAcctPage,
-      "Help Center": helpCenter,
-      "About": about,
-      "Press": press,
-      "Blog": utility.construction,
-      "Careers": utility.construction,
-      "Developers": utility.construction,
-    }
+    if config.currUser is None:
+      generalLinksOptions = {
+        "Sign Up": account.createAcctPage,
+        "Help Center": helpCenter,
+        "About": about,
+        "Press": press,
+        "Blog": utility.construction,
+        "Careers": utility.construction,
+        "Developers": utility.construction,
+      }
+    else:
+      generalLinksOptions = {
+        "Help Center": helpCenter,
+        "About": about,
+        "Press": press,
+        "Blog": utility.construction,
+        "Careers": utility.construction,
+        "Developers": utility.construction,
+      }
     utility.printMenu(generalLinksOptions)
     print(f"Press {len(generalLinksOptions)+1} for Back.")
 

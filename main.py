@@ -97,6 +97,7 @@ def loggedin():
   while True:
     utility.pageTitle("Home")
     utility.printMessage(f"Current user: {config.currUser}")
+    utility.printSeparator()
 
     home = {
       "Job Search": jobsearch.JobSearchPage,

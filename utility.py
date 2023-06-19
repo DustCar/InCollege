@@ -172,6 +172,7 @@ def confirmDetails():
 
 
 def quickGoBack():
+  printSeparator()
   print("Press 1 for Back")
 
   while True:

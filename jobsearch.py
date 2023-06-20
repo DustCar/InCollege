@@ -32,6 +32,7 @@ def HasSpecialChar(word):
 		if character in specialCharacters:
 			return True
 	return False
+
   
 # Customized input for title (PostJob)
 def TitleInput():

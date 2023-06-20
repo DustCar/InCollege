@@ -23,6 +23,7 @@ def NameInput(typeName):
   
     if cName.isalpha() == False:
       utility.printMessage("Only letters are allowed!")
+
       continue
     elif len(cName) > 25:
       utility.printMessage(f"{typeName.capitalize()} name is too long! Try again.")

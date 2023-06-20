@@ -1,10 +1,12 @@
 """This file contains the main code for InCollege,
 including the different pages and relevant functions."""
 
+
 # imports
 import account, jobsearch, findsomeone, usefullinks, implinks, utility
 import config
 import getpass as gp
+
 
 # global variables
 minUsr = 1
@@ -15,7 +17,6 @@ maxPasswd = 12
 
 # function for initial InCollege screen
 def inCollege():
-
   while True:
     utility.pageTitle("Welcome to InCollege!")
     welcome = {
@@ -131,7 +132,6 @@ def closeApp():
 def learnSkill():
   while True:
     utility.pageTitle("Learn a New Skill")
-
     skills = {
       "Skill1": utility.construction,
       "Skill2": utility.construction,

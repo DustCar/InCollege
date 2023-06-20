@@ -79,7 +79,6 @@ def choiceValidation(usrInput, menu):
     print("Invalid input.")
     usrInput = input("Input: ")
     isValid = inputValidation(usrInput, menuRange)
-
   inputNum = int(usrInput)
   return inputNum
 
@@ -87,7 +86,6 @@ def choiceValidation(usrInput, menu):
 # function for validating input
 def inputValidation(usrInput, menuRange):
   isNumeric = usrInput.isnumeric()
-
   if isNumeric:
     inRange = int(usrInput) in menuRange
   else:
@@ -114,7 +112,6 @@ def printSuccessStory():
   print(story)
   print("\t - InCollege User \t\n")
 
-
 # function to check if a string contains a capital letter
 def hasCapitalLetter(password):
   """
@@ -127,7 +124,6 @@ def hasCapitalLetter(password):
       return True
   return False
 
-
 # function to check if a string has a digit
 def hasDigit(password):
   """
@@ -139,7 +135,6 @@ def hasDigit(password):
     if character.isdigit():
       return True
   return False
-
 
 #function to check if a string contains a special character
 def hasSpecialCharacter(password):
@@ -157,7 +152,6 @@ def hasSpecialCharacter(password):
     if character in specialCharacters:
       return True
   return False
-
 
 # function that recursively asks to confirm until 'y' or 'n' is typed
 def confirmDetails():

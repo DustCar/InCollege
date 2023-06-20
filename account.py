@@ -12,6 +12,7 @@ try:
   UDCursor.execute(
     "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language)"
   )
+
 except:
   pass
 
@@ -30,7 +31,6 @@ def usernameCreation():
       utility.printMessage(f'The username "{username}" is already in use')
       return usernameCreation()
   return username
-
 
 # function to enforce password criteria on new password
 def passwordCreation():
@@ -80,6 +80,7 @@ def passwordCreation():
   while (confirmPass != password):
     utility.printMessage("Passwords do not match.")
     confirmPass = gp.getpass(prompt="Confirm password: ")
+
   return confirmPass
 
 
@@ -94,12 +95,12 @@ def name():
   # Checks if first,last pair already exists
   for users in UDCursor.execute(
       "SELECT FirstName,LastName FROM userData").fetchall():
+
     if first == users[0] and last == users[1]:
       utility.printMessage('The full name is already in use')
       return name()
   # if it doesn't, return name
   return [first, last]
-
 
 # function to create a user account
 def createAccount():
@@ -122,6 +123,7 @@ def createAccount():
     password = passwordCreation()
     if password == "c":
       utility.clearConsole()
+
       return
     fullName = name()
     firstName = fullName[0]

@@ -9,7 +9,10 @@ UDCursor = userData.cursor()
 
 # check if the table exists and if not create it
 try:
-  UDCursor.execute("CREATE TABLE userData(Username, Password, FirstName, LastName)")
+  UDCursor.execute(
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language)"
+  )
+
 except:
   pass
 
@@ -28,7 +31,6 @@ def usernameCreation():
       utility.printMessage(f'The username "{username}" is already in use')
       return usernameCreation()
   return username
-  
 
 # function to enforce password criteria on new password
 def passwordCreation():
@@ -37,10 +39,10 @@ def passwordCreation():
   meet the requiremnts
   """
 
-  password = gp.getpass(prompt = "Enter your desired password: ")
+  password = gp.getpass(prompt="Enter your desired password: ")
   if password == "c":
     return password
-  
+
   # Checks if the password fits the character count
   isGoodLength = True
   if len(password) > 12:
@@ -53,7 +55,7 @@ def passwordCreation():
   hasCapital = utility.hasCapitalLetter(password)
   hasDigit = utility.hasDigit(password)
   hasSpecialChar = utility.hasSpecialCharacter(password)
-  
+
   # Checks for Capital
   if not hasCapital:
     utility.printMessage("Password must include a capital letter")
@@ -74,10 +76,11 @@ def passwordCreation():
     return passwordCreation()
 
   # If password meets all requirements, returns password
-  confirmPass = gp.getpass(prompt = "Confirm password: ")
+  confirmPass = gp.getpass(prompt="Confirm password: ")
   while (confirmPass != password):
     utility.printMessage("Passwords do not match.")
-    confirmPass = gp.getpass(prompt = "Confirm password: ")
+    confirmPass = gp.getpass(prompt="Confirm password: ")
+
   return confirmPass
 
 
@@ -90,13 +93,14 @@ def name():
   if last == "c":
     return ["c", last]
   # Checks if first,last pair already exists
-  for users in UDCursor.execute("SELECT FirstName,LastName FROM userData").fetchall():
+  for users in UDCursor.execute(
+      "SELECT FirstName,LastName FROM userData").fetchall():
+
     if first == users[0] and last == users[1]:
       utility.printMessage('The full name is already in use')
       return name()
   # if it doesn't, return name
   return [first, last]
-  
 
 # function to create a user account
 def createAccount():
@@ -104,31 +108,50 @@ def createAccount():
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if(len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
+  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
     print("PASSWORD REQUIREMENTS\n----------------------------")
-    print("Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character")
+    print(
+      "Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character"
+    )
     print("----------------------------")
     utility.printMessage("To cancel, press 'c' at any time")
-    
+
     username = usernameCreation()
     if username == "c":
+      utility.clearConsole()
       return
     password = passwordCreation()
     if password == "c":
+      utility.clearConsole()
+
       return
     fullName = name()
     firstName = fullName[0]
     lastName = fullName[1]
     if firstName == "c" or lastName == "c":
+      utility.clearConsole()
       return
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}')
+      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
     """)
     userData.commit()
+    utility.clearConsole()
   else:
     utility.printMessage("Maximum amount of accounts have been made")
+    utility.quickGoBack()
+
+
+# function for creating an account
+def createAcctPage():
+  if config.currUser is not None:
+    utility.printMessage("You are currently logged in!")
+    utility.quickGoBack()
+    return
+  utility.pageTitle("Create An Account")
+  createAccount()
+  return
 
 
 def login(username, password):
@@ -150,7 +173,21 @@ def userVerification(username, password):
 
   verifies that inputted username and password both exists and are correct
   """
-  for users, passwrds in UDCursor.execute("SELECT Username, Password FROM userData").fetchall():
+  for users, passwrds in UDCursor.execute(
+      "SELECT Username, Password FROM userData").fetchall():
     if username == users and password == passwrds:
       return True
   return False
+
+
+def update_user_language(language):
+  query = f"UPDATE userData SET Language = '{language}' WHERE Username = '{config.currUser}'"
+  UDCursor.execute(query)
+  userData.commit()
+  return
+
+def toggleFeature(feature, toggle):
+  query = f"UPDATE userData SET {feature} = '{toggle}' WHERE Username = '{config.currUser}'"
+  UDCursor.execute(query)
+  userData.commit()
+  return

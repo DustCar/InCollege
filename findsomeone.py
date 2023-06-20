@@ -21,8 +21,9 @@ def NameInput(typeName):
       cancelInput = True
       break
   
-    if utility.hasSpecialCharacter(cName):
-      utility.printMessage("Special characters are not allowed!")
+    if cName.isalpha() == False:
+      utility.printMessage("Only letters are allowed!")
+
       continue
     elif len(cName) > 25:
       utility.printMessage(f"{typeName.capitalize()} name is too long! Try again.")
@@ -48,6 +49,7 @@ def SearchStudent():
     utility.printSeparator()
     
   if cancelInput is True:
+    utility.clearConsole()
     return
 
   for fnames, lnames in UDCursor.execute("SELECT FirstName, LastName FROM userData").fetchall():
@@ -56,8 +58,11 @@ def SearchStudent():
 
   if inSystem:
     utility.printMessage("They are a part of the inCollege system")
+    if config.currUser is not None:
+      utility.quickGoBack()
   else:
     utility.printMessage("They are not a part of the inCollege system yet")
+    utility.quickGoBack()
   return
 
 # main page for find someone functionality
@@ -75,6 +80,7 @@ def FindSomeonePage():
     choiceNum = utility.choiceValidation(choice, findMenuOptions)
     
     if choiceNum == len(findMenuOptions)+1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, findMenuOptions)

@@ -33,16 +33,6 @@ def HasSpecialChar(word):
 			return True
 	return False
 
-# function that recursively asks to confirm until 'y' or 'n' is typed
-def ConfirmDetails():
-  while True:
-    confirm = input("Confirm detail? (y or n): ")
-    if confirm == "y" or confirm == "n":
-      break
-    else:
-      utility.printMessage("'y' or 'n' only.")
-      continue
-  return confirm
   
 # Customized input for title (PostJob)
 def TitleInput():
@@ -63,12 +53,11 @@ def TitleInput():
       continue
   
     print(f"Given title: {cTitle}")
-    confirmation = ConfirmDetails()
+    confirmation = utility.confirmDetails()
   
     if confirmation == 'y':
       return cTitle
     elif confirmation == 'n':
-      utility.printSeparator()
       continue
   return
 
@@ -88,7 +77,7 @@ def DescInput():
       continue
   
     print(f"Given description: {cDesc}")
-    confirmation = ConfirmDetails()
+    confirmation = utility.confirmDetails()
   
     if confirmation == 'y':
       return cDesc
@@ -115,7 +104,7 @@ def EmpInput():
       continue
   
     print(f"Given employer name: {cEmployer}")
-    confirmation = ConfirmDetails()
+    confirmation = utility.confirmDetails()
   
     if confirmation == 'y':
       return cEmployer
@@ -142,7 +131,7 @@ def LocInput():
       continue
   
     print(f"Given location: {cLocation}")
-    confirmation = ConfirmDetails()
+    confirmation = utility.confirmDetails()
   
     if confirmation == 'y':
       return cLocation
@@ -166,7 +155,7 @@ def SalInput():
       continue
   
     print(f"Given salary: {cSalary}")
-    confirmation = ConfirmDetails()
+    confirmation = utility.confirmDetails()
   
     if confirmation == 'y':
       return int(cSalary)
@@ -180,6 +169,7 @@ def PostJob():
   
   if (len(UDCursor.execute("SELECT Title FROM jobsData").fetchall()) >= 5):
     utility.printMessage("Sorry, max amount of jobs already posted!")
+    utility.quickGoBack()
     return
     
   utility.pageTitle("Post a Job")
@@ -207,6 +197,7 @@ def PostJob():
   salary = SalInput()
   
   if cancelPost is True:
+    utility.clearConsole()
     return
 
   sqlStatement = """ INSERT INTO 
@@ -218,6 +209,7 @@ def PostJob():
   userData.commit()
 
   utility.printMessage("Job successfully posted!")
+  utility.quickGoBack()
   return
 
 def JobSearchPage():
@@ -237,6 +229,7 @@ def JobSearchPage():
     choice = input("Input: ")
     choiceNum = utility.choiceValidation(choice, jobsMenuOptions)
     if choiceNum == len(jobsMenuOptions)+1:
+      utility.clearConsole()
       break
     else:
       utility.call(choiceNum, jobsMenuOptions)

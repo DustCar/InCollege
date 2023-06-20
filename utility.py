@@ -22,13 +22,14 @@ def printMessage(message):
 # function to print message for incomplete pages
 def construction():
   print("Under Construction.")
+  quickGoBack()
   return
 
 
-# function for printing menu 
+# function for printing menu
 def printMenu(listOptions):
   numOptions = len(listOptions)
-  for choice in range(1, numOptions+1):
+  for choice in range(1, numOptions + 1):
     print(f"Press {choice} for {list(listOptions)[choice-1]}.")
   return
 
@@ -39,7 +40,7 @@ def printSeparator():
   return
 
 
-# function for selecting from menu 
+# function for selecting from menu
 def call(input, menu):
   for choice in menu:
     if input == list(menu.keys()).index(choice) + 1:
@@ -71,14 +72,13 @@ def clearConsole():
 def choiceValidation(usrInput, menu):
   menuLength = len(menu)
   menuRange = range(1, menuLength + 2)
-  
+
   isValid = inputValidation(usrInput, menuRange)
-  
+
   while (not isValid):
     print("Invalid input.")
     usrInput = input("Input: ")
     isValid = inputValidation(usrInput, menuRange)
-    
   inputNum = int(usrInput)
   return inputNum
 
@@ -86,14 +86,12 @@ def choiceValidation(usrInput, menu):
 # function for validating input
 def inputValidation(usrInput, menuRange):
   isNumeric = usrInput.isnumeric()
-  isOneCharacter = (len(usrInput) == 1)
-  
   if isNumeric:
     inRange = int(usrInput) in menuRange
   else:
     inRange = False
-    
-  if (isNumeric and isOneCharacter and inRange):
+
+  if (isNumeric and inRange):
     return True
   else:
     return False
@@ -145,9 +143,37 @@ def hasSpecialCharacter(password):
 
   Checks for special characters in new user password
   """
-  specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+  specialCharacters = [
+    '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/',
+    ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',
+    '}', '~'
+  ]
   for character in password:
     if character in specialCharacters:
       return True
   return False
-  
+
+# function that recursively asks to confirm until 'y' or 'n' is typed
+def confirmDetails():
+  while True:
+    confirm = input("Confirm? (y or n): ")
+    if confirm == "y" or confirm == "n":
+      break
+    else:
+      printMessage("'y' or 'n' only.")
+      continue
+  return confirm
+
+
+def quickGoBack():
+  printSeparator()
+  print("Press 1 for Back")
+
+  while True:
+    usrInput = input("Input: ")
+    if usrInput == "1":
+      clearConsole()
+      break
+    else:
+      printMessage("Invalid input. Select again.")
+  return

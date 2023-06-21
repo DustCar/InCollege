@@ -3,7 +3,7 @@ including the different pages and relevant functions."""
 
 
 # imports
-import account, jobsearch, findsomeone, usefullinks, implinks, utility
+import account, jobsearch, findsomeone, usefullinks, implinks, utility, friends
 import config
 import getpass as gp
 
@@ -105,7 +105,8 @@ def loggedin():
       "Find Someone": findsomeone.FindSomeonePage,
       "Learn a New Skill": learnSkill,
       "Useful Links": usefullinks.UsefulLinksPage,
-      "InCollege Important Links": implinks.ImportantLinksPage
+      "InCollege Important Links": implinks.ImportantLinksPage,
+      "My Friends": friends.MyFriendsPage
     }
 
     utility.printMenu(home)

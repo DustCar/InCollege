@@ -10,8 +10,11 @@ UDCursor = userData.cursor()
 # check if the table exists and if not create it
 try:
   UDCursor.execute(
-    "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language)"
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language)"
   )
+  UDCursor.execute("CREATE TABLE Friends(User, Friend)")
+  UDCursor.execute("CREATE TABLE FriendRequests(Sender, Receiver)")
+  
 
 except:
   pass
@@ -103,6 +106,17 @@ def name():
   # if it doesn't, return name
   return [first, last]
 
+# this function asks the user to input their university
+def getUniversity():
+  university = input("Enter the current university you are attending: ")
+  return university
+
+
+# this function asks the user to input their major
+def getMajor():
+  major = input("Enter your major: ")
+  return major
+
 
 # function to create a user account
 def createAccount():
@@ -134,9 +148,16 @@ def createAccount():
       utility.clearConsole()
       return
 
+    university = getUniversity()
+    major = getMajor()
+
+    if university == "c" or major == "c":
+      utility.clearConsole()
+      return
+
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
+      ('{username}', '{password}', '{firstName}', '{lastName}', '{university}', '{major}', 'ON', 'ON', 'ON', 'English')
     """)
     userData.commit()
     utility.clearConsole()
@@ -154,7 +175,6 @@ def createAcctPage():
   utility.pageTitle("Create An Account")
   createAccount()
   return
-
 
 def login(username, password):
   """

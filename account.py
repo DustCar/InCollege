@@ -32,6 +32,7 @@ def usernameCreation():
       return usernameCreation()
   return username
 
+
 # function to enforce password criteria on new password
 def passwordCreation():
   """
@@ -102,13 +103,14 @@ def name():
   # if it doesn't, return name
   return [first, last]
 
+
 # function to create a user account
 def createAccount():
   """
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
+  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 10):
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print(
       "Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character"
@@ -185,6 +187,7 @@ def update_user_language(language):
   UDCursor.execute(query)
   userData.commit()
   return
+
 
 def toggleFeature(feature, toggle):
   query = f"UPDATE userData SET {feature} = '{toggle}' WHERE Username = '{config.currUser}'"

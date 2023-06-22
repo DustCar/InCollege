@@ -8,6 +8,15 @@ import sqlite3 as sql
 userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
+# check if the table exists and if not create it
+try:
+  UDCursor.execute("CREATE TABLE Friends(User, Friend)")
+  UDCursor.execute("CREATE TABLE FriendRequests(Sender, Receiver)")
+  
+except:
+  pass
+
+
 def MyFriendsPage():
   while True:
     utility.pageTitle("Manage Your Current Friends")

@@ -12,9 +12,6 @@ try:
   UDCursor.execute(
     "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language)"
   )
-  UDCursor.execute("CREATE TABLE Friends(User, Friend)")
-  UDCursor.execute("CREATE TABLE FriendRequests(Sender, Receiver)")
-  
 
 except:
   pass

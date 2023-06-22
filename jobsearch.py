@@ -124,7 +124,7 @@ def LocInput():
       break
   
     if HasSpecialChar(cLocation):
-      utility.printMessage("#, ;, \, ` characters are not allowed!")
+      utility.printMessage("#, ;, \\, ` characters are not allowed!")
       continue
     elif len(cLocation) > 255:
       utility.printMessage("Name of Location is too long! Try again.")

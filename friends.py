@@ -8,6 +8,14 @@ import sqlite3 as sql
 userData = sql.connect(config.database)
 UDCursor = userData.cursor()
 
+# check if the table exists and if not create it
+try:
+  UDCursor.execute("CREATE TABLE Friends(User, Friend)")
+  UDCursor.execute("CREATE TABLE FriendRequests(Sender, Receiver)")
+  
+except:
+  pass
+
 
 def MyFriendsPage():
   while True:
@@ -389,3 +397,13 @@ def RemoveFriend():
     )
   else:
     print("Friend removal cancelled.")
+
+
+# send a logged in user to pending request page if they have any pending requests
+def FriendRequestNotification():
+  received_requests = UDCursor.execute(
+    f"SELECT Sender FROM FriendRequests WHERE Receiver = '{config.currUser}'"
+  ).fetchall()
+
+  if len(received_requests) > 0:
+    ShowMyPendingRequestsPage()

@@ -95,6 +95,10 @@ def loginAuthorization(usr, passwd):
 # function for screen after logging in
 def loggedin():
   global currUser
+
+  # notify users they have pending requests when they log in
+  friends.FriendRequestNotification()
+  
   while True:
     utility.pageTitle("Home")
     utility.printMessage(f"Current user: {config.currUser}")

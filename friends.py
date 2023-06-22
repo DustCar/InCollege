@@ -345,7 +345,7 @@ def ShowMyPendingRequestsPage():
   input("Press any key to return")
   utility.clearConsole()
 
-
+#Function shows all friends, and allows you to remove one.
 def RemoveFriend():
   # Query to get all current friends
   friends = UDCursor.execute(

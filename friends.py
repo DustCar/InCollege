@@ -151,6 +151,7 @@ def SearchStudentM():
 
 def SearchStudentPage():
   while True:
+
     utility.pageTitle("Search for friends in InCollege")
 
     # menu options within search students page

@@ -1,7 +1,7 @@
 # this file will contain the functions that manage the
 # friends list for InCollege users
 
-import utility, config, findsomeone
+import utility, config
 import sqlite3 as sql
 
 # Connect to SQL database
@@ -12,7 +12,7 @@ UDCursor = userData.cursor()
 try:
   UDCursor.execute("CREATE TABLE Friends(User, Friend)")
   UDCursor.execute("CREATE TABLE FriendRequests(Sender, Receiver)")
-  
+
 except:
   pass
 
@@ -77,175 +77,84 @@ def CanSendRequest(friendToAdd):
   return True
 
 
+# this function handles search by function
+def SearchStudent(searchCritera):
+  display = searchCritera
+  
+  if searchCritera == "LastName":
+    display = "Last Name"
+    
+  while True:
+    utility.pageTitle(f"Search by {display}")
+    utility.printMessage("Type 'c' to cancel the search and go back")
+    utility.printSeparator()
+    userInput = input(f"Enter a {display} to search: ").lower()
+      
+    if userInput == "c":
+      break
+
+    # search for the users based on last name and store into list
+    users = UDCursor.execute(
+      f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LOWER({searchCritera}) = '{userInput}'"
+    ).fetchall()
+    if len(users) > 0:
+      print("\n")
+      utility.printMessage(f"Matches Found: {len(users)}")
+      print("\n")
+      
+      for i, user in enumerate(users):
+        print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
+      while True:
+        friendNum = input(
+          "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
+        )
+        if friendNum == 'c':
+          break
+        elif not friendNum.isdigit() or int(friendNum) < 1 or int(
+            friendNum) > len(users):
+          print("Invalid number. Please try again.")
+        else:
+          friendToAdd = users[int(friendNum) -
+                              1][0]  # Get the username of the selected friend
+          if CanSendRequest(friendToAdd):
+            # Add the new friendship to the database
+            UDCursor.execute(
+              f"INSERT INTO FriendRequests VALUES ('{config.currUser}', '{friendToAdd}')"
+            )
+            userData.commit()
+            print(f"You have sent a friend request to {friendToAdd}.")
+            break
+    else:
+      print("\n")
+      utility.printMessage("No Matches Found")
+      print("\n")
+    
+    option = input("Would you like to search again? (y/n): ")
+    utility.clearConsole()
+    if option == "y":
+      continue
+    else:
+      break
+
+# Search students by lastname
+def SearchStudentLN():
+  SearchStudent("LastName")
+
+# Search students by University
+def SearchStudentU():
+  SearchStudent("University")
+
+# Search students by major
+def SearchStudentM():
+  SearchStudent("Major")
+
+
 def SearchStudentPage():
   while True:
-    # this helper function handles searching done by last name
-    def SearchStudentLN():
-      while True:
-        utility.pageTitle("Search by Last name")
-        utility.printMessage("Type 'c' to cancel the search and go back")
-        utility.printSeparator()
-        lastname = findsomeone.NameInput("last")
-
-        # if input is c then exit loop
-        if lastname is None:
-          break
-
-        # search for the users based on last name and store into list
-        users = UDCursor.execute(
-          f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LastName = '{lastname}'"
-        ).fetchall()
-        if len(users) > 0:
-          print("\n")
-          utility.printMessage(f"Matches Found: {len(users)}")
-          print("\n")
-          for i, user in enumerate(users):
-            print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
-        while True:
-          friendNum = input(
-            "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
-          )
-          if friendNum == 'c':
-            break
-          elif not friendNum.isdigit() or int(friendNum) < 1 or int(
-              friendNum) > len(users):
-            print("Invalid number. Please try again.")
-          else:
-            friendToAdd = users[int(friendNum) - 1][
-              0]  # Get the username of the selected friend
-            if CanSendRequest(friendToAdd):
-              # Add the new friendship to the database
-              UDCursor.execute(
-                f"INSERT INTO FriendRequests VALUES ('{config.currUser}', '{friendToAdd}')"
-              )
-              userData.commit()
-              print(f"You have sent a friend request to {friendToAdd}.")
-              break
-        else:
-          print("\n")
-          utility.printMessage("No Matches Found")
-          print("\n")
-
-        option = input("Would you like to search again? (y/n): ")
-        utility.clearConsole()
-        if option == "y":
-          continue
-        else:
-          break
-
-    # this helper function handles searching done by university
-    def SearchStudentU():
-      while True:
-        utility.pageTitle("Search by University")
-        utility.printMessage("Type 'c' to cancel the search and go back")
-        utility.printSeparator()
-        university = input("Enter a university: ")
-        university = university.lower()
-
-        # if input is c then exit loop
-        if university == "c":
-          break
-
-        # search for the users based on university and store into list
-        users = UDCursor.execute(
-          f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LOWER(University) = '{university}'"
-        ).fetchall()
-        if len(users) > 0:
-          print("\n")
-          utility.printMessage(f"Matches Found: {len(users)}")
-          print("\n")
-          for i, user in enumerate(users):
-            print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
-        while True:
-          friendNum = input(
-            "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
-          )
-          if friendNum == 'c':
-            break
-          elif not friendNum.isdigit() or int(friendNum) < 1 or int(
-              friendNum) > len(users):
-            print("Invalid number. Please try again.")
-          else:
-            friendToAdd = users[int(friendNum) - 1][
-              0]  # Get the username of the selected friend
-            if CanSendRequest(friendToAdd):
-              # Add the new friendship to the database
-              UDCursor.execute(
-                f"INSERT INTO FriendRequests VALUES ('{config.currUser}', '{friendToAdd}')"
-              )
-              userData.commit()
-              print(f"You have sent a friend request to {friendToAdd}.")
-              break
-        else:
-          print("\n")
-          utility.printMessage("No Matches Found")
-          print("\n")
-
-        option = input("Would you like to search again? (y/n): ")
-        utility.clearConsole()
-        if option == "y":
-          continue
-        else:
-          break
-
-    # this helper function handles searching done by major
-    def SearchStudentM():
-      while True:
-        utility.pageTitle("Search by Major")
-        utility.printMessage("Type 'c' to cancel the search and go back")
-        utility.printSeparator()
-        major = input("Enter a major: ")
-        major = major.lower()
-
-        # if input is c then exit loop
-        if major == "c":
-          break
-
-        # search for the users based on university and store into list
-        users = UDCursor.execute(
-          f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LOWER(major) = '{major}'"
-        ).fetchall()
-        if len(users) > 0:
-          print("\n")
-          utility.printMessage(f"Matches Found: {len(users)}")
-          print("\n")
-          for i, user in enumerate(users):
-            print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
-        while True:
-          friendNum = input(
-            "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
-          )
-          if friendNum == 'c':
-            break
-          elif not friendNum.isdigit() or int(friendNum) < 1 or int(
-              friendNum) > len(users):
-            print("Invalid number. Please try again.")
-          else:
-            friendToAdd = users[int(friendNum) - 1][
-              0]  # Get the username of the selected friend
-            if CanSendRequest(friendToAdd):
-              # Add the new friendship to the database
-              UDCursor.execute(
-                f"INSERT INTO FriendRequests VALUES ('{config.currUser}', '{friendToAdd}')"
-              )
-              userData.commit()
-              print(f"You have sent a friend request to {friendToAdd}.")
-              break
-        else:
-          print("\n")
-          utility.printMessage("No Matches Found")
-          print("\n")
-
-        option = input("Would you like to search again? (y/n): ")
-        utility.clearConsole()
-        if option == "y":
-          continue
-        else:
-          break
-
     utility.pageTitle("Search for friends in InCollege")
 
-    # menu options within "My Friends"
+    # menu options within search students page
+
     options = {
       "Search by Last Name": SearchStudentLN,
       "Search by University": SearchStudentU,
@@ -353,6 +262,7 @@ def ShowMyPendingRequestsPage():
   input("Press any key to return")
   utility.clearConsole()
 
+
 #Function shows all friends, and allows you to remove one.
 def RemoveFriend():
   # Query to get all current friends
@@ -397,6 +307,7 @@ def RemoveFriend():
     )
   else:
     print("Friend removal cancelled.")
+
 
 # send a logged in user to pending request page if they have any pending requests
 def FriendRequestNotification():

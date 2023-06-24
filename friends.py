@@ -101,6 +101,7 @@ def SearchStudentPage():
           print("\n")
           for i, user in enumerate(users):
             print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
+        # BUG: while loop below needs one indent to be inside the if statement, otherwise else statment will never run
         while True:
           friendNum = input(
             "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
@@ -156,6 +157,7 @@ def SearchStudentPage():
           print("\n")
           for i, user in enumerate(users):
             print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
+        # BUG: while loop below needs one indent to be inside the if statement, otherwise else statment will never run
         while True:
           friendNum = input(
             "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
@@ -211,6 +213,7 @@ def SearchStudentPage():
           print("\n")
           for i, user in enumerate(users):
             print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
+        # BUG: while loop below needs one indent to be inside the if statement, otherwise else statment will never run
         while True:
           friendNum = input(
             "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "

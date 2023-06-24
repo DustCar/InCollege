@@ -10,7 +10,7 @@ UDCursor = userData.cursor()
 # check if the table exists and if not create it
 try:
   UDCursor.execute(
-    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language)"
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
   )
 
 except:

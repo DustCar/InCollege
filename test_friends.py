@@ -1,8 +1,8 @@
-import friends
 import pytest
-import utility, config
+import config
 from unittest import mock
 from unittest.mock import patch
+import friends
 import sqlite3 as sql
 
 # Define a fixture to set up and tear down the database for testing
@@ -24,7 +24,7 @@ def database():
       EmailFeat TEXT,
       SMSFeat TEXT,
       TargetAdFeat TEXT,
-      Language TEXT);
+      Language TEXT, UNIQUE (Username, FirstName, LastName));
     """)
   except:
     pass
@@ -58,14 +58,14 @@ def test_MyFriendsPage(capfd, monkeypatch):
   assert "Search by Major" in out
   assert "Back" in out
 
-  # test that user gets sent to SearchStudentPage
+  # test that user gets sent to ShowMyNetworkPage
   input  = iter(['2', 'c', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(input))
   result = friends.MyFriendsPage()
   out, err = capfd.readouterr()
   assert "Your current friends are:" in out
 
-  # test that user gets sent to SearchStudentPage
+  # test that user gets sent to ShowMyPendingRequestsPage
   input  = iter(['3', 'c', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(input))
   result = friends.MyFriendsPage()
@@ -82,12 +82,17 @@ def test_CanSendRequest(capfd, monkeypatch, database):
   cursor = database.cursor()
 
   cursor.executescript("""
+  DELETE FROM FriendRequests WHERE Sender LIKE 'user%';
+  DELETE FROM Friends WHERE User LIKE 'user%';
   INSERT INTO FriendRequests VALUES ('user1', 'user2');
   INSERT INTO FriendRequests VALUES ('user4', 'user1');
   INSERT INTO Friends VALUES ('user3', 'user1');
   INSERT INTO Friends VALUES ('user1', 'user3');
+  INSERT OR IGNORE INTO userData VALUES ('user1', 'userpass@1', 'Useronef', 'Useronel', 'University of South Florida', 'Computer Science', 'ON', 'ON', 'ON', 'English');
+  INSERT OR IGNORE INTO userData VALUES ('user2', 'userpass@2', 'Usertwof', 'Usertwol', 'University of North Florida', 'Computer Engineering', 'ON', 'ON', 'ON', 'English');
+  INSERT OR IGNORE INTO userData VALUES ('user3', 'userpass@3', 'Userthreef', 'Userthreel', 'University of Florida', 'Accounting', 'ON', 'ON', 'ON', 'English');
   """)
-
+  
   # test sending a request to ownself
   result = friends.CanSendRequest("user1")
   out, err = capfd.readouterr()
@@ -112,9 +117,33 @@ def test_CanSendRequest(capfd, monkeypatch, database):
   assert result == False
   assert "You are already friends with this user." in out
 
+"""
+function to test search by functions
+"""
+def test_SearchStudentLN(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  
+  # test searching with a match
+  inputs = iter(['1', 'Usertwol', 'c', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentPage()
+  out, err = capfd.readouterr()
+  assert "Matches Found: 1" in out
+  assert "Usertwof Usertwol, University of North Florida, Computer Engineering" in out
+  
+  # test searching without any matches
+  inputs = iter(['1', 'Userfourl', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentPage()
+  out, err = capfd.readouterr()
+  assert "No Matches Found" in out
+
+def test_RemoveFriend(capfd, monkeypatch, database):
+  
+  pass
 
 
 
 # Run the tests
 if __name__ == '__main__':
-	pytest.main()
+  pytest.main()

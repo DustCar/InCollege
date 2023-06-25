@@ -306,8 +306,10 @@ def RemoveFriend():
     print(
       f"{friend_names[friend_to_remove]} has been removed from your friends list."
     )
+    # FIX PLEASE: need to add quickgoback since the message gets cleared before user sees it. Also changing the print to util.printmessage could make the message look sleeker
   else:
     print("Friend removal cancelled.")
+    # FIX PLEASE: same bug and fix as above
 
 
 # send a logged in user to pending request page if they have any pending requests

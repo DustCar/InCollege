@@ -91,6 +91,7 @@ def test_CanSendRequest(capfd, monkeypatch, database):
   INSERT OR IGNORE INTO userData VALUES ('user1', 'userpass@1', 'Useronef', 'Useronel', 'University of South Florida', 'Computer Science', 'ON', 'ON', 'ON', 'English');
   INSERT OR IGNORE INTO userData VALUES ('user2', 'userpass@2', 'Usertwof', 'Usertwol', 'University of North Florida', 'Computer Engineering', 'ON', 'ON', 'ON', 'English');
   INSERT OR IGNORE INTO userData VALUES ('user3', 'userpass@3', 'Userthreef', 'Userthreel', 'University of Florida', 'Accounting', 'ON', 'ON', 'ON', 'English');
+  INSERT OR IGNORE INTO userData VALUES ('user4', 'userpass@4', 'Userfourf', 'Userfourl', 'Florida State University', 'Mechanical Engineering', 'ON', 'ON', 'ON', 'English');
   """)
   
   # test sending a request to ownself
@@ -124,24 +125,124 @@ def test_SearchStudentLN(capfd, monkeypatch, database):
   config.currUser = "user1"
   
   # test searching with a match
-  inputs = iter(['1', 'Usertwol', 'c', 'n', '4'])
+  inputs = iter(['Usertwol', 'c', 'n', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = friends.SearchStudentPage()
+  result = friends.SearchStudentLN()
   out, err = capfd.readouterr()
   assert "Matches Found: 1" in out
   assert "Usertwof Usertwol, University of North Florida, Computer Engineering" in out
   
   # test searching without any matches
-  inputs = iter(['1', 'Userfourl', 'n', '4'])
+  inputs = iter(['Userfivel', 'n', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = friends.SearchStudentPage()
+  result = friends.SearchStudentLN()
   out, err = capfd.readouterr()
   assert "No Matches Found" in out
 
-def test_RemoveFriend(capfd, monkeypatch, database):
+  # test sending a request
+  config.currUser = "user2"
+  inputs = iter(['userthreel', '1', 'y', 'userthreel', '1', 'c', 'n'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentLN()
+  out, err = capfd.readouterr()
+  assert "You have sent a friend request to user3" in out
+  assert "You have already sent a friend request to this user." in out
   
-  pass
 
+def test_SearchStudentM(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  
+  # test searching with a match
+  inputs = iter(['Accounting', 'c', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentM()
+  out, err = capfd.readouterr()
+  assert "Matches Found: 1" in out
+  assert "Userthreef Userthreel, University of Florida, Accounting" in out
+  
+  # test searching without any matches
+  inputs = iter(['Business', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentM()
+  out, err = capfd.readouterr()
+  assert "No Matches Found" in out
+
+def test_SearchStudentU(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  
+  # test searching with a match
+  inputs = iter(['University of North Florida', 'c', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentU()
+  out, err = capfd.readouterr()
+  assert "Matches Found: 1" in out
+  assert "Usertwof Usertwol, University of North Florida, Computer Engineering" in out
+  
+  # test searching without any matches
+  inputs = iter(['University of Miami', 'n', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.SearchStudentU()
+  out, err = capfd.readouterr()
+  assert "No Matches Found" in out
+
+def test_ShowMyPendingRequestsPage(capfd, monkeypatch, database):
+  config.currUser = "user1"
+
+  # test if friend requests are showing
+  inputs = iter(['c', ''])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.ShowMyPendingRequestsPage()
+  out, err = capfd.readouterr()
+  assert "Friend requests you've sent that have not been accepted yet:\n1: user2" in out
+  assert "Friend requests you've received that you haven't accepted yet:\n1: user4" in out
+
+  # test declining a friend request
+  inputs = iter(['d1', 'c', ''])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.ShowMyPendingRequestsPage()
+  out, err = capfd.readouterr()
+  assert "You have declined the friend request from user4." in out
+  
+  # test accepting a friend request
+  config.currUser = "user2"
+  inputs = iter(['1', ''])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.ShowMyPendingRequestsPage()
+  out, err = capfd.readouterr()
+  assert "You are now friends with user1." in out
+
+  # test showing no requests
+  config.currUser = "user4"
+  monkeypatch.setattr('builtins.input', lambda _: '')
+  result = friends.ShowMyPendingRequestsPage()
+  out, err = capfd.readouterr()
+  assert "You have no pending requests." in out
+  assert "You have no incoming friend requests." in out
+
+
+def test_RemoveFriend(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  
+  # test showing current friends, also covering ShowMyNetworkPage
+  monkeypatch.setattr('builtins.input', lambda _: 'c')
+  result = friends.RemoveFriend()
+  out, err = capfd.readouterr()
+  assert "1. Userthreef Userthreel" in out
+  assert "2. Usertwof Usertwol" in out
+
+  # test removing a friend but cancelling
+  inputs = iter(['1', 'n'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.RemoveFriend()
+  out, err = capfd.readouterr()
+  assert "Friend removal cancelled." in out
+
+  # test removing a friend and confirming
+  inputs = iter(['1', 'y'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = friends.RemoveFriend()
+  out, err = capfd.readouterr()
+  assert "Userthreef Userthreel has been removed from your friends list." in out
 
 
 # Run the tests

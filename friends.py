@@ -177,8 +177,6 @@ def SearchStudentPage():
 
 
 #Handles Pending Friends
-
-
 def ShowMyNetworkPage():
   #RemoveFriend shows all students and allows you to remove one
   RemoveFriend()
@@ -292,7 +290,7 @@ def RemoveFriend():
   
     # Ask user to select a friend to remove
     selected_friend = input(
-      f"Enter the number of the friend you want to remove or press {len(friends)+1} to cancel: "
+      f"Enter the number of the friend you want to remove or press {len(friends)+1} to go back: "
     )
     selected_friend = utility.choiceValidation(selected_friend, friends)
     

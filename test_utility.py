@@ -1,11 +1,13 @@
 import utility
 from unittest.mock import MagicMock
+from unittest import mock
+from unittest.mock import patch
 
 #capture page title
 def test_pageTitle(capfd):
     utility.pageTitle("Welcome")
     out, err = capfd.readouterr()
-    assert out == "----------\nWelcome\n----------\n"
+    assert out == "--------------------\nWelcome\n--------------------\n"
 
 #capture output and assert Hello
 def test_printMessage(capfd):
@@ -14,10 +16,12 @@ def test_printMessage(capfd):
     assert out == "* Hello *\n"
 
 #Tests for Under Construction
-def test_construction(capfd):
-    utility.construction()
+def test_construction(capfd, monkeypatch):
+    input = '1'
+    monkeypatch.setattr('builtins.input', lambda _: input)
+    result = utility.construction()
     out, err = capfd.readouterr()
-    assert out == "Under Construction.\n"
+    assert "Under Construction.\n" in out
 
 # function for printing menu 
 def test_printMenu(capfd):
@@ -67,9 +71,11 @@ def test_call(monkeypatch):
 
 # Test choiceValidation function
 def test_choiceValidation(monkeypatch):
-
+    exMenu = {"Book" : "The Great Gatsby", 
+              "Author" : "F. Scott Fitzgerald"}
+  
     # Test with a valid numeric input
-    response = utility.choiceValidation("1")
+    response = utility.choiceValidation("1", exMenu)
     assert response == 1
     
 

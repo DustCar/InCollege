@@ -170,7 +170,8 @@ def test_PostJob(capfd, monkeypatch, database):
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = jobsearch.PostJob()
   out, err = capfd.readouterr()
-  
+
+  # remove inserted test case to not affect the actual database
   cursor.execute("DELETE FROM jobsData WHERE Issuer LIKE 'user%'")
 
   assert "Job successfully posted!" in out

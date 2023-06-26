@@ -184,18 +184,10 @@ def ShowMyNetworkPage():
   RemoveFriend()
   pass
 
-
-def ShowMyPendingRequestsPage():
-  utility.pageTitle("Your Friend Requests")
-
+def ShowSentRequests():
   # query the database for requests sent by the current user
   sent_requests = UDCursor.execute(
     f"SELECT Receiver FROM FriendRequests WHERE Sender = '{config.currUser}'"
-  ).fetchall()
-
-  # query the database for requests received by the current user
-  received_requests = UDCursor.execute(
-    f"SELECT Sender FROM FriendRequests WHERE Receiver = '{config.currUser}'"
   ).fetchall()
 
   # print all sent requests
@@ -207,7 +199,14 @@ def ShowMyPendingRequestsPage():
     print("You have no pending requests.")
   print("\n")
 
-  # print all received requests
+  
+def ShowRecievedRequests():
+  # query the database for requests received by the current user
+  received_requests = UDCursor.execute(
+    f"SELECT Sender FROM FriendRequests WHERE Receiver = '{config.currUser}'"
+  ).fetchall()
+
+    # print all received requests
   print("Friend requests you've received that you haven't accepted yet:")
   if len(received_requests) > 0:
     for i, request in enumerate(received_requests):
@@ -263,6 +262,11 @@ def ShowMyPendingRequestsPage():
   input("Press any key to return")
   utility.clearConsole()
 
+def ShowMyPendingRequestsPage():
+  utility.pageTitle("Your Friend Requests")
+  ShowSentRequests()
+  ShowRecievedRequests()
+    
 
 #Function shows all friends, and allows you to remove one.
 def RemoveFriend():
@@ -270,53 +274,65 @@ def RemoveFriend():
   friends = UDCursor.execute(
     f"SELECT Friend FROM Friends WHERE User = '{config.currUser}'").fetchall()
 
-  # Dictionary to map friends' usernames to their names
-  friend_names = {}
+  # check if they have any friends
+  if len(friends) > 0:
 
-  # Print all friends
-  print("Your current friends are:")
-  for i, friend in enumerate(friends):
-    # Get the friend's first and last name from the userData table
-    friend_info = UDCursor.execute(
-      f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend[0]}'"
-    ).fetchone()
-    friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
-    print(f"{i + 1}. {friend_names[friend[0]]}")
-
-  # Ask user to select a friend to remove
-  selected_friend = input(
-    "Enter the number of the friend you want to remove or press 'c' to cancel: "
-  )
-  if selected_friend == 'c':
-    return
-  selected_friend = int(selected_friend) - 1
-  friend_to_remove = friends[selected_friend][0]
-
-  # Ask for confirmation
-  confirmation = input(
-    f"Are you sure you want to remove {friend_names[friend_to_remove]} from your friends list? (Y/N): "
-  )
-
-  # If confirmed, remove the friend
-  if confirmation.lower() == 'y':
-    UDCursor.execute(
-      f"DELETE FROM Friends WHERE (User = '{config.currUser}' AND Friend = '{friend_to_remove}') OR (User = '{friend_to_remove}' AND Friend = '{config.currUser}')"
+    # Dictionary to map friends' usernames to their names
+    friend_names = {}
+  
+    # Print all friends
+    print("Your current friends are:")
+    for i, friend in enumerate(friends):
+      # Get the friend's first and last name from the userData table
+      friend_info = UDCursor.execute(
+        f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend[0]}'"
+      ).fetchone()
+      friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
+      print(f"{i + 1}. {friend_names[friend[0]]}")
+  
+    # Ask user to select a friend to remove
+    selected_friend = input(
+      f"Enter the number of the friend you want to remove or press {len(friends)+1} to cancel: "
     )
-    userData.commit()
-    print(
-      f"{friend_names[friend_to_remove]} has been removed from your friends list."
+    selected_friend = utility.choiceValidation(selected_friend, friends)
+    
+    if selected_friend == len(friends)+1:
+      return
+    selected_friend = int(selected_friend) - 1
+    friend_to_remove = friends[selected_friend][0]
+  
+    # Ask for confirmation
+    confirmation = input(
+      f"Are you sure you want to remove {friend_names[friend_to_remove]} from your friends list? (Y/N): "
     )
-    # FIX PLEASE: need to add quickgoback since the message gets cleared before user sees it. Also changing the print to util.printmessage could make the message look sleeker
+  
+    # If confirmed, remove the friend
+    if confirmation.lower() == 'y':
+      UDCursor.execute(
+        f"DELETE FROM Friends WHERE (User = '{config.currUser}' AND Friend = '{friend_to_remove}') OR (User = '{friend_to_remove}' AND Friend = '{config.currUser}')"
+      )
+      userData.commit()
+      utility.printMessage(
+        f"{friend_names[friend_to_remove]} has been removed from your friends list."
+      )
+      utility.quickGoBack()
+      
+    else:
+      utility.printMessage("Friend removal cancelled.")
+      utility.quickGoBack()
+
   else:
-    print("Friend removal cancelled.")
-    # FIX PLEASE: same bug and fix as above
-
+    utility.printMessage("You currently have no friends.")
+    utility.quickGoBack()
+  
 
 # send a logged in user to pending request page if they have any pending requests
 def FriendRequestNotification():
+  # check if the user has any recieved requests
   received_requests = UDCursor.execute(
     f"SELECT Sender FROM FriendRequests WHERE Receiver = '{config.currUser}'"
   ).fetchall()
 
   if len(received_requests) > 0:
-    ShowMyPendingRequestsPage()
+    utility.pageTitle("Your Friend Requests")
+    ShowRecievedRequests()

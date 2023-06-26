@@ -62,7 +62,6 @@ def loginPage():
   if goodLogin:
     utility.clearConsole()
     utility.printMessage("You have successfully logged in")
-    config.currUser = usr
     loggedin()
   return
 
@@ -73,7 +72,8 @@ def loginAuthorization(usr, passwd):
   badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
 
   incorrectInfo = account.login(usr, passwd)
-
+  newUsr = usr
+  
   while badUsr or badPasswd or incorrectInfo:
     utility.printMessage("Incorrect username/password, please try again")
     utility.pageTitle("Log In")
@@ -89,6 +89,8 @@ def loginAuthorization(usr, passwd):
     badUsr = len(newUsr) < minUsr or len(newUsr) > maxUsr
     badPasswd = len(newPasswd) < minPasswd or len(newPasswd) > maxPasswd
     incorrectInfo = account.login(newUsr, newPasswd)
+
+  config.currUser = newUsr
   return True
 
 

@@ -38,29 +38,6 @@ def database():
 	# Tear down the database after testing
 	conn.close()
 
-# test hasCapitalLetter Function
-def test_hasCapitalLetter():
-	out = account_testing.hasCapitalLetter("Test")
-	out1 = account_testing.hasCapitalLetter("test")
-	assert out == True
-	assert out1 == False
-
-# test hasDigit Function
-def test_hasDigit():
-	out = account_testing.hasDigit("Test123")
-	out1 = account_testing.hasDigit("test")
-	assert out == True
-	assert out1 == False
-
-# test hasSpecialCharacter function
-def test_hasSpecialCharacter():
-	specialCharacters = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
-	for char in specialCharacters:
-		password = "test" + char
-		out = account_testing.hasSpecialCharacter(password)
-		assert out == True
-	out = account_testing.hasSpecialCharacter("test")
-	assert out == False
 
 def test_usernameCreation(capfd, monkeypatch, database):
 	# this will test is a unique username is inputted

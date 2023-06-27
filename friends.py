@@ -46,7 +46,7 @@ def MyFriendsPage():
 def CanSendRequest(friendToAdd):
   # Check if the current user is trying to send a request to themselves
   if friendToAdd == config.currUser:
-    print("You can't send a friend request to yourself.")
+    utility.printMessage("You can't send a friend request to yourself.")
     return False
 
   # Check if the current user has already sent a request to the other user
@@ -54,7 +54,7 @@ def CanSendRequest(friendToAdd):
     f"SELECT * FROM FriendRequests WHERE Sender = '{config.currUser}' AND Receiver = '{friendToAdd}'"
   ).fetchone()
   if existing_request is not None:
-    print("You have already sent a friend request to this user.")
+    utility.printMessage("You have already sent a friend request to this user.")
     return False
 
   # Check if the other user has already sent a request to the current user
@@ -62,7 +62,7 @@ def CanSendRequest(friendToAdd):
     f"SELECT * FROM FriendRequests WHERE Sender = '{friendToAdd}' AND Receiver = '{config.currUser}'"
   ).fetchone()
   if incoming_request is not None:
-    print("This user has already sent you a friend request.")
+    utility.printMessage("This user has already sent you a friend request.")
     return False
 
   # Check if the two users are already friends
@@ -70,7 +70,7 @@ def CanSendRequest(friendToAdd):
     f"SELECT * FROM Friends WHERE (User = '{config.currUser}' AND Friend = '{friendToAdd}') OR (User = '{friendToAdd}' AND Friend = '{config.currUser}')"
   ).fetchone()
   if existing_friendship is not None:
-    print("You are already friends with this user.")
+    utility.printMessage("You are already friends with this user.")
     return False
 
   # If none of the above conditions are met, the current user can send a request to the other user
@@ -108,6 +108,7 @@ def SearchStudent(searchCritera):
         friendNum = input(
           "Enter the number of the friend you would like to send a friend request to, or 'c' to cancel: "
         )
+        utility.printSeparator()
         if friendNum == 'c':
           break
         elif not friendNum.isdigit() or int(friendNum) < 1 or int(
@@ -124,17 +125,23 @@ def SearchStudent(searchCritera):
             userData.commit()
             print(f"You have sent a friend request to {friendToAdd}.")
             break
+        utility.printSeparator()
     else:
       print("\n")
       utility.printMessage("No Matches Found")
       print("\n")
+
+    while True:
+      option = input("\nWould you like to search again? (y/n): ").lower()
+      if option == "y":
+        break
+      elif option == "n":
+        return
+      else:
+        utility.printMessage("Invalid input. try again")
     
-    option = input("Would you like to search again? (y/n): ")
     utility.clearConsole()
-    if option == "y":
-      continue
-    else:
-      break
+    
 
 # Search students by lastname
 def SearchStudentLN():
@@ -180,7 +187,6 @@ def SearchStudentPage():
 def ShowMyNetworkPage():
   #RemoveFriend shows all students and allows you to remove one
   RemoveFriend()
-  pass
 
 def ShowSentRequests():
   # query the database for requests sent by the current user
@@ -189,7 +195,9 @@ def ShowSentRequests():
   ).fetchall()
 
   # print all sent requests
-  print("Friend requests you've sent that have not been accepted yet:")
+  utility.printMessage("Sent Friend Requests")
+  utility.printSeparator()
+  
   if len(sent_requests) > 0:
     for i, request in enumerate(sent_requests):
       print(f"{i+1}: {request[0]}")
@@ -205,7 +213,8 @@ def ShowRecievedRequests():
   ).fetchall()
 
     # print all received requests
-  print("Friend requests you've received that you haven't accepted yet:")
+  utility.printMessage("Recieved Friend Requests")
+  utility.printSeparator()
   if len(received_requests) > 0:
     for i, request in enumerate(received_requests):
       print(f"{i+1}: {request[0]}")
@@ -230,6 +239,7 @@ def ShowRecievedRequests():
           userData.commit()
           print(
             f"You have declined the friend request from {friendToDecline}.")
+          break
       elif selection.isdigit():
         selection_number = int(selection)
         if selection_number < 1 or selection_number > len(received_requests):
@@ -257,11 +267,12 @@ def ShowRecievedRequests():
     print("You have no incoming friend requests.")
   print("\n")
 
-  input("Press any key to return")
+  utility.quickGoBack()
   utility.clearConsole()
 
 def ShowMyPendingRequestsPage():
   utility.pageTitle("Your Friend Requests")
+  print("\n")
   ShowSentRequests()
   ShowRecievedRequests()
     
@@ -286,11 +297,12 @@ def RemoveFriend():
         f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend[0]}'"
       ).fetchone()
       friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
-      print(f"{i + 1}. {friend_names[friend[0]]}")
+      print(f"\n{i + 1}. {friend_names[friend[0]]}")
   
     # Ask user to select a friend to remove
+    utility.printSeparator()
     selected_friend = input(
-      f"Enter the number of the friend you want to remove or press {len(friends)+1} to go back: "
+      f"\nEnter the number of the friend you want to remove or press {len(friends)+1} to go back: "
     )
     selected_friend = utility.choiceValidation(selected_friend, friends)
     
@@ -333,4 +345,5 @@ def FriendRequestNotification():
 
   if len(received_requests) > 0:
     utility.pageTitle("Your Friend Requests")
+    print("\n")
     ShowRecievedRequests()

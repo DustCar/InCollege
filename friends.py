@@ -213,7 +213,7 @@ def ShowRecievedRequests():
   ).fetchall()
 
     # print all received requests
-  utility.printMessage("Recieved Friend Requests")
+  utility.printMessage("Received Friend Requests")
   utility.printSeparator()
   if len(received_requests) > 0:
     for i, request in enumerate(received_requests):

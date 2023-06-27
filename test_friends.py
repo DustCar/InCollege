@@ -59,19 +59,19 @@ def test_MyFriendsPage(capfd, monkeypatch):
   assert "Back" in out
 
   # test that user gets sent to ShowMyNetworkPage
-  input  = iter(['2', 'c', '4'])
+  input  = iter(['2', '1', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(input))
   result = friends.MyFriendsPage()
   out, err = capfd.readouterr()
-  assert "Your current friends are:" in out
+  assert "You currently have no friends" in out
 
   # test that user gets sent to ShowMyPendingRequestsPage
-  input  = iter(['3', 'c', '4'])
+  input  = iter(['3', '1', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(input))
   result = friends.MyFriendsPage()
   out, err = capfd.readouterr()
-  assert "Friend requests you've sent that have not been accepted yet:" in out
-  assert "Friend requests you've received that you haven't accepted yet:" in out
+  assert "Sent Friend Requests" in out
+  assert "Received Friend Requests" in out
   
 """
 function to test all cases for sending a friend request
@@ -189,15 +189,15 @@ def test_ShowMyPendingRequestsPage(capfd, monkeypatch, database):
   config.currUser = "user1"
 
   # test if friend requests are showing
-  inputs = iter(['c', ''])
+  inputs = iter(['c', '1'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = friends.ShowMyPendingRequestsPage()
   out, err = capfd.readouterr()
-  assert "Friend requests you've sent that have not been accepted yet:\n1: user2" in out
-  assert "Friend requests you've received that you haven't accepted yet:\n1: user4" in out
+  assert "* Sent Friend Requests *\n---\n1: user2" in out
+  assert "* Received Friend Requests *\n---\n1: user4" in out
 
   # test declining a friend request
-  inputs = iter(['d1', 'c', ''])
+  inputs = iter(['d1', 'c', '1'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = friends.ShowMyPendingRequestsPage()
   out, err = capfd.readouterr()
@@ -205,7 +205,7 @@ def test_ShowMyPendingRequestsPage(capfd, monkeypatch, database):
   
   # test accepting a friend request
   config.currUser = "user2"
-  inputs = iter(['1', ''])
+  inputs = iter(['1', '1'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = friends.ShowMyPendingRequestsPage()
   out, err = capfd.readouterr()
@@ -213,7 +213,7 @@ def test_ShowMyPendingRequestsPage(capfd, monkeypatch, database):
 
   # test showing no requests
   config.currUser = "user4"
-  monkeypatch.setattr('builtins.input', lambda _: '')
+  monkeypatch.setattr('builtins.input', lambda _: '1')
   result = friends.ShowMyPendingRequestsPage()
   out, err = capfd.readouterr()
   assert "You have no pending requests." in out
@@ -224,21 +224,21 @@ def test_RemoveFriend(capfd, monkeypatch, database):
   config.currUser = "user1"
   
   # test showing current friends, also covering ShowMyNetworkPage
-  monkeypatch.setattr('builtins.input', lambda _: 'c')
+  monkeypatch.setattr('builtins.input', lambda _: '1')
   result = friends.RemoveFriend()
   out, err = capfd.readouterr()
   assert "1. Userthreef Userthreel" in out
   assert "2. Usertwof Usertwol" in out
 
   # test removing a friend but cancelling
-  inputs = iter(['1', 'n'])
+  inputs = iter(['1', 'n', '1'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = friends.RemoveFriend()
   out, err = capfd.readouterr()
   assert "Friend removal cancelled." in out
 
   # test removing a friend and confirming
-  inputs = iter(['1', 'y'])
+  inputs = iter(['1', 'y', '1'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = friends.RemoveFriend()
   out, err = capfd.readouterr()

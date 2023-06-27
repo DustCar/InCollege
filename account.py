@@ -10,7 +10,7 @@ UDCursor = userData.cursor()
 # check if the table exists and if not create it
 try:
   UDCursor.execute(
-    "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language)"
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
   )
 
 except:
@@ -31,6 +31,7 @@ def usernameCreation():
       utility.printMessage(f'The username "{username}" is already in use')
       return usernameCreation()
   return username
+
 
 # function to enforce password criteria on new password
 def passwordCreation():
@@ -102,13 +103,25 @@ def name():
   # if it doesn't, return name
   return [first, last]
 
+# this function asks the user to input their university
+def getUniversity():
+  university = input("Enter the current university you are attending: ")
+  return university
+
+
+# this function asks the user to input their major
+def getMajor():
+  major = input("Enter your major: ")
+  return major
+
+
 # function to create a user account
 def createAccount():
   """
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 5):
+  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 10):
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print(
       "Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character"
@@ -132,9 +145,16 @@ def createAccount():
       utility.clearConsole()
       return
 
+    university = getUniversity()
+    major = getMajor()
+
+    if university == "c" or major == "c":
+      utility.clearConsole()
+      return
+
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
+      ('{username}', '{password}', '{firstName}', '{lastName}', '{university}', '{major}', 'ON', 'ON', 'ON', 'English')
     """)
     userData.commit()
     utility.clearConsole()
@@ -152,7 +172,6 @@ def createAcctPage():
   utility.pageTitle("Create An Account")
   createAccount()
   return
-
 
 def login(username, password):
   """
@@ -185,6 +204,7 @@ def update_user_language(language):
   UDCursor.execute(query)
   userData.commit()
   return
+
 
 def toggleFeature(feature, toggle):
   query = f"UPDATE userData SET {feature} = '{toggle}' WHERE Username = '{config.currUser}'"

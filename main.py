@@ -3,7 +3,7 @@ including the different pages and relevant functions."""
 
 
 # imports
-import account, jobsearch, findsomeone, usefullinks, implinks, utility
+import account, jobsearch, findsomeone, usefullinks, implinks, utility, friends
 import config
 import getpass as gp
 
@@ -62,7 +62,6 @@ def loginPage():
   if goodLogin:
     utility.clearConsole()
     utility.printMessage("You have successfully logged in")
-    config.currUser = usr
     loggedin()
   return
 
@@ -73,7 +72,8 @@ def loginAuthorization(usr, passwd):
   badPasswd = len(passwd) < minPasswd or len(passwd) > maxPasswd
 
   incorrectInfo = account.login(usr, passwd)
-
+  newUsr = usr
+  
   while badUsr or badPasswd or incorrectInfo:
     utility.printMessage("Incorrect username/password, please try again")
     utility.pageTitle("Log In")
@@ -89,12 +89,18 @@ def loginAuthorization(usr, passwd):
     badUsr = len(newUsr) < minUsr or len(newUsr) > maxUsr
     badPasswd = len(newPasswd) < minPasswd or len(newPasswd) > maxPasswd
     incorrectInfo = account.login(newUsr, newPasswd)
+
+  config.currUser = newUsr
   return True
 
 
 # function for screen after logging in
 def loggedin():
   global currUser
+
+  # notify users they have pending requests when they log in
+  friends.FriendRequestNotification()
+  
   while True:
     utility.pageTitle("Home")
     utility.printMessage(f"Current user: {config.currUser}")
@@ -105,7 +111,8 @@ def loggedin():
       "Find Someone": findsomeone.FindSomeonePage,
       "Learn a New Skill": learnSkill,
       "Useful Links": usefullinks.UsefulLinksPage,
-      "InCollege Important Links": implinks.ImportantLinksPage
+      "InCollege Important Links": implinks.ImportantLinksPage,
+      "My Friends": friends.MyFriendsPage
     }
 
     utility.printMenu(home)

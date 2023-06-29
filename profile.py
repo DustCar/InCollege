@@ -166,13 +166,22 @@ def ManageColumnData(type):
     option = confirmDetails("Would you like to edit? (y/n): ")
     utility.printSeparator()
     if(option == "y"):
-    
-      newData = PrefillInput(f"Edit your {type}: ", curData)
 
-      if type == "Title":
+      if type == "University" or type == "Major":
+        newData = PrefillInput(f"Edit your {type}: ", curData).title()
+
+      elif type == "Title":
+        newData = PrefillInput(f"Edit your {type}: ", curData)
         while not VerifyProfileTitle(newData):
           newData = PrefillInput(f"Edit your {type}: ", curData)
-        
+
+      else:
+        newData = PrefillInput(f"Edit your {type}: ", curData)
+      print("\n")
+      utility.printSeparator()
+      utility.printMessage(f"Your new {type}: {newData}")
+      utility.printSeparator()
+      
       confirm = confirmDetails("\nSave this edit? (y/n): ")
       if confirm == "y":
         UDCursor.execute(f'''UPDATE Profiles
@@ -196,6 +205,9 @@ def ManageMajor():
 # this function allows a user to create or edit an about section
 def ManageAbout():
   ManageColumnData("About")
+
+def ManageExperiences():
+  pass
 
 # this function will allow a user to publish their profile so it can
 # be viewed by friends of the user

@@ -10,7 +10,7 @@ UDCursor = userData.cursor()
 # check if the table exists and if not create it
 try:
   UDCursor.execute(
-    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
   )
 
 except:
@@ -105,13 +105,13 @@ def name():
 
 # this function asks the user to input their university
 def getUniversity():
-  university = input("Enter the current university you are attending: ")
+  university = input("Enter the current university you are attending: ").title()
   return university
 
 
 # this function asks the user to input their major
 def getMajor():
-  major = input("Enter your major: ")
+  major = input("Enter your major: ").title()
   return major
 
 
@@ -146,16 +146,28 @@ def createAccount():
       return
 
     university = getUniversity()
+
+    if university.lower() == "c":
+      utility.clearConsole()
+      return
+    
     major = getMajor()
 
-    if university == "c" or major == "c":
+    if major.lower() == "c":
       utility.clearConsole()
       return
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}', '{university}', '{major}', 'ON', 'ON', 'ON', 'English')
+      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
     """)
+
+    # insert the username and university and major into the profiles table
+    UDCursor.execute(f"""
+    INSERT INTO Profiles (User, University, Major, Published)
+    VALUES ('{username}', '{university}', '{major}', 0)
+    """)
+    
     userData.commit()
     utility.clearConsole()
   else:

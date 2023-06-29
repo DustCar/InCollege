@@ -95,7 +95,7 @@ def SearchStudent(searchCritera):
 
     # search for the users based on last name and store into list
     users = UDCursor.execute(
-      f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LOWER({searchCritera}) = '{userInput}'"
+      f"SELECT Username, FirstName, LastName, University, Major FROM userData, Profiles WHERE LOWER({searchCritera}) = '{userInput}' AND Username = User"
     ).fetchall()
     if len(users) > 0:
       print("\n")

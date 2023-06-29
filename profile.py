@@ -4,7 +4,6 @@ import utility, config
 import sqlite3 as sql
 import readline
 
-
 # Connect to SQL database
 userData = sql.connect(config.database)
 UDCursor = userData.cursor()
@@ -13,9 +12,9 @@ UDCursor = userData.cursor()
 try:
   UDCursor.execute('''CREATE TABLE IF NOT EXISTS Profiles(
                              User TEXT,
+                             Title VARCHAR(25), 
                              University TEXT,
                              Major TEXT,
-                             Title VARCHAR(25), 
                              About TEXT,
                              Published INT
                             )''')
@@ -52,7 +51,8 @@ def confirmDetails(prompt):
     if confirm == "y" or confirm == "n":
       break
     else:
-      utility.printMessage("'y' or 'n' only.\n")
+      utility.printMessage("'y' or 'n' only.")
+      print("\n")
       continue
   return confirm
 
@@ -93,13 +93,16 @@ def MyProfile():
 # this function verifies that the inputted profile title fits the criteria
 def VerifyProfileTitle(profileTitle):
   if utility.hasSpecialCharacter(profileTitle):
-    utility.printMessage("Your profile title cannot contain any special characters.\n")
+    utility.printMessage("Your profile title cannot contain any special characters.")
+    print("\n")
     return 0
   elif len(profileTitle) > 25:
-    utility.printMessage("Your profile title cannot be longer than 25 characters.\n")
+    utility.printMessage("Your profile title cannot be longer than 25 characters.")
+    print("\n")
     return 0
   elif len(profileTitle) < 5:
-    utility.printMessage("Your profile title must be longer\n")
+    utility.printMessage("Your profile title must be longer")
+    print("\n")
     return 0
   return 1
 
@@ -107,7 +110,7 @@ def VerifyProfileTitle(profileTitle):
 def ManageProfile():
   while True:
     utility.pageTitle("Create/Edit Your Profile")
-
+    utility.printMessage("Your progress can be saved on any incomplete section")
     titleText = "Edit"
     aboutText = "Edit"
 
@@ -166,7 +169,8 @@ def ManageColumnData(type):
     option = confirmDetails("Would you like to edit? (y/n): ")
     utility.printSeparator()
     if(option == "y"):
-
+      utility.clearConsole()
+      utility.pageTitle(f"Edit Your {type}")
       if type == "University" or type == "Major":
         newData = PrefillInput(f"Edit your {type}: ", curData).title()
 
@@ -177,8 +181,9 @@ def ManageColumnData(type):
 
       else:
         newData = PrefillInput(f"Edit your {type}: ", curData)
+      utility.clearConsole()
+      utility.pageTitle(f"Edit Your {type}")
       print("\n")
-      utility.printSeparator()
       utility.printMessage(f"Your new {type}: {newData}")
       utility.printSeparator()
       

@@ -2,6 +2,7 @@
 
 import utility, config
 import sqlite3 as sql
+import readline
 
 
 # Connect to SQL database
@@ -32,6 +33,34 @@ try:
 except:
   pass
 
+# this function modifies the input function to start with some text that can
+# be modified by the user
+def PrefillInput(prompt, text):
+    def hook():
+        readline.insert_text(text)
+        readline.redisplay()
+    readline.set_pre_input_hook(hook)
+    result = input(prompt)
+    readline.set_pre_input_hook()
+    return result
+
+# this function is the same as the one in utility just with a parameter to
+# dynamically change the confirmation message
+def confirmDetails(prompt):
+  while True:
+    confirm = input(prompt)
+    if confirm == "y" or confirm == "n":
+      break
+    else:
+      utility.printMessage("'y' or 'n' only.\n")
+      continue
+  return confirm
+
+# this function returns a specific column of data from the profiles table
+def getColumn(column):
+  return UDCursor.execute(f"SELECT {column} FROM Profiles WHERE User = '{config.currUser}'").fetchone()[0]
+
+# this function handles the My Profile page option
 def MyProfile():
   while True:
     utility.pageTitle("Manage Your Profile")
@@ -61,27 +90,20 @@ def MyProfile():
       utility.call(optionNum, options)
   return
 
-def AskProfileTitle():
-  while True:
-    profileTitle = input("Enter your profile title: ")
+# this function verifies that the inputted profile title fits the criteria
+def VerifyProfileTitle(profileTitle):
+  if utility.hasSpecialCharacter(profileTitle):
+    utility.printMessage("Your profile title cannot contain any special characters.\n")
+    return 0
+  elif len(profileTitle) > 25:
+    utility.printMessage("Your profile title cannot be longer than 25 characters.\n")
+    return 0
+  elif len(profileTitle) < 5:
+    utility.printMessage("Your profile title must be longer\n")
+    return 0
+  return 1
 
-    if utility.hasSpecialCharacter(profileTitle):
-      utility.printMessage("Your profile title cannot contain any special characters.")
-      continue
-    elif len(profileTitle) > 25:
-      utility.printMessage("Your profile title cannot be longer than 25 characters.")
-      continue
-    elif len(profileTitle) < 1:
-      utility.printMessage("Your profile title must be longer")
-      continue
-
-    break
-    
-  return profileTitle
-
-def getColumn(column):
-  return UDCursor.execute(f"SELECT {column} FROM Profiles WHERE User = '{config.currUser}'").fetchone()[0]
-
+# this handles the create/edit profile options
 def ManageProfile():
   while True:
     utility.pageTitle("Create/Edit Your Profile")
@@ -117,57 +139,71 @@ def ManageProfile():
       utility.call(optionNum, options)
   return
 
+# this function contains the logic to give users ability to create
+# or edit existing content in their profile based on the type (Title, About, etc. )
+def ManageColumnData(type):
+  if getColumn(type) == None:
+    utility.pageTitle(f"Create Your {type}")
+    profileData = input(f"Enter a profile {type}: ")
+
+    if type == "Title":
+      while not VerifyProfileTitle(profileData):
+        profileData = input(f"Enter a profile {type}: ")
     
-    
-def ManageTitle():
-  utility.pageTitle("Create/Edit Your Title")
-  # check if user has a title for their profile
-  if getColumn("Title") == None:
-    profileTitle = AskProfileTitle()
-    
-    option = utility.confirmDetails()
+    option = confirmDetails(f"\nSave this {type}? (y/n)")
     if option == "y":
       UDCursor.execute(f'''UPDATE Profiles
-                        SET Title = '{profileTitle}'
+                        SET {type} = '{profileData}'
                         WHERE User = '{config.currUser}'
                         ''')
       userData.commit()
   
   else:
-    curTitle = getColumn("Title")
-    utility.printMessage(f"Your current title: {curTitle}")
-    option = input("would you like to edit? (y/n): ")
+    utility.pageTitle(f"Edit Your {type}")
+    curData = getColumn(type)
+    utility.printMessage(f"Your current {type}: {curData}")
+    utility.printSeparator()
+    option = confirmDetails("Would you like to edit? (y/n): ")
+    utility.printSeparator()
     if(option == "y"):
     
-      profileTitle = AskProfileTitle()
-      
-      confirm = utility.confirmDetails()
+      newData = PrefillInput(f"Edit your {type}: ", curData)
+
+      if type == "Title":
+        while not VerifyProfileTitle(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+        
+      confirm = confirmDetails("\nSave this edit? (y/n): ")
       if confirm == "y":
         UDCursor.execute(f'''UPDATE Profiles
-                          SET Title = '{profileTitle}'
+                          SET {type} = '{newData}'
                           WHERE User = '{config.currUser}'
                           ''')
         userData.commit()
+
+# this function will allow a user to create a new title or edit an existing one
+def ManageTitle():
+  ManageColumnData("Title")
     
-
+# this function allows a user to edit an already exising univeristy
 def ManageUniversity():
-  pass
+  ManageColumnData("University")
 
+# this function allows a user to edit an already exising univeristy
 def ManageMajor():
-  pass
+  ManageColumnData("Major")
 
+# this function allows a user to create or edit an about section
 def ManageAbout():
-  pass
+  ManageColumnData("About")
 
-def ViewProfile():
-  pass
-
+# this function will allow a user to publish their profile so it can
+# be viewed by friends of the user
 def PublishProfile():
   if getColumn("Title") == None:
     utility.printMessage("You cannot publish your profile without a title.")
     utility.quickGoBack()
 
-  
-
-  
-
+# this function will allow a user to view their current profile
+def ViewProfile():
+  pass

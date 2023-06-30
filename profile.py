@@ -12,7 +12,7 @@ UDCursor = userData.cursor()
 try:
   UDCursor.execute('''CREATE TABLE IF NOT EXISTS Profiles(
                              User TEXT,
-                             Title VARCHAR(25), 
+                             Title VARCHAR(50), 
                              University TEXT,
                              Major TEXT,
                              About TEXT,
@@ -93,12 +93,12 @@ def VerifyProfileTitle(profileTitle):
     utility.printMessage("Your profile title cannot contain any special characters.")
     print("\n")
     return 0
-  elif len(profileTitle) > 25:
-    utility.printMessage("Your profile title cannot be longer than 25 characters.")
+  elif len(profileTitle) > 50:
+    utility.printMessage("Your profile title cannot be longer than 50 characters.")
     print("\n")
     return 0
   elif len(profileTitle) < 5:
-    utility.printMessage("Your profile title must be longer")
+    utility.printMessage("Your profile title must be longer.")
     print("\n")
     return 0
   return 1

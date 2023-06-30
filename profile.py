@@ -149,7 +149,7 @@ def ManageColumnData(type):
       while not VerifyProfileTitle(profileData):
         profileData = input(f"Enter a profile {type}: ")
     
-    option = confirmDetails(f"\nSave this {type}? (y/n)")
+    option = confirmDetails(f"\nSave this {type}? (y/n): ")
     if option == "y":
       UDCursor.execute(f'''UPDATE Profiles
                         SET {type} = '{profileData}'

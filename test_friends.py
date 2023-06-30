@@ -92,13 +92,13 @@ def test_CanSendRequest(capfd, monkeypatch, database):
   INSERT INTO Friends VALUES ('user3', 'user1');
   INSERT INTO Friends VALUES ('user1', 'user3');
   INSERT OR IGNORE INTO userData VALUES ('user1', 'userpass@1', 'Useronef', 'Useronel', 'ON', 'ON', 'ON', 'English');
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', '');
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', 0);
   INSERT OR IGNORE INTO userData VALUES ('user2', 'userpass@2', 'Usertwof', 'Usertwol', 'ON', 'ON', 'ON', 'English');
-  INSERT OR IGNORE INTO Profiles VALUES ('user2', '', 'University of North Florida', 'Computer Engineering', '', '');
+  INSERT OR IGNORE INTO Profiles VALUES ('user2', '', 'University of North Florida', 'Computer Engineering', '', 0);
   INSERT OR IGNORE INTO userData VALUES ('user3', 'userpass@3', 'Userthreef', 'Userthreel', 'ON', 'ON', 'ON', 'English');
-  INSERT OR IGNORE INTO Profiles VALUES ('user3', '', 'University of Florida', 'Accounting', '', '');
+  INSERT OR IGNORE INTO Profiles VALUES ('user3', '', 'University of Florida', 'Accounting', '', 0);
   INSERT OR IGNORE INTO userData VALUES ('user4', 'userpass@4', 'Userfourf', 'Userfourl', 'ON', 'ON', 'ON', 'English');
-  INSERT OR IGNORE INTO Profiles VALUES ('user4', '', 'Florida State University', 'Mechanical Engineering', '', '');
+  INSERT OR IGNORE INTO Profiles VALUES ('user4', '', 'Florida State University', 'Mechanical Engineering', '', 0);
   """)
   
   # test sending a request to ownself

@@ -21,7 +21,7 @@ try:
   
   UDCursor.execute('''CREATE TABLE IF NOT EXISTS Experiences(
                               User TEXT, 
-                              Title VARCHAR(25),
+                              Title VARCHAR(50),
                               Employer TEXT,
                               Date_started DATE,
                               Date_ended DATE,

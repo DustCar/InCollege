@@ -32,8 +32,7 @@ try:
 except:
   pass
 
-# this function modifies the input function to start with some text that can
-# be modified by the user
+# this function modifies the input function to start with some text that can be modified by the user
 def PrefillInput(prompt, text):
     def hook():
         readline.insert_text(text)
@@ -43,8 +42,7 @@ def PrefillInput(prompt, text):
     readline.set_pre_input_hook()
     return result
 
-# this function is the same as the one in utility just with a parameter to
-# dynamically change the confirmation message
+# this function is the same as the one in utility just with a parameter to dynamically change the confirmation message
 def confirmDetails(prompt):
   while True:
     confirm = input(prompt)
@@ -70,7 +68,6 @@ def MyProfile():
     if getColumn("Published") == 1:
       publishText = "Unpublish"
 
-    # menu options within "My Friends"
     options = {
       "Create/Edit My Profile": ManageProfile,
       "View My Profile": ViewProfile,
@@ -142,8 +139,7 @@ def ManageProfile():
       utility.call(optionNum, options)
   return
 
-# this function contains the logic to give users ability to create
-# or edit existing content in their profile based on the type (Title, About, etc. )
+# this function contains the logic to give users ability to create or edit existing content in their profile based on the type (Title, About, etc. )
 def ManageColumnData(type):
   if getColumn(type) == None:
     utility.pageTitle(f"Create Your {type}")
@@ -214,8 +210,7 @@ def ManageAbout():
 def ManageExperiences():
   pass
 
-# this function will allow a user to publish their profile so it can
-# be viewed by friends of the user
+# this function will allow a user to publish their profile so it can swfbe viewed by friends of the user
 def PublishProfile():
   if getColumn("Title") == None:
     utility.printMessage("You cannot publish your profile without a title.")

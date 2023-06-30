@@ -210,7 +210,7 @@ def ManageAbout():
 def ManageExperiences():
   pass
 
-# this function will allow a user to publish their profile so it can swfbe viewed by friends of the user
+# this function will allow a user to publish their profile so it can be viewed by friends of the user
 def PublishProfile():
   if getColumn("Title") == None:
     utility.printMessage("You cannot publish your profile without a title.")

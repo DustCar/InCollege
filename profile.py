@@ -449,79 +449,82 @@ def EditExperience():
     else:
       # get the experience id selected by the user
       experienceID = experiences[optionNum - 1][0]
-      while True:
-        utility.clearConsole()
-        utility.pageTitle("Edit This Experience")
+      EditSpecificExperiencePage(experienceID)
 
-        experience = UDCursor.execute(
-          f"SELECT * FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}"
-        ).fetchone()
 
-        # store experience content retrieved from db into this dictionary
-        experience_content = {
-          "Title": experience[2],
-          "Employer": experience[3],
-          "Date_started": experience[4],
-          "Date_ended": experience[5],
-          "Location": experience[6],
-          "Description": experience[7]
-        }
+def EditSpecificExperiencePage(experienceID):
+  while True:
+    utility.clearConsole()
+    utility.pageTitle("Edit This Experience")
 
-        titleText = "Edit"
-        if experience_content["Title"] == "":
-          titleText = "Add"
-        employerText = "Edit"
-        if experience_content["Employer"] == "":
-          employerText = "Add"
-        dateStartedText = "Edit"
-        if experience_content["Date_started"] == "":
-          dateStartedText = "Add"
-        dateEndedText = "Edit"
-        if experience_content["Date_ended"] == "":
-          dateEndedText = "Add"
-        locationText = "Edit"
-        if experience_content["Location"] == "":
-          locationText = "Add"
-        descriptionText = "Edit"
-        if experience_content["Description"] == "":
-          descriptionText = "Add"
+    experience = UDCursor.execute(
+      f"SELECT * FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}"
+    ).fetchone()
 
-        # menu options that is displayed to the user
-        options = {
-          f"{titleText} Title": 1,
-          f"{employerText} Employer": 2,
-          f"{dateStartedText} Date Started": 3,
-          f"{dateEndedText} Date Ended": 4,
-          f"{locationText} Location": 5,
-          f"{descriptionText} Description": 6
-        }
+    # store experience content retrieved from db into this dictionary
+    experience_content = {
+      "Title": experience[2],
+      "Employer": experience[3],
+      "Date_started": experience[4],
+      "Date_ended": experience[5],
+      "Location": experience[6],
+      "Description": experience[7]
+    }
 
-        utility.printMessage(
-          f"You are editing the job titled: '{experience_content['Title']}'")
-        utility.printSeparator()
-        utility.printMenu(options)
-        print(f"Press {len(options)+1} to go back.")
-        utility.printSeparator()
+    titleText = "Edit"
+    if experience_content["Title"] == "":
+      titleText = "Add"
+    employerText = "Edit"
+    if experience_content["Employer"] == "":
+      employerText = "Add"
+    dateStartedText = "Edit"
+    if experience_content["Date_started"] == "":
+      dateStartedText = "Add"
+    dateEndedText = "Edit"
+    if experience_content["Date_ended"] == "":
+      dateEndedText = "Add"
+    locationText = "Edit"
+    if experience_content["Location"] == "":
+      locationText = "Add"
+    descriptionText = "Edit"
+    if experience_content["Description"] == "":
+      descriptionText = "Add"
 
-        option = input("Input: ")
-        optionNum = utility.choiceValidation(option, experience_content)
-        utility.clearConsole()
+    # menu options that is displayed to the user
+    options = {
+      f"{titleText} Title": 1,
+      f"{employerText} Employer": 2,
+      f"{dateStartedText} Date Started": 3,
+      f"{dateEndedText} Date Ended": 4,
+      f"{locationText} Location": 5,
+      f"{descriptionText} Description": 6
+    }
 
-        if optionNum == len(experience_content) + 1:
-          break
-        elif optionNum == 1:
-          ManageExperienceData(experienceID, experience_content, "Title")
-        elif optionNum == 2:
-          ManageExperienceData(experienceID, experience_content, "Employer")
-        elif optionNum == 3:
-          ManageExperienceData(experienceID, experience_content,
-                               "Date_started")
-        elif optionNum == 4:
-          ManageExperienceData(experienceID, experience_content, "Date_ended")
-        elif optionNum == 5:
-          ManageExperienceData(experienceID, experience_content, "Location")
-        elif optionNum == 6:
-          ManageExperienceData(experienceID, experience_content, "Description")
+    utility.printMessage(
+      f"You are editing the job titled: '{experience_content['Title']}'")
+    utility.printSeparator()
+    utility.printMenu(options)
+    print(f"Press {len(options)+1} to go back.")
+    utility.printSeparator()
+
+    option = input("Input: ")
+    optionNum = utility.choiceValidation(option, experience_content)
+    utility.clearConsole()
+
+    if optionNum == len(experience_content) + 1:
+      break
+    elif optionNum == 1:
+      ManageExperienceData(experienceID, experience_content, "Title")
+    elif optionNum == 2:
+      ManageExperienceData(experienceID, experience_content, "Employer")
+    elif optionNum == 3:
+      ManageExperienceData(experienceID, experience_content, "Date_started")
+    elif optionNum == 4:
+      ManageExperienceData(experienceID, experience_content, "Date_ended")
+    elif optionNum == 5:
+      ManageExperienceData(experienceID, experience_content, "Location")
+    elif optionNum == 6:
+      ManageExperienceData(experienceID, experience_content, "Description")
 
 
 # this function will allow a user to publish their profile so it can be viewed by friends of the user

@@ -2,7 +2,7 @@
 
 import utility, config
 import sqlite3 as sql
-import readline
+import readline, re
 
 # Connect to SQL database
 userData = sql.connect(config.database)
@@ -15,6 +15,7 @@ try:
                              Title VARCHAR(50), 
                              University TEXT,
                              Major TEXT,
+                             years_attended TEXT,
                              About TEXT,
                              Published INT
                             )''')
@@ -103,6 +104,12 @@ def VerifyProfileTitle(profileTitle):
     return 0
   return 1
 
+def ValidateYearsAttended(yearsAttended):
+  if not re.search("\d{4}\-\d{4}", yearsAttended):
+    utility.printMessage("Invalid input. Make sure your input looks like yyyy-yyyy. ex: 2020-2024")
+    return 0
+  return 1
+
 # this handles the create/edit profile options
 def ManageProfile():
   while True:
@@ -110,6 +117,7 @@ def ManageProfile():
     utility.printMessage("Your progress can be saved on any incomplete section")
     titleText = "Edit"
     aboutText = "Edit"
+    yearsAttendedText = "Edit"
 
     # if the user does not have any title, change text to create in menu
     if getColumn("Title") == None:
@@ -119,11 +127,15 @@ def ManageProfile():
     if getColumn("About") == None:
       aboutText = "Create"
 
+    if getColumn("years_attended") == None:
+      yearsAttendedText = "Add"
+
     options = {
       f"{titleText} Your Profile Title": ManageTitle,
       "Edit Your University": ManageUniversity,
       "Edit Your Major": ManageMajor,
-      f"{aboutText} Your About me": ManageAbout,
+      f"{yearsAttendedText} Your years attended": ManageYearsAttended,
+      f"{aboutText} Your About me": ManageAbout
     }
 
     utility.printMenu(options)
@@ -141,15 +153,30 @@ def ManageProfile():
 
 # this function contains the logic to give users ability to create or edit existing content in their profile based on the type (Title, About, etc. )
 def ManageColumnData(type):
-  if getColumn(type) == None:
-    utility.pageTitle(f"Create Your {type}")
-    profileData = input(f"Enter a profile {type}: ")
-
+  curData = getColumn(type)
+  
+  if curData == None:
+    
+    if type == "years_attended":
+      utility.pageTitle("Add your years Attended")
+      profileData = input("Enter your years attended as yyyy-yyyy. ex: 2020-2024: ")  
+    else:
+      utility.pageTitle(f"Create Your {type}")
+      profileData = input(f"Enter a profile {type}: ")
+    
     if type == "Title":
       while not VerifyProfileTitle(profileData):
         profileData = input(f"Enter a profile {type}: ")
-    
-    option = confirmDetails(f"\nSave this {type}? (y/n): ")
+
+    elif type == "years_attended":
+      while not ValidateYearsAttended(profileData):
+        profileData = input("Enter your years attended as yyyy-yyyy: ")  
+
+    if type == "years_attended":
+      option = confirmDetails("\nSave your years attended? (y/n): ")
+    else:
+      option = confirmDetails(f"\nSave this {type}? (y/n): ")
+      
     if option == "y":
       UDCursor.execute(f'''UPDATE Profiles
                         SET {type} = '{profileData}'
@@ -158,8 +185,10 @@ def ManageColumnData(type):
       userData.commit()
   
   else:
+    if type == "years_attended":
+      type = "years attended"
+      
     utility.pageTitle(f"Edit Your {type}")
-    curData = getColumn(type)
     utility.printMessage(f"Your current {type}: {curData}")
     utility.printSeparator()
     option = confirmDetails("Would you like to edit? (y/n): ")
@@ -167,6 +196,7 @@ def ManageColumnData(type):
     if(option == "y"):
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
+      
       if type == "University" or type == "Major":
         newData = PrefillInput(f"Edit your {type}: ", curData).title()
 
@@ -175,8 +205,14 @@ def ManageColumnData(type):
         while not VerifyProfileTitle(newData):
           newData = PrefillInput(f"Edit your {type}: ", curData)
 
+      elif type == "years attended":
+        newData = PrefillInput(f"Edit your {type}: ", curData)
+        while not ValidateYearsAttended(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
       else:
         newData = PrefillInput(f"Edit your {type}: ", curData)
+        
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
       print("\n")
@@ -185,6 +221,9 @@ def ManageColumnData(type):
       
       confirm = confirmDetails("\nSave this edit? (y/n): ")
       if confirm == "y":
+        if type == "years attended":
+          type = "years_attended"
+          
         UDCursor.execute(f'''UPDATE Profiles
                           SET {type} = '{newData}'
                           WHERE User = '{config.currUser}'
@@ -206,6 +245,9 @@ def ManageMajor():
 # this function allows a user to create or edit an about section
 def ManageAbout():
   ManageColumnData("About")
+
+def ManageYearsAttended():
+  ManageColumnData("years_attended")
 
 def ManageExperiences():
   pass

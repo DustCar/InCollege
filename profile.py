@@ -134,8 +134,9 @@ def ManageProfile():
       f"{titleText} Your Profile Title": ManageTitle,
       "Edit Your University": ManageUniversity,
       "Edit Your Major": ManageMajor,
-      f"{yearsAttendedText} Your years attended": ManageYearsAttended,
-      f"{aboutText} Your About me": ManageAbout
+      f"{yearsAttendedText} Your Years Attended": ManageYearsAttended,
+      f"{aboutText} Your About me": ManageAbout,
+      "Add Experiences": ManageExperiences
     }
 
     utility.printMenu(options)
@@ -254,9 +255,38 @@ def ManageExperiences():
 
 # this function will allow a user to publish their profile so it can be viewed by friends of the user
 def PublishProfile():
+  published = getColumn("Published")
+  if published == 1:
+    utility.pageTitle("Unpublish Your Profile")
+    utility.printMessage("Unpublish your profile to hide it")
+  else:
+    utility.pageTitle("Publish your profile")
+    utility.printMessage("Publish your profile to make it visible to your friends")
+  utility.printSeparator()
+  
   if getColumn("Title") == None:
     utility.printMessage("You cannot publish your profile without a title.")
     utility.quickGoBack()
+  else:
+    if published == 1:
+      choice = confirmDetails("Would you like to Unpublish? (y/n): ")
+    else:
+      choice = confirmDetails("Would you like to Publish? (y/n): ")
+
+    if choice == "y":
+      # XOR published with 1 to invert value
+      published = published ^ 1
+      
+      UDCursor.execute(f'''UPDATE Profiles
+                            SET Published = {published}
+                            WHERE User = '{config.currUser}'
+                            ''')
+      if published == 0:
+        utility.printMessage("You have unpublished your profile.")
+      else:
+        utility.printMessage("You have published your profile.")
+        
+      utility.quickGoBack()
 
 # this function will allow a user to view their current profile
 def ViewProfile():

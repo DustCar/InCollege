@@ -34,15 +34,19 @@ try:
 except:
   pass
 
+
 # this function modifies the input function to start with some text that can be modified by the user
 def PrefillInput(prompt, text):
+
   def hook():
     readline.insert_text(text)
     readline.redisplay()
+
   readline.set_pre_input_hook(hook)
   result = input(prompt)
   readline.set_pre_input_hook()
   return result
+
 
 # this function is the same as the one in utility just with a parameter to dynamically change the confirmation message
 def confirmDetails(prompt):
@@ -56,11 +60,13 @@ def confirmDetails(prompt):
       continue
   return confirm
 
+
 # this function returns a specific column of data from the profiles table
 def getColumn(column):
   return UDCursor.execute(
     f"SELECT {column} FROM Profiles WHERE User = '{config.currUser}'"
   ).fetchone()[0]
+
 
 # returns the total number of experiences made by the user
 def getNumExperiences():
@@ -68,6 +74,7 @@ def getNumExperiences():
     UDCursor.execute(
       f"SELECT User FROM Experiences WHERE User = '{config.currUser}'").
     fetchall())
+
 
 # this function handles the My Profile page option
 def MyProfile():
@@ -98,6 +105,7 @@ def MyProfile():
       utility.call(optionNum, options)
   return
 
+
 # this function verifies that the inputted profile title fits the criteria
 def VerifyProfileTitle(profileTitle):
   # if the user wants to cancel then exit the function
@@ -119,17 +127,19 @@ def VerifyProfileTitle(profileTitle):
     return 0
   return 1
 
+
 def ValidateYearsAttended(yearsAttended):
   # if the user wants to cancel then exit the function
   if yearsAttended == "c":
     return 1
-    
+
   if not re.search("\d{4}\-\d{4}", yearsAttended):
     utility.printMessage(
       "Invalid input. Make sure your input looks like yyyy-yyyy. ex: 2020-2024"
     )
     return 0
   return 1
+
 
 # this handles the create/edit profile options
 def ManageProfile():
@@ -174,6 +184,7 @@ def ManageProfile():
       utility.call(optionNum, options)
   return
 
+
 # this function contains the logic to give users ability to create or edit existing content in their profile based on the type (Title, About, etc. )
 def ManageColumnData(type):
   curData = getColumn(type)
@@ -181,7 +192,7 @@ def ManageColumnData(type):
   if curData == None:
 
     if type == "years_attended":
-      utility.pageTitle("Add your years Attended")
+      utility.pageTitle("Add Your Years Attended")
       profileData = input(
         "Enter your years attended as yyyy-yyyy. ex: 2020-2024: ")
     else:
@@ -212,9 +223,7 @@ def ManageColumnData(type):
       userData.commit()
 
   else:
-    if type == "years_attended":
-      type = "years attended"
-
+    type = type.replace("_", " ")
     utility.pageTitle(f"Edit Your {type}")
     utility.printMessage(f"Your current {type}: {curData}")
     utility.printSeparator()
@@ -239,10 +248,10 @@ def ManageColumnData(type):
 
       else:
         newData = PrefillInput(f"Edit your {type}: ", curData)
-      
+
       if newData.lower() == "c":
         return
-      
+
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
       print("\n")
@@ -251,14 +260,14 @@ def ManageColumnData(type):
 
       confirm = confirmDetails("\nSave this edit? (y/n): ")
       if confirm == "y":
-        if type == "years attended":
-          type = "years_attended"
+        type = type.replace(" ", "_")
 
         UDCursor.execute(f'''UPDATE Profiles
                           SET {type} = '{newData}'
                           WHERE User = '{config.currUser}'
                           ''')
         userData.commit()
+
 
 # this function will allow a user to create a new title or edit an existing one
 def ManageTitle():
@@ -282,6 +291,7 @@ def ManageAbout():
 
 def ManageYearsAttended():
   ManageColumnData("years_attended")
+
 
 # this function provides the menu options to add, edit, and remove experiences
 def ManageExperiences():
@@ -317,6 +327,7 @@ def ManageExperiences():
       break
     else:
       utility.call(optionNum, options)
+
 
 # this function will allow a user to add a new experience
 def AddExperience():
@@ -363,6 +374,7 @@ def AddExperience():
     """)
   userData.commit()
 
+
 # this will allow users to remove their current experiences
 def RemoveExperience():
   utility.pageTitle("Remove An Experience")
@@ -393,6 +405,7 @@ def RemoveExperience():
       utility.printMessage("This experience has been deleted.")
       utility.quickGoBack()
 
+
 # this function is similar to ManageColumnData in that it gets the current experience data for a column and prompts the user to edit or create new data for that column
 def ManageExperienceData(e_id, experience_content, type):
   utility.pageTitle(f"Edit the Experience {type}")
@@ -412,6 +425,7 @@ def ManageExperienceData(e_id, experience_content, type):
                     WHERE User = '{config.currUser}' AND e_id = {e_id}
                     ''')
       userData.commit()
+
 
 # this is the edit experience page which lists all of the experiences started by a user that they can select to edit
 def EditExperience():
@@ -438,11 +452,11 @@ def EditExperience():
       while True:
         utility.clearConsole()
         utility.pageTitle("Edit This Experience")
-        
+
         experience = UDCursor.execute(
           f"SELECT * FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}"
         ).fetchone()
-        
+
         # store experience content retrieved from db into this dictionary
         experience_content = {
           "Title": experience[2],
@@ -452,18 +466,38 @@ def EditExperience():
           "Location": experience[6],
           "Description": experience[7]
         }
-        
+
+        titleText = "Edit"
+        if experience_content["Title"] == "":
+          titleText = "Add"
+        employerText = "Edit"
+        if experience_content["Employer"] == "":
+          employerText = "Add"
+        dateStartedText = "Edit"
+        if experience_content["Date_started"] == "":
+          dateStartedText = "Add"
+        dateEndedText = "Edit"
+        if experience_content["Date_ended"] == "":
+          dateEndedText = "Add"
+        locationText = "Edit"
+        if experience_content["Location"] == "":
+          locationText = "Add"
+        descriptionText = "Edit"
+        if experience_content["Description"] == "":
+          descriptionText = "Add"
+
         # menu options that is displayed to the user
         options = {
-          "Edit Title": 1,
-          "Edit Employer": 2,
-          "Edit Date Started": 3,
-          "Edit Date Ended": 4,
-          "Edit Location": 5,
-          "Edit Description": 6
+          f"{titleText} Title": 1,
+          f"{employerText} Employer": 2,
+          f"{dateStartedText} Date Started": 3,
+          f"{dateEndedText} Date Ended": 4,
+          f"{locationText} Location": 5,
+          f"{descriptionText} Description": 6
         }
-        
-        utility.printMessage(f"You are editing the job titled: '{experience_content['Title']}'")
+
+        utility.printMessage(
+          f"You are editing the job titled: '{experience_content['Title']}'")
         utility.printSeparator()
         utility.printMenu(options)
         print(f"Press {len(options)+1} to go back.")
@@ -488,6 +522,7 @@ def EditExperience():
           ManageExperienceData(experienceID, experience_content, "Location")
         elif optionNum == 6:
           ManageExperienceData(experienceID, experience_content, "Description")
+
 
 # this function will allow a user to publish their profile so it can be viewed by friends of the user
 def PublishProfile():
@@ -524,6 +559,7 @@ def PublishProfile():
         utility.printMessage("You have published your profile.")
 
       utility.quickGoBack()
+
 
 # this function will allow a user to view their current profile
 def ViewProfile():

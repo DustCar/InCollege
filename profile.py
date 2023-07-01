@@ -17,10 +17,11 @@ try:
                              Major TEXT,
                              years_attended TEXT,
                              About TEXT,
-                             Published INT
+                             Published INT, UNIQUE (User)
                             )''')
   
   UDCursor.execute('''CREATE TABLE IF NOT EXISTS Experiences(
+                              e_id integer primary key autoincrement,
                               User TEXT, 
                               Title VARCHAR(50),
                               Employer TEXT,
@@ -58,6 +59,10 @@ def confirmDetails(prompt):
 # this function returns a specific column of data from the profiles table
 def getColumn(column):
   return UDCursor.execute(f"SELECT {column} FROM Profiles WHERE User = '{config.currUser}'").fetchone()[0]
+
+# returns the number of experiences made by the user
+def getNumExperiences():
+  return len(UDCursor.execute(f"SELECT User FROM Experiences WHERE User = '{config.currUser}'").fetchall())
 
 # this function handles the My Profile page option
 def MyProfile():
@@ -136,7 +141,7 @@ def ManageProfile():
       "Edit Your Major": ManageMajor,
       f"{yearsAttendedText} Your Years Attended": ManageYearsAttended,
       f"{aboutText} Your About me": ManageAbout,
-      "Add Experiences": ManageExperiences
+      "Manage Experiences": ManageExperiences
     }
 
     utility.printMenu(options)
@@ -251,8 +256,144 @@ def ManageYearsAttended():
   ManageColumnData("years_attended")
 
 def ManageExperiences():
-  pass
+  while True:
+    utility.pageTitle("Manage Your Experiences")
+    # adjust menu options based on number of experiences 
+    if getNumExperiences() < 3 and getNumExperiences() > 0:
+      options = {
+        "Add an experience": AddExperience,
+        "Edit an Experience": EditExperience,
+        "Remove an Experience": RemoveExperience
+      }
+      
+    elif getNumExperiences() == 3:
+      options = {
+        "Edit an Experience": EditExperience,
+        "Remove an Experience": RemoveExperience
+      }
+  
+    else:
+      options = {
+        "Add an experience": AddExperience,
+      }
+  
+    utility.printMenu(options)
+    print(f"Press {len(options)+1} for Back.")
+  
+    option = input("Input: ")
+    optionNum = utility.choiceValidation(option, options)
+  
+    if optionNum == len(options) + 1:
+      utility.clearConsole()
+      break
+    else:
+      utility.call(optionNum, options)
 
+def AddExperience():
+  # insert the username into Experiences Table
+  title = input("Enter an experience title: ")
+  employer = input("Enter an employer: ")
+  dateStarted = input("Enter Date Started: ")
+  dateEnded = input("Enter Date Ended: ")
+  location = input("Enter a location: ")
+  description = input("Enter a description: ")
+  
+  UDCursor.execute(f"""
+    INSERT INTO Experiences (User, Title, Employer, date_started, date_ended, Location, Description)
+    VALUES ('{config.currUser}', '{title}', '{employer}', '{dateStarted}', '{dateEnded}', '{location}', '{description}')
+    """)    
+  userData.commit()
+
+# this will allow users to remove their current experiences
+def RemoveExperience():
+  experiences = UDCursor.execute(f"SELECT e_id, Title FROM Experiences WHERE User = '{config.currUser}'").fetchall()
+
+  for i,experience in enumerate(experiences):
+    print(f"Press {i+1} to delete experience titled: '{experience[1]}'")
+
+  print(f"Press {len(experiences)+1} to go back")
+    
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option, experiences)
+
+  if optionNum == len(experiences) + 1:
+    utility.clearConsole()
+    return
+  else:
+    option = confirmDetails("Are you sure you want to delete this experience? (y/n): ")
+
+    if option == "y":
+      UDCursor.execute(f"DELETE FROM Experiences WHERE User = '{config.currUser}' AND e_id = '{experiences[optionNum-1][0]}'")
+      userData.commit()
+      utility.printMessage("This experience has been deleted.")
+      utility.quickGoBack()
+
+def ManageExperienceData(e_id, experience_content, type):
+  utility.pageTitle(f"Edit the Experience {type}")
+  curData = experience_content[type]
+  utility.printMessage(f"Your current {type}: {curData}")
+  choice = confirmDetails(f"Would you like to edit your {type}? (y/n): ")
+  if choice == "y":
+    newData = PrefillInput(f"Edit your {type}: ", curData)
+    utility.clearConsole()
+    utility.printMessage(f"Your new {type}: {newData}")
+    confirmEdit = confirmDetails("Save this edit? (y/n): ")
+    if confirmEdit == "y":
+      UDCursor.execute(f'''UPDATE Experiences
+                    SET {type} = '{newData}'
+                    WHERE User = '{config.currUser}' AND e_id = {e_id}
+                    ''')
+      userData.commit()
+
+def EditExperience():
+  experiences = UDCursor.execute(f"SELECT e_id, Title FROM Experiences WHERE User = '{config.currUser}'").fetchall()
+
+  for i,experience in enumerate(experiences):
+    print(f"Press {i+1} to edit experience titled: '{experience[1]}'")
+
+  print(f"Press {len(experiences)+1} to go back")
+    
+  option = input("Input: ")
+  optionNum = utility.choiceValidation(option, experiences)
+
+  if optionNum == len(experiences) + 1:
+    utility.clearConsole()
+    return
+  else:
+    # get the experience id selected by the user
+    experienceID = experiences[optionNum-1][0]
+    while True:
+      utility.clearConsole()
+      utility.pageTitle("Edit This Experience")
+      experience = UDCursor.execute(f"SELECT * FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}").fetchone()
+      
+      experience_content = {"Title": experience[2], "Employer": experience[3], "Date_started": experience[4], "Date_ended": experience[5], "location": experience[6], "description": experience[7]}
+
+      options = {"Title": 1, "Employer": 2, "Date Started": 3, "Date Ended": 4, "Location": 5, "Description": 6}
+      
+      utility.printMenu(options)
+      print(f"Press {len(options)+1} to go back.")
+      utility.printSeparator()
+      
+      option = input("Input: ")
+      optionNum = utility.choiceValidation(option, experience_content)
+      utility.clearConsole()
+      
+      if optionNum == len(experience_content) + 1:
+        break
+      elif optionNum == 1:
+        ManageExperienceData(experienceID, experience_content, "Title")
+      elif optionNum == 2:
+        ManageExperienceData(experienceID, experience_content, "Employer")
+      elif optionNum == 3:
+        ManageExperienceData(experienceID, experience_content, "Date_started")
+      elif optionNum == 4:
+        ManageExperienceData(experienceID, experience_content, "Date_ended")
+      elif optionNum == 5:
+        ManageExperienceData(experienceID, experience_content, "Location")
+      elif optionNum == 6:
+        ManageExperienceData(experienceID, experience_content, "Description")
+    
 # this function will allow a user to publish their profile so it can be viewed by friends of the user
 def PublishProfile():
   published = getColumn("Published")

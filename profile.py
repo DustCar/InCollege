@@ -376,6 +376,7 @@ def AddExperience():
 
 # this will allow users to remove their current experiences
 def RemoveExperience():
+  utility.pageTitle("Remove An Experience")
   experiences = UDCursor.execute(
     f"SELECT e_id, Title FROM Experiences WHERE User = '{config.currUser}'"
   ).fetchall()
@@ -426,7 +427,7 @@ def ManageExperienceData(e_id, experience_content, type):
 
 def EditExperience():
   while True:
-
+    utility.pageTitle("Edit An Experience")
     experiences = UDCursor.execute(
       f"SELECT e_id, Title FROM Experiences WHERE User = '{config.currUser}'"
     ).fetchall()
@@ -461,6 +462,7 @@ def EditExperience():
           "Location": experience[6],
           "Description": experience[7]
         }
+        
 
         options = {
           "Edit Title": 1,

@@ -21,18 +21,20 @@ SMSFeat TEXT,
 TargetAdFeat TEXT,
 Language TEXT, UNIQUE (Username, FirstName, LastName));
     CREATE TABLE IF NOT EXISTS Profiles(User TEXT,
-Title VARCHAR(25), 
+Title VARCHAR(50), 
 University TEXT,
 Major TEXT,
+years_attended TEXT,
 About TEXT,
 Published INT, UNIQUE (User));
-    CREATE TABLE IF NOT EXISTS Experiences(User TEXT, 
-Title VARCHAR(25),
+    CREATE TABLE IF NOT EXISTS Experiences(e_id integer primary key autoincrement,
+User TEXT, 
+Title VARCHAR(50),
 Employer TEXT,
 Date_started DATE,
 Date_ended DATE,
 Location TEXT,
-Description TEXT, UNIQUE (User));
+Description TEXT);
   """)
   except:
     pass
@@ -50,7 +52,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', 0);""")
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', '', 0);""")
   # test page with user profile not published yet
   monkeypatch.setattr('builtins.input', lambda _: '4')
   result = profile.MyProfile()
@@ -63,7 +65,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   # test page with user profile already published
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', 1);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', '', 1);
   """)
   monkeypatch.setattr('builtins.input', lambda _: '4')
   result = profile.MyProfile()
@@ -81,7 +83,7 @@ def test_getColumn(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University of South Florida', 'Computer Science', 'Aspiring game developer', 0);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University of South Florida', 'Computer Science', '', 'Aspiring game developer', 0);
   """)
   # test getColumn with title
   result = profile.getColumn("Title")
@@ -102,4 +104,45 @@ def test_getColumn(capfd, monkeypatch, database):
   result = profile.getColumn("About")
   out, err = capfd.readouterr()
   assert result == "Aspiring game developer"
+
+def test_ManageTitle(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  cursor = database.cursor()
+
+  cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
+  INSERT INTO Profiles (User, University, Major, Published)
+VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
+  """)
+  
+  # test menu option is set to create when no title has been set
+  inputs = iter(['1', '1', 'c', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 for Create Your Profile Title." in out
+
+  # test creating a new title
+  inputs = iter(['1', '1', '3rd year Computer Science student', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  title = profile.getColumn("Title")
+  out, err = capfd.readouterr()
+  assert title == "3rd year Computer Science student"
+
+  # test menu option changing title option to 'Edit' and change title
+  inputs = iter(['1', '1', 'y', '3rd year Computer Science developer', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  title = profile.getColumn("Title")
+  out, err = capfd.readouterr()
+  assert "Press 1 for Edit Your Profile Title."
+  assert title == "3rd year Computer Science developer"
+
+  # test cancelling an edit
+  inputs = iter(['1', '1', 'y', '3rd year Computer Engineering student', 'n', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  title = profile.getColumn("Title")
+  out, err = capfd.readouterr()
+  assert title == "3rd year Computer Science developer"
   

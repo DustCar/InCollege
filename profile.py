@@ -3,6 +3,7 @@
 import utility, config
 import sqlite3 as sql
 import readline, re
+from datetime import date, datetime
 
 # Connect to SQL database
 userData = sql.connect(config.database)
@@ -112,17 +113,15 @@ def VerifyProfileTitle(profileTitle):
   if profileTitle == "c":
     return 1
   if utility.hasSpecialCharacter(profileTitle):
-    utility.printMessage(
-      "Your profile title cannot contain any special characters.")
+    utility.printMessage("Your title cannot contain any special characters.")
     print("\n")
     return 0
   elif len(profileTitle) > 50:
-    utility.printMessage(
-      "Your profile title cannot be longer than 50 characters.")
+    utility.printMessage("Your title cannot be longer than 50 characters.")
     print("\n")
     return 0
   elif len(profileTitle) < 5:
-    utility.printMessage("Your profile title must be longer.")
+    utility.printMessage("Your title must be longer.")
     print("\n")
     return 0
   return 1
@@ -135,7 +134,7 @@ def ValidateYearsAttended(yearsAttended):
 
   if not re.search(r"\d{4}\-\d{4}", yearsAttended):
     utility.printMessage(
-      "Invalid input. Make sure your input looks like yyyy-yyyy. ex: 2020-2024"
+      f"Invalid input. Make sure your input looks like yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}."
     )
     return 0
   return 1
@@ -185,6 +184,16 @@ def ManageProfile():
   return
 
 
+#this function will update the specified column in the profiles table with the data
+def UpdateProfileData(profileData, type):
+  type = type.replace(" ", "_")
+  UDCursor.execute(f'''UPDATE Profiles
+                        SET {type} = '{profileData}'
+                        WHERE User = '{config.currUser}'
+                        ''')
+  userData.commit()
+
+
 # this function contains the logic to give users ability to create or edit existing content in their profile based on the type (Title, About, etc. )
 def ManageColumnData(type):
   curData = getColumn(type)
@@ -194,7 +203,8 @@ def ManageColumnData(type):
     if type == "years_attended":
       utility.pageTitle("Add Your Years Attended")
       profileData = input(
-        "Enter your years attended as yyyy-yyyy. ex: 2020-2024: ")
+        f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: "
+      )
     else:
       utility.pageTitle(f"Create Your {type}")
       profileData = input(f"Enter a profile {type}: ")
@@ -205,7 +215,9 @@ def ManageColumnData(type):
 
     elif type == "years_attended":
       while not ValidateYearsAttended(profileData):
-        profileData = input("Enter your years attended as yyyy-yyyy: ")
+        profileData = input(
+          f"Enter your years attended as yyyy-yyyy. ex. {date.today().year-4}-{date.today().year}: "
+        )
 
     if profileData.lower() == "c":
       return
@@ -216,11 +228,7 @@ def ManageColumnData(type):
       option = confirmDetails(f"\nSave this {type}? (y/n): ")
 
     if option == "y":
-      UDCursor.execute(f'''UPDATE Profiles
-                        SET {type} = '{profileData}'
-                        WHERE User = '{config.currUser}'
-                        ''')
-      userData.commit()
+      UpdateProfileData(profileData, type)
 
   else:
     type = type.replace("_", " ")
@@ -259,13 +267,7 @@ def ManageColumnData(type):
 
       confirm = confirmDetails("\nSave this edit? (y/n): ")
       if confirm == "y":
-        type = type.replace(" ", "_")
-
-        UDCursor.execute(f'''UPDATE Profiles
-                          SET {type} = '{newData}'
-                          WHERE User = '{config.currUser}'
-                          ''')
-        userData.commit()
+        UpdateProfileData(newData, type)
 
 
 # this function will allow a user to create a new title or edit an existing one
@@ -296,15 +298,16 @@ def ManageYearsAttended():
 def ManageExperiences():
   while True:
     utility.pageTitle("Manage Your Experiences")
+    maxExperiences = 3
     # adjust menu options based on number of experiences
-    if getNumExperiences() < 3 and getNumExperiences() > 0:
+    if getNumExperiences() < maxExperiences and getNumExperiences() > 0:
       options = {
         "Add an experience": AddExperience,
         "Edit an Experience": EditExperience,
         "Remove an Experience": RemoveExperience
       }
 
-    elif getNumExperiences() == 3:
+    elif getNumExperiences() == maxExperiences:
       options = {
         "Edit an Experience": EditExperience,
         "Remove an Experience": RemoveExperience
@@ -328,6 +331,21 @@ def ManageExperiences():
       utility.call(optionNum, options)
 
 
+def VerifyExperienceDate(userinput):
+  # if the user wants to cancel then exit the function
+  if userinput == "c":
+    return 1
+
+  try:
+    datetime.strptime(userinput, '%m-%d-%Y')
+    return 1
+  except ValueError:
+    utility.printMessage(
+      f"Enter the date as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}"
+    )
+    return 0
+
+
 # this function will allow a user to add a new experience
 def AddExperience():
   while True:
@@ -337,6 +355,9 @@ def AddExperience():
     title = employer = dateStarted = dateEnded = location = description = ""
 
     title = input("Enter a title for your experience: ")
+    while not VerifyProfileTitle(title):
+      title = input("Enter a title for your experience: ")
+
     if title == "c":
       title = ""
       break
@@ -346,12 +367,26 @@ def AddExperience():
       employer = ""
       break
 
-    dateStarted = input("Enter Date Started: ")
+    dateStarted = input(
+      f"Enter Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: "
+    )
+    while not VerifyExperienceDate(dateStarted):
+      dateStarted = input(
+        f"Enter Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: "
+      )
+
     if dateStarted == "c":
       dateStarted = ""
       break
 
-    dateEnded = input("Enter Date Ended: ")
+    dateEnded = input(
+      f"Enter Date Ended as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: "
+    )
+    while not VerifyExperienceDate(dateEnded):
+      dateEnded = input(
+        f"Enter Date Ended as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: "
+      )
+
     if dateEnded == "c":
       dateEnded = ""
       break
@@ -405,25 +440,64 @@ def RemoveExperience():
       utility.quickGoBack()
 
 
+# this will update the specified column in the specific experience row specified by the e_id and the type
+def UpdateExperienceData(e_id, newData, type):
+  type = type.replace(" ", "_")
+  UDCursor.execute(f'''UPDATE Experiences
+                SET {type} = '{newData}'
+                WHERE User = '{config.currUser}' AND e_id = {e_id}
+                ''')
+  userData.commit()
+
+
 # this function is similar to ManageColumnData in that it gets the current experience data for a column and prompts the user to edit or create new data for that column
 def ManageExperienceData(e_id, experience_content, type):
-  utility.pageTitle(f"Edit the Experience {type}")
   curData = experience_content[type]
   type = type.replace("_", " ")
-  utility.printMessage(f"Your current {type}: {curData}")
-  choice = confirmDetails(f"Would you like to edit your {type}? (y/n): ")
-  if choice == "y":
-    newData = PrefillInput(f"Edit your {type}: ", curData)
-    utility.clearConsole()
-    utility.printMessage(f"Your new {type}: {newData}")
-    confirmEdit = confirmDetails("Save this edit? (y/n): ")
-    if confirmEdit == "y":
-      type = type.replace(" ", "_")
-      UDCursor.execute(f'''UPDATE Experiences
-                    SET {type} = '{newData}'
-                    WHERE User = '{config.currUser}' AND e_id = {e_id}
-                    ''')
-      userData.commit()
+  # if the content is empty prompt the user to add new content
+  if curData == "":
+    utility.pageTitle(f"Add the {type}")
+    utility.printMessage("Press 'c' to cancel anytime.")
+    newData = input(f"Add your {type}: ")
+
+    if type == "Title":
+      while not VerifyProfileTitle(newData):
+        newData = input(f"Add your {type}: ")
+
+    elif type == "Date started" or type == "Date ended":
+      while not VerifyExperienceDate(newData):
+        newData = input(f"Add your {type}: ")
+
+    if newData.lower() == "c":
+      return
+
+    choice = confirmDetails("Save this change? (y/n): ")
+    if choice == "y":
+      UpdateExperienceData(e_id, newData, type)
+
+  else:
+    utility.pageTitle(f"Edit the {type}")
+    utility.printMessage(f"Your current {type}: {curData}")
+    choice = confirmDetails(f"Would you like to edit your {type}? (y/n): ")
+    if choice == "y":
+      utility.printMessage("Press 'c' to cancel anytime.")
+      newData = PrefillInput(f"Edit your {type}: ", curData)
+      if type == "Title":
+        while not VerifyProfileTitle(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
+      elif type == "Date started" or type == "Date ended":
+        while not VerifyExperienceDate(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
+      if newData.lower() == "c":
+        return
+
+      utility.clearConsole()
+      utility.printMessage(f"Your new {type}: {newData}")
+      confirmEdit = confirmDetails("Save this edit? (y/n): ")
+      if confirmEdit == "y":
+        UpdateExperienceData(e_id, newData, type)
 
 
 # this is the edit experience page which lists all of the experiences started by a user that they can select to edit

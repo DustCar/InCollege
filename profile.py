@@ -11,9 +11,9 @@ UDCursor = userData.cursor()
 
 # check if the table exists and if not create it
 try:
-  UDCursor.execute('''CREATE TABLE IF NOT EXISTS Profiles(
+  UDCursor.execute(f'''CREATE TABLE IF NOT EXISTS Profiles(
                              User TEXT,
-                             Title VARCHAR(50), 
+                             Title VARCHAR({config.maxTitleLen}), 
                              University TEXT,
                              Major TEXT,
                              years_attended TEXT,
@@ -21,10 +21,10 @@ try:
                              Published INT, UNIQUE (User)
                             )''')
 
-  UDCursor.execute('''CREATE TABLE IF NOT EXISTS Experiences(
+  UDCursor.execute(f'''CREATE TABLE IF NOT EXISTS Experiences(
                               e_id integer primary key autoincrement,
                               User TEXT, 
-                              Title VARCHAR(50),
+                              Title VARCHAR({config.maxTitleLen}),
                               Employer TEXT,
                               Date_started DATE,
                               Date_ended DATE,
@@ -116,12 +116,12 @@ def VerifyProfileTitle(profileTitle):
     utility.printMessage("Your title cannot contain any special characters.")
     print("\n")
     return 0
-  elif len(profileTitle) > 50:
-    utility.printMessage("Your title cannot be longer than 50 characters.")
+  elif len(profileTitle) > config.maxTitleLen:
+    utility.printMessage(f"Your title cannot be longer than {config.maxTitleLen} characters.")
     print("\n")
     return 0
-  elif len(profileTitle) < 5:
-    utility.printMessage("Your title must be longer.")
+  elif len(profileTitle) <= config.minTitleLen:
+    utility.printMessage(f"Your title must be longer than {config.minTitleLen} characters.")
     print("\n")
     return 0
   return 1
@@ -298,16 +298,15 @@ def ManageYearsAttended():
 def ManageExperiences():
   while True:
     utility.pageTitle("Manage Your Experiences")
-    maxExperiences = 3
     # adjust menu options based on number of experiences
-    if getNumExperiences() < maxExperiences and getNumExperiences() > 0:
+    if getNumExperiences() < config.maxExperiences and getNumExperiences() > 0:
       options = {
         "Add an experience": AddExperience,
         "Edit an Experience": EditExperience,
         "Remove an Experience": RemoveExperience
       }
 
-    elif getNumExperiences() == maxExperiences:
+    elif getNumExperiences() == config.maxExperiences:
       options = {
         "Edit an Experience": EditExperience,
         "Remove an Experience": RemoveExperience

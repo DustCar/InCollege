@@ -121,7 +121,7 @@ def createAccount():
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 10):
+  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < config.maxAccounts):
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print(
       "Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character"

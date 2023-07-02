@@ -145,4 +145,45 @@ VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
   title = profile.getColumn("Title")
   out, err = capfd.readouterr()
   assert title == "3rd year Computer Science developer"
+
+def test_ManageAbout(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  cursor = database.cursor()
+
+  cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
+  INSERT INTO Profiles (User, University, Major, Published)
+VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
+  """)
+  
+  # test menu option is set to create when no about me has been set
+  inputs = iter(['1', '5', 'c', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 5 for Create Your About me." in out
+
+  # test creating a new title
+  inputs = iter(['1', '5', 'Hello, my name is userone and I am a 3rd year computer science student at USF. I hope to become a future software developer at Tesla in a few years. I am very interested in the technology of the latest Tesla cars and hope to one day work on them myself.', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  about = profile.getColumn("About")
+  out, err = capfd.readouterr()
+  assert about == "Hello, my name is userone and I am a 3rd year computer science student at USF. I hope to become a future software developer at Tesla in a few years. I am very interested in the technology of the latest Tesla cars and hope to one day work on them myself."
+
+  # test menu option changing title option to 'Edit' and change title
+  inputs = iter(['1', '5', 'y', 'Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them.', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  about = profile.getColumn("About")
+  out, err = capfd.readouterr()
+  assert "Press 1 for Edit Your About me."
+  assert about == "Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them."
+
+  # test cancelling an edit
+  inputs = iter(['1', '5', 'y', 'I think I\'ll just remove the about me section that I worked to create.', 'n', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  about = profile.getColumn("About")
+  out, err = capfd.readouterr()
+  assert about == "Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them."
   

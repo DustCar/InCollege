@@ -133,8 +133,7 @@ def ValidateYearsAttended(yearsAttended):
   if yearsAttended == "c":
     return 1
 
-  # WARNING: the '\d' or any '\' should have double backslash to avoid any accidental escapes
-  if not re.search("\d{4}\-\d{4}", yearsAttended):
+  if not re.search(r"\d{4}\-\d{4}", yearsAttended):
     utility.printMessage(
       "Invalid input. Make sure your input looks like yyyy-yyyy. ex: 2020-2024"
     )
@@ -255,8 +254,6 @@ def ManageColumnData(type):
 
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
-      # SUGGESTION: remove new line since it ruins some spacing
-      print("\n")
       utility.printMessage(f"Your new {type}: {newData}")
       utility.printSeparator()
 

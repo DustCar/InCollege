@@ -12,18 +12,13 @@ functions found in main.py
 # Define a fixture to set up and tear down the database for testing 
 @pytest.fixture
 def database():
-  conn = sql.connect("User_Data_Test.db")
+  conn = sql.connect(config.database)
   cursor = conn.cursor()
 
   # Create a table for User_Data
   try:
     cursor.execute("""
-    CREATE TABLE userData (
-      Username TEXT,
-      Password TEXT,
-      FirstName TEXT,
-      LastName TEXT
-    )
+    CREATE TABLE IF NOT EXISTS userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))
   """)
   except:
     pass
@@ -41,13 +36,15 @@ def test_inCollege(password, capfd, monkeypatch, database):
   # log in,
   password.return_value = "Testing!123"
   cursor = database.cursor()
-  sqlite_insert_query = """INSERT INTO userData
-                          (Username, Password, FirstName, LastName)
-                           VALUES
-                          ('Test','Testing!123', 'Test', 'Test')"""
-  cursor.execute(sqlite_insert_query)
+  sqlite_insert_query = """
+  INSERT OR IGNORE INTO userData
+    (Username, Password, FirstName, LastName) VALUES 
+    ('Test','Testing!123', 'Test', 'Test');
+  INSERT OR IGNORE INTO Profiles VALUES ('Test', '', 
+  'University Of Testing', 'Test Science', '', '', 0);"""
+  cursor.executescript(sqlite_insert_query)
   
-  inputs = iter(['1', 'Test', '1', '3', '2', '2', '3', '6', '4', '5', '5', '10', '6', '4', '7', '7'])
+  inputs = iter(['1', 'Test', 'Testing!123', '1', '3', '2', '2', '3', '6', '4', '5', '5', '10', '6', '4', '7', '4', '8', '7'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = main.inCollege()
   out, err = capfd.readouterr()
@@ -58,6 +55,7 @@ def test_inCollege(password, capfd, monkeypatch, database):
   assert "Useful Links" in out
   assert "InCollege Important Links" in out
   assert "My Friends" in out
+  assert "My Profile" in out
   assert "Log Out" in out
   assert "* Exited InCollege. *" in out
 
@@ -142,7 +140,7 @@ def test_loggedin(mock_jobsearch, password, capfd, monkeypatch):
   password.return_value = "Testing!123"
   # Test that logged in menu prints as expected and
   # when logging out, curuser gets set to none
-  inputs = iter(['7'])
+  inputs = iter(['8'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
   result = main.loggedin()
   out, err = capfd.readouterr()
@@ -151,7 +149,7 @@ def test_loggedin(mock_jobsearch, password, capfd, monkeypatch):
   assert main.config.currUser == None
 
 
-def test_learnSkill(capfd, monkeypatch):
+def test_learnSkill(capfd, monkeypatch, database):
   # Test that all the menu options work and show the appropriate message.
   inputs = iter(['1', '1', '6'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
@@ -187,6 +185,13 @@ def test_learnSkill(capfd, monkeypatch):
   out, err = capfd.readouterr()
   assert "Learn a New Skill" in out
   assert "Under Construction." in out
+
+  #Erase all test rows in db
+  cursor = database.cursor()
+  cursor.executescript("""
+  DELETE FROM userData WHERE Username LIKE 'Test';
+  DELETE FROM Profiles WHERE User LIKE 'Test';
+  """)
 
 
 # Run the tests

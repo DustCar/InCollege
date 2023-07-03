@@ -2,7 +2,12 @@
 
 import utility, config
 import sqlite3 as sql
-import readline, re
+try:
+  import readline
+except ImportError:
+  from pyreadline3 import Readline
+  readline = Readline()
+import re
 from datetime import date, datetime
 
 # Connect to SQL database

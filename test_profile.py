@@ -12,29 +12,14 @@ def database():
     cursor.executescript("""
     CREATE TABLE IF NOT EXISTS Friends(User, Friend);
     CREATE TABLE IF NOT EXISTS FriendRequests(Sender, Receiver);
-    CREATE TABLE IF NOT EXISTS userData(Username TEXT,
-Password TEXT,
-FirstName TEXT,
-LastName TEXT,
-EmailFeat TEXT,
-SMSFeat TEXT,
-TargetAdFeat TEXT,
+    CREATE TABLE IF NOT EXISTS userData(Username TEXT, Password TEXT, FirstName TEXT, LastName TEXT, 
+EmailFeat TEXT, SMSFeat TEXT, TargetAdFeat TEXT,
 Language TEXT, UNIQUE (Username, FirstName, LastName));
     CREATE TABLE IF NOT EXISTS Profiles(User TEXT,
-Title VARCHAR(50), 
-University TEXT,
-Major TEXT,
-years_attended TEXT,
-About TEXT,
-Published INT, UNIQUE (User));
-    CREATE TABLE IF NOT EXISTS Experiences(e_id integer primary key autoincrement,
-User TEXT, 
-Title VARCHAR(50),
-Employer TEXT,
-Date_started DATE,
-Date_ended DATE,
-Location TEXT,
-Description TEXT);
+Title VARCHAR(50), University TEXT, Major TEXT,
+years_attended TEXT, About TEXT, Published INT, UNIQUE (User));
+    CREATE TABLE IF NOT EXISTS Experiences(e_id integer primary key autoincrement, User TEXT, Title VARCHAR(50),
+Employer TEXT, Date_started DATE, Date_ended DATE, Location TEXT, Description TEXT);
   """)
   except:
     pass
@@ -52,7 +37,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', '', 0);""")
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 0);""")
   # test page with user profile not published yet
   monkeypatch.setattr('builtins.input', lambda _: '4')
   result = profile.MyProfile()
@@ -65,7 +50,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   # test page with user profile already published
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University of South Florida', 'Computer Science', '', '', 1);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 1);
   """)
   monkeypatch.setattr('builtins.input', lambda _: '4')
   result = profile.MyProfile()
@@ -83,7 +68,7 @@ def test_getColumn(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University of South Florida', 'Computer Science', '', 'Aspiring game developer', 0);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University Of South Florida', 'Computer Science', '', 'Aspiring game developer', 0);
   """)
   # test getColumn with title
   result = profile.getColumn("Title")
@@ -93,7 +78,7 @@ def test_getColumn(capfd, monkeypatch, database):
   # test getColumn with university
   result = profile.getColumn("University")
   out, err = capfd.readouterr()
-  assert result == "University of South Florida"
+  assert result == "University Of South Florida"
 
   # test getColumn with major
   result = profile.getColumn("Major")
@@ -105,13 +90,16 @@ def test_getColumn(capfd, monkeypatch, database):
   out, err = capfd.readouterr()
   assert result == "Aspiring game developer"
 
+"""
+function that tests the create/edit title option
+"""
 def test_ManageTitle(capfd, monkeypatch, database):
   config.currUser = "user1"
   cursor = database.cursor()
 
   cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
   INSERT INTO Profiles (User, University, Major, Published)
-VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
+VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
   """)
   
   # test menu option is set to create when no title has been set
@@ -146,13 +134,16 @@ VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
   out, err = capfd.readouterr()
   assert title == "3rd year Computer Science developer"
 
+"""
+function that tests the create/edit the about me option
+"""
 def test_ManageAbout(capfd, monkeypatch, database):
   config.currUser = "user1"
   cursor = database.cursor()
 
   cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
   INSERT INTO Profiles (User, University, Major, Published)
-VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
+VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
   """)
   
   # test menu option is set to create when no about me has been set
@@ -186,4 +177,59 @@ VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
   about = profile.getColumn("About")
   out, err = capfd.readouterr()
   assert about == "Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them."
+
+"""
+function that tests the edit university option
+"""
+def test_ManageUniversity(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  cursor = database.cursor()
+
+  cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
+  INSERT INTO Profiles (User, University, Major, Published)
+VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
+  """)
   
+  # test changing university
+  inputs = iter(['1', '2', 'y', 'University of Florida', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  university = profile.getColumn("University")
+  out, err = capfd.readouterr()
+  assert university == "University Of Florida"
+
+  # test changing university but then cancelling
+  inputs = iter(['1', '2', 'y', 'University of Miami', 'n', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  university = profile.getColumn("University")
+  out, err = capfd.readouterr()
+  assert university == "University Of Florida"
+
+"""
+function that tests the edit major option
+"""
+def test_ManageMajor(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  cursor = database.cursor()
+
+  cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
+  INSERT INTO Profiles (User, University, Major, Published)
+VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
+  """)
+  
+  # test changing major
+  inputs = iter(['1', '3', 'y', 'Computer Engineering', 'y', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  major = profile.getColumn("Major")
+  out, err = capfd.readouterr()
+  assert major == "Computer Engineering"
+
+  # test changing major but then cancelling
+  inputs = iter(['1', '3', 'y', 'Accounting', 'n', '7', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  result = profile.MyProfile()
+  major = profile.getColumn("Major")
+  out, err = capfd.readouterr()
+  assert major == "Computer Engineering"

@@ -136,12 +136,6 @@ def ValidateMajor(major):
   return 1
 
 
-# this function asks the user to input their major
-def getMajor():
-
-  return major
-
-
 # function to create a user account
 def createAccount():
   """

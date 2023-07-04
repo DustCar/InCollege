@@ -116,6 +116,7 @@ def MyProfile():
 # this function verifies that the inputted profile title fits the criteria
 def VerifyProfileTitle(profileTitle):
   # if the user wants to cancel then exit the function
+  profileTitle = profileTitle.strip()
   if profileTitle == "c":
     return 1
   if utility.hasSpecialCharacter(profileTitle):
@@ -137,6 +138,7 @@ def VerifyProfileTitle(profileTitle):
 
 def ValidateYearsAttended(yearsAttended):
   # if the user wants to cancel then exit the function
+  yearsAttended = yearsAttended.strip()
   if yearsAttended == "c":
     return 1
 
@@ -151,9 +153,20 @@ def ValidateYearsAttended(yearsAttended):
   if abs(years[0] - years[1]) > 20:
     utility.printMessage("This date range is too big.")
     return 0
-  
+
   return 1
 
+
+def ValidateProfileAbout(about):
+  about = about.strip()
+  if about == "c":
+    return 1
+
+  if len(about) < 10:
+    utility.printMessage("Add more characters to your about.")
+    return 0
+
+  return 1
 
 
 # this handles the create/edit profile options
@@ -199,6 +212,7 @@ def ManageProfile():
 def ManageEducationSection():
   pass
 
+
 #this function will update the specified column in the profiles table with the data
 def UpdateProfileData(profileData, type):
   type = type.replace(" ", "_")
@@ -238,6 +252,10 @@ def ManageColumnData(type):
           f"Enter your years attended as yyyy-yyyy. ex. {date.today().year-4}-{date.today().year}: "
         )
 
+    elif type == "About":
+      while not ValidateProfileAbout(profileData):
+        profileData = input(f"Enter a profile {type}: ")
+
     if profileData.lower() == "c":
       return
 
@@ -267,11 +285,11 @@ def ManageColumnData(type):
 
       if type == "University" or type == "Major":
         newData = PrefillInput(f"Edit your {type}: ", curData).title()
-        
+
         if type == "University":
           while not account.ValidateUniversity(newData):
             newData = PrefillInput(f"Edit your {type}: ", curData).title()
-            
+
         elif type == "Major":
           while not account.ValidateMajor(newData):
             newData = PrefillInput(f"Edit your {type}: ", curData).title()
@@ -286,12 +304,17 @@ def ManageColumnData(type):
         while not ValidateYearsAttended(newData):
           newData = PrefillInput(f"Edit your {type}: ", curData)
 
+      elif type == "About":
+        newData = PrefillInput(f"Edit your {type}: ", curData)
+        while not ValidateProfileAbout(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
       else:
         newData = PrefillInput(f"Edit your {type}: ", curData)
 
       if newData.lower() == "c":
         return
-        
+
       newData = newData.strip()
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
@@ -365,6 +388,7 @@ def ManageExperiences():
 
 def VerifyExperienceDate(userinput):
   # if the user wants to cancel then exit the function
+  userinput = userinput.strip()
   if userinput == "c":
     return 1
 
@@ -376,6 +400,54 @@ def VerifyExperienceDate(userinput):
       f"Enter the date as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}"
     )
     return 0
+
+
+def ValidateExperienceEmployer(employer):
+  employer = employer.strip()
+
+  if employer.lower() == "c":
+    return 1
+
+  if utility.hasSpecialCharacter(employer):
+    utility.printMessage(
+      "You cannot include any special characters for your employer.")
+    return 0
+
+  if len(employer) < 2:
+    utility.printMessage("Add more characters for your employer.")
+    return 0
+
+  return 1
+
+
+def ValidateExperienceLocation(location):
+  location = location.strip()
+  specialCharacters = [
+    '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', '-', '.', '/', ':',
+    ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}',
+    '~'
+  ]
+  if location.lower() == "c":
+    return 1
+
+  if utility.hasSpecialCharacter(location):
+    for char in location:
+      if char in specialCharacters:
+        utility.printMessage("You can only include the special character ,")
+        return 0
+
+  return 1
+
+
+def ValidateExperienceDescription(description):
+  description = description.strip()
+  if description.lower == "c":
+    return 1
+  if len(description) < 5:
+    utility.printMessage("Add more characters to your description.")
+    return 0
+
+  return 1
 
 
 # this function will allow a user to add a new experience
@@ -395,6 +467,9 @@ def AddExperience():
       return
 
     employer = input("Enter an employer: ")
+    while not ValidateExperienceEmployer(employer):
+      employer = input("Enter an employer: ")
+
     if employer == "c":
       employer = ""
       break
@@ -424,16 +499,20 @@ def AddExperience():
       break
 
     location = input("Enter a location: ")
+    while not ValidateExperienceLocation(location):
+      location = input("Enter a location: ")
     if location == "c":
       location = ""
       break
 
     description = input("Enter a description: ")
+    while not ValidateExperienceDescription(description):
+      description = input("Enter a description: ")
     if description == "c":
       description = ""
       break
     break
-    
+
   # remove leading and trailing whitespaces
   title = title.strip()
   employer = employer.strip()
@@ -441,7 +520,7 @@ def AddExperience():
   dateEnded = dateEnded.strip()
   location = location.strip()
   description = description.strip()
-  
+
   UDCursor.execute(f"""
     INSERT INTO Experiences (User, Title, Employer, Date_started, Date_ended, Location, Description)
     VALUES ('{config.currUser}', '{title}', '{employer}', '{dateStarted}', '{dateEnded}', '{location}', '{description}')
@@ -504,9 +583,21 @@ def ManageExperienceData(e_id, experience_content, type):
       while not VerifyExperienceDate(newData):
         newData = input(f"Add your {type}: ")
 
+    elif type == "Employer":
+      while not ValidateExperienceEmployer(newData):
+        newData = input(f"Add your {type}: ")
+
+    elif type == "Location":
+      while not ValidateExperienceLocation(newData):
+        newData = input(f"Add your {type}: ")
+
+    elif type == "Description":
+      while not ValidateExperienceDescription(newData):
+        newData = input(f"Add your {type}: ")
+
     if newData.lower() == "c":
       return
-      
+
     newData = newData.strip()
     choice = confirmDetails("Save this change? (y/n): ")
     if choice == "y":
@@ -527,8 +618,22 @@ def ManageExperienceData(e_id, experience_content, type):
         while not VerifyExperienceDate(newData):
           newData = PrefillInput(f"Edit your {type}: ", curData)
 
+      elif type == "Employer":
+        while not ValidateExperienceEmployer(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
+      elif type == "Location":
+        while not ValidateExperienceLocation(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
+      elif type == "Description":
+        while not ValidateExperienceDescription(newData):
+          newData = PrefillInput(f"Edit your {type}: ", curData)
+
+
       if newData.lower() == "c":
         return
+        
       newData = newData.strip()
       utility.clearConsole()
       utility.printMessage(f"Your new {type}: {newData}")
@@ -655,7 +760,7 @@ def PublishProfile():
   elif getColumn("About") == None:
     utility.printMessage("You cannot publish your profile without an about.")
     utility.quickGoBack()
-    
+
   else:
     if published == 1:
       choice = confirmDetails("Would you like to Unpublish? (y/n): ")

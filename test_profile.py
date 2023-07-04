@@ -40,7 +40,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 0);""")
   # test page with user profile not published yet
   monkeypatch.setattr('builtins.input', lambda _: '4')
-  result = profile.MyProfile()
+  profile.MyProfile()
   out, err = capfd.readouterr()
   assert "Press 1 for Create/Edit My Profile." in out
   assert "Press 2 for View My Profile." in out
@@ -53,7 +53,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 1);
   """)
   monkeypatch.setattr('builtins.input', lambda _: '4')
-  result = profile.MyProfile()
+  profile.MyProfile()
   out, err = capfd.readouterr()
   assert "Press 1 for Create/Edit My Profile." in out
   assert "Press 2 for View My Profile." in out
@@ -103,33 +103,33 @@ VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
   """)
   
   # test menu option is set to create when no title has been set
-  inputs = iter(['1', '1', 'c', '7', '4'])
+  inputs = iter(['1', '1', 'c', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   out, err = capfd.readouterr()
   assert "Press 1 for Create Your Profile Title." in out
 
   # test creating a new title
-  inputs = iter(['1', '1', '3rd year Computer Science student', 'y', '7', '4'])
+  inputs = iter(['1', '1', '3rd year Computer Science student', 'y', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   title = profile.getColumn("Title")
   out, err = capfd.readouterr()
   assert title == "3rd year Computer Science student"
 
   # test menu option changing title option to 'Edit' and change title
-  inputs = iter(['1', '1', 'y', '3rd year Computer Science developer', 'y', '7', '4'])
+  inputs = iter(['1', '1', 'y', '3rd year Computer Science developer', 'y', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   title = profile.getColumn("Title")
   out, err = capfd.readouterr()
   assert "Press 1 for Edit Your Profile Title."
   assert title == "3rd year Computer Science developer"
 
   # test cancelling an edit
-  inputs = iter(['1', '1', 'y', '3rd year Computer Engineering student', 'n', '7', '4'])
+  inputs = iter(['1', '1', 'y', '3rd year Computer Engineering student', 'n', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   title = profile.getColumn("Title")
   out, err = capfd.readouterr()
   assert title == "3rd year Computer Science developer"
@@ -147,33 +147,33 @@ VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
   """)
   
   # test menu option is set to create when no about me has been set
-  inputs = iter(['1', '5', 'c', '7', '4'])
+  inputs = iter(['1', '3', 'c', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   out, err = capfd.readouterr()
-  assert "Press 5 for Create Your About me." in out
+  assert "Press 3 for Create Your About me." in out
 
   # test creating a new title
-  inputs = iter(['1', '5', 'Hello, my name is userone and I am a 3rd year computer science student at USF. I hope to become a future software developer at Tesla in a few years. I am very interested in the technology of the latest Tesla cars and hope to one day work on them myself.', 'y', '7', '4'])
+  inputs = iter(['1', '3', 'Hello, my name is userone and I am a 3rd year computer science student at USF. I hope to become a future software developer at Tesla in a few years. I am very interested in the technology of the latest Tesla cars and hope to one day work on them myself.', 'y', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   about = profile.getColumn("About")
   out, err = capfd.readouterr()
   assert about == "Hello, my name is userone and I am a 3rd year computer science student at USF. I hope to become a future software developer at Tesla in a few years. I am very interested in the technology of the latest Tesla cars and hope to one day work on them myself."
 
   # test menu option changing title option to 'Edit' and change title
-  inputs = iter(['1', '5', 'y', 'Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them.', 'y', '7', '4'])
+  inputs = iter(['1', '3', 'y', 'Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them.', 'y', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   about = profile.getColumn("About")
   out, err = capfd.readouterr()
   assert "Press 1 for Edit Your About me."
   assert about == "Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them."
 
   # test cancelling an edit
-  inputs = iter(['1', '5', 'y', 'I think I\'ll just remove the about me section that I worked to create.', 'n', '7', '4'])
+  inputs = iter(['1', '3', 'y', 'I think I\'ll just remove the about me section that I worked to create.', 'n', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   about = profile.getColumn("About")
   out, err = capfd.readouterr()
   assert about == "Hello, my name is userone and I am a computer science student at USF onto my last year for a Bachelors. I hope to be a software developer with the focus on EVs, or electric vehicles. I aspire to work on the latest systems for EVs and potentially create a new system for them."
@@ -191,17 +191,17 @@ VALUES ('user1', 'University Of South Florida', 'Computer Science', 0);
   """)
   
   # test changing university
-  inputs = iter(['1', '2', 'y', 'University of Florida', 'y', '7', '4'])
+  inputs = iter(['1', '2', '1', 'y', 'University of Florida', 'y', '4', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   university = profile.getColumn("University")
   out, err = capfd.readouterr()
   assert university == "University Of Florida"
 
   # test changing university but then cancelling
-  inputs = iter(['1', '2', 'y', 'University of Miami', 'n', '7', '4'])
+  inputs = iter(['1', '2', '1', 'y', 'University of Miami', 'n', '4', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   university = profile.getColumn("University")
   out, err = capfd.readouterr()
   assert university == "University Of Florida"
@@ -219,17 +219,94 @@ VALUES ('user1', 'University of South Florida', 'Computer Science', 0);
   """)
   
   # test changing major
-  inputs = iter(['1', '3', 'y', 'Computer Engineering', 'y', '7', '4'])
+  inputs = iter(['1', '2', '2', 'y', 'Computer Engineering', 'y', '4', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   major = profile.getColumn("Major")
   out, err = capfd.readouterr()
   assert major == "Computer Engineering"
 
   # test changing major but then cancelling
-  inputs = iter(['1', '3', 'y', 'Accounting', 'n', '7', '4'])
+  inputs = iter(['1', '2', '2', 'y', 'Accounting', 'n', '4', '5', '4'])
   monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-  result = profile.MyProfile()
+  profile.MyProfile()
   major = profile.getColumn("Major")
   out, err = capfd.readouterr()
   assert major == "Computer Engineering"
+
+"""
+function that tests functions dealing with experiences
+"""
+def test_ManageExperience(capfd, monkeypatch, database):
+  config.currUser = "user1"
+  cursor = database.cursor()
+
+  cursor.executescript("""
+  DELETE FROM Experiences WHERE User LIKE 'user%';
+  """)
+
+  # test menu with no experiences
+  inputs = iter(['1', '4', '2', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 for Add an experience.\nPress 2 for Back." in out
+
+  # test adding title then cancelling (this test goes for all other options as well)
+  inputs = iter(['1', '4', '1', 'Manager', 'c', '2', '1', '7', '2', '4', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 for Add an experience.\nPress 2 for Edit an Experience.\nPress 3 for Remove an Experience." in out
+  assert "Press 1 to edit experience titled: 'Manager'" in out
+  assert "You are editing the job titled: 'Manager'" in out
+  assert "Press 1 for Edit Title." in out
+
+  # test editing title (this test goes for all other options as well)
+  inputs = iter(['1', '4', '2', '1', '1', 'y', 'Cashier', 'y', '7', '2', '4', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 to edit experience titled: 'Manager'" in out
+  assert "You are editing the job titled: 'Manager'" in out
+  assert "Press 1 for Edit Title." in out
+  assert "You are editing the job titled: 'Cashier'" in out
+
+  # test menu when three jobs are posted
+  inputs = iter(['1', '4', '1', 'Stocker', 'c', '1', 'Software Maintenance', 'c', '3', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 for Edit an Experience.\nPress 2 for Remove an Experience." in out
+
+  # test removing an experience (when experiences are full)
+  inputs = iter(['1', '4', '2', '3', 'y', '1', '4', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "This experience has been deleted." in out
+  assert "Press 1 for Add an experience.\nPress 2 for Edit an Experience.\nPress 3 for Remove an Experience." in out
+
+  # test if menu reverts after deleting all experiences
+  inputs = iter(['1', '4', '3', '1', 'y', '1', '3', '1', 'y', '1', '2', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "This experience has been deleted." in out
+  assert "Press 1 for Add an experience.\nPress 2 for Back." in out
+
+  # test adding a full experience
+  inputs = iter(['1', '4', '1', 'Software Maintenance', 'John Doe', '03-24-2021', '06-10-2022', 'Tampa, FL', 'Maintained software at Ubisoft including servers, account managing, and transactions.', '2', '1', '7', '2', '4', '5', '4'])
+  monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+  profile.MyProfile()
+  out, err = capfd.readouterr()
+  assert "Press 1 for Edit Title.\nPress 2 for Edit Employer.\nPress 3 for Edit Date Started.\nPress 4 for Edit Date Ended.\nPress 5 for Edit Location.\nPress 6 for Edit Description." in out
+
+  # test to see if previous test saved in db
+  experience = cursor.execute("SELECT Title, Employer, Date_started, Date_ended, Location, Description FROM Experiences WHERE User = 'user1' AND Title = 'Software Maintenance';").fetchone()
+  assert experience[0] == "Software Maintenance"
+  assert experience[1] == "John Doe"
+  assert experience[2] == "03-24-2021"
+  assert experience[3] == "06-10-2022"
+  assert experience[4] == "Tampa, FL"
+  assert experience[5] == "Maintained software at Ubisoft including servers, account managing, and transactions."

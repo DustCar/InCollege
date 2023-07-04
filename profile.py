@@ -363,8 +363,7 @@ def AddExperience():
       title = input("Enter a title for your experience: ")
 
     if title == "c":
-      title = ""
-      break
+      return
 
     employer = input("Enter an employer: ")
     if employer == "c":
@@ -535,17 +534,17 @@ def EditSpecificExperiencePage(experienceID):
     utility.pageTitle("Edit This Experience")
 
     experience = UDCursor.execute(
-      f"SELECT * FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}"
+      f"SELECT Title, Employer, Date_started, Date_ended, Location, Description FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experienceID}"
     ).fetchone()
 
     # store experience content retrieved from db into this dictionary
     experience_content = {
-      "Title": experience[2],
-      "Employer": experience[3],
-      "Date_started": experience[4],
-      "Date_ended": experience[5],
-      "Location": experience[6],
-      "Description": experience[7]
+      "Title": experience[0],
+      "Employer": experience[1],
+      "Date_started": experience[2],
+      "Date_ended": experience[3],
+      "Location": experience[4],
+      "Description": experience[5]
     }
 
     titleText = "Edit"
@@ -604,7 +603,7 @@ def EditSpecificExperiencePage(experienceID):
       ManageExperienceData(experienceID, experience_content, "Description")
 
 
-# this function will allow a user to publish their profile so it can be viewed by friends of the user
+# this function will allow a user to publish or unpublish their profile so it can be viewed by friends of the user
 def PublishProfile():
   published = getColumn("Published")
   if published == 1:

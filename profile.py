@@ -630,10 +630,9 @@ def ManageExperienceData(e_id, experience_content, type):
         while not ValidateExperienceDescription(newData):
           newData = PrefillInput(f"Edit your {type}: ", curData)
 
-
       if newData.lower() == "c":
         return
-        
+
       newData = newData.strip()
       utility.clearConsole()
       utility.printMessage(f"Your new {type}: {newData}")

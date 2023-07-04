@@ -104,14 +104,41 @@ def name():
   return [first, last]
 
 # this function asks the user to input their university
-def getUniversity():
-  university = input("Enter the current university you are attending: ").title()
-  return university
+def ValidateUniversity(university):
+  university = university.strip()
+  if university.lower() == "c":
+    return 1
+    
+  if len(university) < 4:
+    utility.printMessage("Add more characters for your university.")
+    return 0
+
+  if utility.hasSpecialCharacter(university):
+    utility.printMessage("Your university cannot contain any special characters.")
+    return 0
+    
+  return 1
+
+# this function asks the user to input their university
+def ValidateMajor(major):
+  major = major.strip()
+  if major.lower() == "c":
+    return 1
+    
+  if len(major) < 4:
+    utility.printMessage("Add more characters for your major.")
+    return 0
+
+  if utility.hasSpecialCharacter(major):
+    utility.printMessage("Your major cannot contain any special characters.")
+    return 0
+    
+  return 1
 
 
 # this function asks the user to input their major
 def getMajor():
-  major = input("Enter your major: ").title()
+
   return major
 
 
@@ -145,17 +172,25 @@ def createAccount():
       utility.clearConsole()
       return
 
-    university = getUniversity()
-
+    university = input("Enter the current university you are attending: ").title()
+    while not ValidateUniversity(university):
+      university = input("Enter the current university you are attending: ").title()
+      
     if university.lower() == "c":
       utility.clearConsole()
       return
+
+    university = university.strip()
     
-    major = getMajor()
+    major = input("Enter your major: ").title()
+    while not ValidateMajor(major):
+      major = input("Enter your major: ").title()
 
     if major.lower() == "c":
       utility.clearConsole()
       return
+
+    major = major.strip()
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES

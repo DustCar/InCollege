@@ -62,7 +62,7 @@ def confirmDetails(prompt):
       break
     else:
       utility.printMessage("'y' or 'n' only.")
-      print("\n")
+      utility.printSeparator()
       continue
   return confirm
 
@@ -119,17 +119,17 @@ def VerifyProfileTitle(profileTitle):
     return 1
   if utility.hasSpecialCharacter(profileTitle):
     utility.printMessage("Your title cannot contain any special characters.")
-    print("\n")
+    utility.printSeparator()
     return 0
   elif len(profileTitle) > config.maxTitleLen:
     utility.printMessage(
       f"Your title cannot be longer than {config.maxTitleLen} characters.")
-    print("\n")
+    utility.printSeparator()
     return 0
   elif len(profileTitle) <= config.minTitleLen:
     utility.printMessage(
       f"Your title must be longer than {config.minTitleLen} characters.")
-    print("\n")
+    utility.printSeparator()
     return 0
   return 1
 
@@ -162,7 +162,6 @@ def ManageProfile():
       "Your progress can be saved on any incomplete section")
     titleText = "Edit"
     aboutText = "Edit"
-    educationText = "Edit"
     # if the user does not have any title, change text to create in menu
     if getColumn("Title") == None:
       titleText = "Create"
@@ -171,14 +170,13 @@ def ManageProfile():
     if getColumn("About") == None:
       aboutText = "Create"
 
-    if getColumn("years_attended") == None:
-      educationText = "Add"
-
     options = {
       f"{titleText} Your Profile Title": ManageTitle,
-      f"{educationText} Education Info": ManageEducationSection,
+      "Edit Current University": ManageUniversity,
+      "Edit Current Major": ManageMajor,
       f"{aboutText} Your About me": ManageAbout,
-      "Manage Experiences": ManageExperiences
+      "Manage Education History": ManageEducationSection,
+      "Manage Job Experiences": ManageExperiences
     }
 
     utility.printMenu(options)
@@ -195,36 +193,9 @@ def ManageProfile():
   return
 
 
-# this function is the page that allows users to edit or create parts of their education section like university, major, and years attended
+# this function is the page that allows users to create, edit, or remove parts of their education history like school name, degree, and years attended
 def ManageEducationSection():
-  while True:
-    utility.pageTitle("Manage Your Education Information")
-    utility.printMessage(
-      "Add and Edit content for your education information")
-    yearsAttendedText = "Edit"
-
-    if getColumn("years_attended") == None:
-      yearsAttendedText = "Add"
-
-    options = {
-      "Edit Your University": ManageUniversity,
-      "Edit Your Major": ManageMajor,
-      f"{yearsAttendedText} Your Years Attended": ManageYearsAttended,
-    }
-
-    utility.printMenu(options)
-    print(f"Press {len(options)+1} for Back.")
-
-    option = input("Input: ")
-    optionNum = utility.choiceValidation(option, options)
-
-    if optionNum == len(options) + 1:
-      utility.clearConsole()
-      break
-    else:
-      utility.call(optionNum, options)
-  return
-
+  pass
 
 #this function will update the specified column in the profiles table with the data
 def UpdateProfileData(profileData, type):
@@ -244,11 +215,15 @@ def ManageColumnData(type):
 
     if type == "years_attended":
       utility.pageTitle("Add Your Years Attended")
+      utility.printMessage("Enter 'c' to cancel anytime.")
+      utility.printSeparator()
       profileData = input(
         f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: "
       )
     else:
       utility.pageTitle(f"Create Your {type}")
+      utility.printMessage("Enter 'c' to cancel anytime.")
+      utility.printSeparator()
       profileData = input(f"Enter a profile {type}: ")
 
     if type == "Title":
@@ -282,6 +257,8 @@ def ManageColumnData(type):
     if (option == "y"):
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
+      utility.printMessage("Enter 'c' to cancel anytime.")
+      utility.printSeparator()
 
       if type == "University" or type == "Major":
         newData = PrefillInput(f"Edit your {type}: ", curData).title()
@@ -393,6 +370,7 @@ def AddExperience():
     # insert the username into Experiences Table
     utility.pageTitle("Add An Experience")
     utility.printMessage("Enter 'c' to leave and save your progress.")
+    utility.printSeparator()
     title = employer = dateStarted = dateEnded = location = description = ""
 
     title = input("Enter a title for your experience: ")
@@ -655,6 +633,10 @@ def PublishProfile():
   if getColumn("Title") == None:
     utility.printMessage("You cannot publish your profile without a title.")
     utility.quickGoBack()
+  elif getColumn("About") == None:
+    utility.printMessage("You cannot publish your profile without an about.")
+    utility.quickGoBack()
+    
   else:
     if published == 1:
       choice = confirmDetails("Would you like to Unpublish? (y/n): ")

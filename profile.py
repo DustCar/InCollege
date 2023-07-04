@@ -2,6 +2,7 @@
 
 import utility, config
 import sqlite3 as sql
+import account
 try:
   import readline
 except ImportError:
@@ -154,6 +155,7 @@ def ValidateYearsAttended(yearsAttended):
   return 1
 
 
+
 # this handles the create/edit profile options
 def ManageProfile():
   while True:
@@ -239,6 +241,9 @@ def ManageColumnData(type):
     if profileData.lower() == "c":
       return
 
+    # remove leading and trailing whitespaces
+    profileData = profileData.strip()
+
     if type == "years_attended":
       option = confirmDetails("\nSave your years attended? (y/n): ")
     else:
@@ -262,6 +267,14 @@ def ManageColumnData(type):
 
       if type == "University" or type == "Major":
         newData = PrefillInput(f"Edit your {type}: ", curData).title()
+        
+        if type == "University":
+          while not account.ValidateUniversity(newData):
+            newData = PrefillInput(f"Edit your {type}: ", curData).title()
+            
+        elif type == "Major":
+          while not account.ValidateMajor(newData):
+            newData = PrefillInput(f"Edit your {type}: ", curData).title()
 
       elif type == "Title":
         newData = PrefillInput(f"Edit your {type}: ", curData)
@@ -278,7 +291,8 @@ def ManageColumnData(type):
 
       if newData.lower() == "c":
         return
-
+        
+      newData = newData.strip()
       utility.clearConsole()
       utility.pageTitle(f"Edit Your {type}")
       utility.printMessage(f"Your new {type}: {newData}")
@@ -419,7 +433,15 @@ def AddExperience():
       description = ""
       break
     break
-
+    
+  # remove leading and trailing whitespaces
+  title = title.strip()
+  employer = employer.strip()
+  dateStarted = dateStarted.strip()
+  dateEnded = dateEnded.strip()
+  location = location.strip()
+  description = description.strip()
+  
   UDCursor.execute(f"""
     INSERT INTO Experiences (User, Title, Employer, Date_started, Date_ended, Location, Description)
     VALUES ('{config.currUser}', '{title}', '{employer}', '{dateStarted}', '{dateEnded}', '{location}', '{description}')
@@ -478,17 +500,14 @@ def ManageExperienceData(e_id, experience_content, type):
     utility.printMessage("Press 'c' to cancel anytime.")
     newData = input(f"Add your {type}: ")
 
-    if type == "Title":
-      while not VerifyProfileTitle(newData):
-        newData = input(f"Add your {type}: ")
-
-    elif type == "Date started" or type == "Date ended":
+    if type == "Date started" or type == "Date ended":
       while not VerifyExperienceDate(newData):
         newData = input(f"Add your {type}: ")
 
     if newData.lower() == "c":
       return
-
+      
+    newData = newData.strip()
     choice = confirmDetails("Save this change? (y/n): ")
     if choice == "y":
       UpdateExperienceData(e_id, newData, type)
@@ -510,7 +529,7 @@ def ManageExperienceData(e_id, experience_content, type):
 
       if newData.lower() == "c":
         return
-
+      newData = newData.strip()
       utility.clearConsole()
       utility.printMessage(f"Your new {type}: {newData}")
       confirmEdit = confirmDetails("Save this edit? (y/n): ")

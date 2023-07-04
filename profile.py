@@ -122,11 +122,13 @@ def VerifyProfileTitle(profileTitle):
     print("\n")
     return 0
   elif len(profileTitle) > config.maxTitleLen:
-    utility.printMessage(f"Your title cannot be longer than {config.maxTitleLen} characters.")
+    utility.printMessage(
+      f"Your title cannot be longer than {config.maxTitleLen} characters.")
     print("\n")
     return 0
   elif len(profileTitle) <= config.minTitleLen:
-    utility.printMessage(f"Your title must be longer than {config.minTitleLen} characters.")
+    utility.printMessage(
+      f"Your title must be longer than {config.minTitleLen} characters.")
     print("\n")
     return 0
   return 1
@@ -137,11 +139,18 @@ def ValidateYearsAttended(yearsAttended):
   if yearsAttended == "c":
     return 1
 
-  if not re.search(r"\d{4}\-\d{4}", yearsAttended):
+  if not re.search(r"^\d{4}-{1}\d{4}$", yearsAttended):
     utility.printMessage(
       f"Invalid input. Make sure your input looks like yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}."
     )
     return 0
+
+  years = [int(i) for i in yearsAttended.split("-")]
+
+  if abs(years[0] - years[1]) > 20:
+    utility.printMessage("This date range is too big.")
+    return 0
+  
   return 1
 
 
@@ -153,8 +162,7 @@ def ManageProfile():
       "Your progress can be saved on any incomplete section")
     titleText = "Edit"
     aboutText = "Edit"
-    yearsAttendedText = "Edit"
-
+    educationText = "Edit"
     # if the user does not have any title, change text to create in menu
     if getColumn("Title") == None:
       titleText = "Create"
@@ -164,15 +172,44 @@ def ManageProfile():
       aboutText = "Create"
 
     if getColumn("years_attended") == None:
-      yearsAttendedText = "Add"
+      educationText = "Add"
 
     options = {
       f"{titleText} Your Profile Title": ManageTitle,
+      f"{educationText} Education Info": ManageEducationSection,
+      f"{aboutText} Your About me": ManageAbout,
+      "Manage Experiences": ManageExperiences
+    }
+
+    utility.printMenu(options)
+    print(f"Press {len(options)+1} for Back.")
+
+    option = input("Input: ")
+    optionNum = utility.choiceValidation(option, options)
+
+    if optionNum == len(options) + 1:
+      utility.clearConsole()
+      break
+    else:
+      utility.call(optionNum, options)
+  return
+
+
+# this function is the page that allows users to edit or create parts of their education section like university, major, and years attended
+def ManageEducationSection():
+  while True:
+    utility.pageTitle("Manage Your Education Information")
+    utility.printMessage(
+      "Add and Edit content for your education information")
+    yearsAttendedText = "Edit"
+
+    if getColumn("years_attended") == None:
+      yearsAttendedText = "Add"
+
+    options = {
       "Edit Your University": ManageUniversity,
       "Edit Your Major": ManageMajor,
       f"{yearsAttendedText} Your Years Attended": ManageYearsAttended,
-      f"{aboutText} Your About me": ManageAbout,
-      "Manage Experiences": ManageExperiences
     }
 
     utility.printMenu(options)

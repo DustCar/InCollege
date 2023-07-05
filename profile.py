@@ -216,10 +216,10 @@ def ManageEducationSection():
 #this function will update the specified column in the profiles table with the data
 def UpdateProfileData(profileData, type):
   type = type.replace(" ", "_")
-  UDCursor.execute(f'''UPDATE Profiles
-                        SET {type} = '{profileData}'
-                        WHERE User = '{config.currUser}'
-                        ''')
+  UDCursor.execute(f"""UPDATE Profiles
+                        SET {type} = \"{profileData}\"
+                        WHERE User = \"{config.currUser}\"
+                        """)
   userData.commit()
 
 

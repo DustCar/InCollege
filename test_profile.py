@@ -10,8 +10,6 @@ def database():
 	# Create a table for User_Data
   try:
     cursor.executescript("""
-    CREATE TABLE IF NOT EXISTS Friends(User, Friend);
-    CREATE TABLE IF NOT EXISTS FriendRequests(Sender, Receiver);
     CREATE TABLE IF NOT EXISTS userData(Username TEXT, Password TEXT, FirstName TEXT, LastName TEXT, 
 EmailFeat TEXT, SMSFeat TEXT, TargetAdFeat TEXT,
 Language TEXT, UNIQUE (Username, FirstName, LastName));
@@ -310,3 +308,9 @@ def test_ManageExperience(capfd, monkeypatch, database):
   assert experience[3] == "06-10-2022"
   assert experience[4] == "Tampa, FL"
   assert experience[5] == "Maintained software at Ubisoft including servers, account managing, and transactions."
+
+  # clear all test instances
+  cursor.executescript("""DELETE FROM Profiles WHERE User LIKE 'user%';
+  DELETE FROM Experiences WHERE User LIKE 'user%'; 
+  DELETE FROM UserData WHERE Username LIKE 'user%';
+  """)

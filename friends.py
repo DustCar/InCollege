@@ -1,7 +1,7 @@
 # this file will contain the functions that manage the
 # friends list for InCollege users
 
-import utility, config
+import utility, config, userprofile
 import sqlite3 as sql
 
 # Connect to SQL database
@@ -181,6 +181,56 @@ def SearchStudentPage():
     else:
       utility.call(optionNum, options)
   return
+
+def show_friends_profile():
+  """
+  shows friends profiles if available
+  """
+  friends = UDCursor.execute(
+    f"SELECT Friend FROM Friends WHERE User = '{config.currUser}'").fetchall()
+  # check if they have any friends
+  if len(friends) > 0:
+
+    # Dictionary to map friends' usernames to their names
+    friend_names = {}
+  
+    # Print all friends
+    print("Your current friends are:")
+    for i, friend in enumerate(friends):
+      # Get the friend's first and last name from the userData table
+      friend_info = UDCursor.execute(
+        f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend[0]}'"
+      ).fetchone()
+      friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
+      if userprofile.is_published(friend[0]) == 1:
+        print(f"\n{i + 1}. {friend_names[friend[0]]}    (Profile is Viewable)")
+      else:
+        print(f"\n{i + 1}. {friend_names[friend[0]]}")
+
+    # Ask user to select a friend to remove
+    utility.printSeparator()
+    selected_friend = input(
+      f"\nEnter the number of the friend you want to remove or press {len(friends)+1} to go back: "
+    )
+
+    selected_friend = utility.choiceValidation(selected_friend, friends)
+
+    if selected_friend == len(friends)+1:
+      return
+    selected_friend = int(selected_friend) - 1
+    friend_profile = friends[selected_friend][0]
+
+    if userprofile.is_published(friend_profile) == 1:
+      userprofile.ViewProfile(friend_profile)
+    else:
+      friend_info = UDCursor.execute(f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend_profile}'").fetchone()
+      utility.clearConsole()
+      utility.printMessage(f'{friend_info[0]} {friend_info[1]} does not have a viewable profile')
+      show_friends_profile()
+
+  else:
+    utility.printMessage("You currently have no friends.")
+    utility.quickGoBack()
 
 
 #Handles Pending Friends

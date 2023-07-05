@@ -216,10 +216,10 @@ def ManageEducationSection():
 #this function will update the specified column in the profiles table with the data
 def UpdateProfileData(profileData, type):
   type = type.replace(" ", "_")
-  UDCursor.execute(f"""UPDATE Profiles
-                        SET {type} = \"{profileData}\"
-                        WHERE User = \"{config.currUser}\"
-                        """)
+  UDCursor.execute(f""" UPDATE Profiles
+                        SET {type} = ?
+                        WHERE User = ?
+                        """, (profileData, config.currUser))
   userData.commit()
 
 
@@ -521,10 +521,10 @@ def AddExperience():
   location = location.strip()
   description = description.strip()
 
-  UDCursor.execute(f"""
+  UDCursor.execute("""
     INSERT INTO Experiences (User, Title, Employer, Date_started, Date_ended, Location, Description)
-    VALUES ('{config.currUser}', '{title}', '{employer}', '{dateStarted}', '{dateEnded}', '{location}', '{description}')
-    """)
+    VALUES (?,?,?,?,?,?,?)
+    """, (config.currUser, title, employer, dateStarted, dateEnded, location, description))
   userData.commit()
 
 
@@ -552,7 +552,7 @@ def RemoveExperience():
 
     if option == "y":
       UDCursor.execute(
-        f"DELETE FROM Experiences WHERE User = '{config.currUser}' AND e_id = '{experiences[optionNum-1][0]}'"
+        f"DELETE FROM Experiences WHERE User = '{config.currUser}' AND e_id = {experiences[optionNum-1][0]}"
       )
       userData.commit()
       utility.printMessage("This experience has been deleted.")
@@ -563,9 +563,9 @@ def RemoveExperience():
 def UpdateExperienceData(e_id, newData, type):
   type = type.replace(" ", "_")
   UDCursor.execute(f'''UPDATE Experiences
-                SET {type} = '{newData}'
-                WHERE User = '{config.currUser}' AND e_id = {e_id}
-                ''')
+                SET {type} = ?
+                WHERE User = ? AND e_id = ?
+                ''', (newData, config.currUser, e_id))
   userData.commit()
 
 
@@ -770,10 +770,10 @@ def PublishProfile():
       # XOR published with 1 to invert value
       published = published ^ 1
 
-      UDCursor.execute(f'''UPDATE Profiles
-                            SET Published = {published}
-                            WHERE User = '{config.currUser}'
-                            ''')
+      UDCursor.execute('''  UPDATE Profiles
+                            SET Published = ?
+                            WHERE User = ?
+                            ''', (published, config.currUser))
       userData.commit()
       if published == 0:
         utility.printMessage("You have unpublished your profile.")

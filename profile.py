@@ -774,6 +774,7 @@ def PublishProfile():
                             SET Published = {published}
                             WHERE User = '{config.currUser}'
                             ''')
+      userData.commit()
       if published == 0:
         utility.printMessage("You have unpublished your profile.")
       else:

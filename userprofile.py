@@ -38,6 +38,15 @@ try:
                               Location TEXT,
                               Description TEXT
                               )''')
+  UDCursor.execute('''CREATE TABLE IF NOT EXISTS Educations(
+                              edu_id integer primary key autoincrement,
+                              User TEXT,
+                              degree_type TEXT,
+                              study TEXT,
+                              university TEXT,
+                              start_date DATE,
+                              end_date DATE,
+                              description TEXT)''')
 
 except:
   pass

@@ -210,7 +210,7 @@ def show_friends_profile():
     # Ask user to select a friend to remove
     utility.printSeparator()
     selected_friend = input(
-      f"\nEnter the number of the friend you want to remove or press {len(friends)+1} to go back: "
+      f"\nEnter the number of the friend's profile you want to view or press {len(friends)+1} to go back: "
     )
 
     selected_friend = utility.choiceValidation(selected_friend, friends)

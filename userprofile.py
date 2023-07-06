@@ -1076,8 +1076,8 @@ def ViewProfile(user_profile):
     for education in educations:
       edu_id, user, school, degree, years_attended = education        
       print('------------------')
-      print(school)
-      print(f'{degree}')
+      print(f"School name: {school}")
+      print(f'Degree: {degree}')
       print(f'Years Attended: {years_attended}')
       print('------------------')
 

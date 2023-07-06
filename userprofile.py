@@ -1035,16 +1035,17 @@ def PublishProfile():
       "Publish your profile to make it visible to your friends")
   utility.printSeparator()
 
-  if getColumn("Title") == None:
-    utility.printMessage("You cannot publish your profile without a title.")
-    utility.quickGoBack()
-  elif getColumn("About") == None:
-    utility.printMessage("You cannot publish your profile without an about.")
-    utility.quickGoBack()
-  elif len(UDCursor.execute(
+  if getColumn("Title") == None or getColumn("About") == None or len(UDCursor.execute(
     f"SELECT User FROM Educations WHERE User = '{config.currUser}'"
   ).fetchall()) == 0:
-    utility.printMessage("You must have at least one education history in your profile before you can publish.")
+    if getColumn("Title") == None:
+      utility.printMessage("You cannot publish your profile without a title.")
+    if getColumn("About") == None:
+      utility.printMessage("You cannot publish your profile without an About.")
+    if len(UDCursor.execute(
+    f"SELECT User FROM Educations WHERE User = '{config.currUser}'"
+  ).fetchall()) == 0:
+      utility.printMessage("You must have at least one education history in your profile before you can publish.")
     utility.quickGoBack()
 
   else:

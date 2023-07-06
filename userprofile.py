@@ -1148,10 +1148,12 @@ def ViewProfileUser():
   ViewProfile(config.currUser)
   
 # this function will allow a user to view their current profile
-def ViewProfile(user_profile=config.currUser):
+def ViewProfile(user_profile):
   print('  O\n--|--\n / \\\n-------')
   user, title, university, major, years_attended, about, published = UDCursor.execute("SELECT * FROM Profiles WHERE User = ?", (user_profile,)).fetchone()
-  print(f"{user}, {title}")
+  first, last = UDCursor.execute("SELECT FirstName, LastName FROM userData WHERE Username = ?", (user_profile,)).fetchone()
+  
+  print(f"{first} {last}, {title}")
   print(f'{major} at {university}')
   print(f'------------------\nabout\n------------------')
 
@@ -1185,9 +1187,4 @@ def ViewProfile(user_profile=config.currUser):
       print(description)
       print('------------------')
 
-  while True:
-    cancel = input('Press 1 to return')
-    if int(cancel) == 1:
-      return
-    else:
-      utility.printMessage('Invalid Input')
+  utility.quickGoBack()

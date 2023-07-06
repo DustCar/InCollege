@@ -1081,7 +1081,9 @@ def ViewProfile(user_profile):
   
   print(f"{first} {last}, {title}")
   print(f'{major} at {university}')
-  print(f'------------------\nabout\n------------------')
+  print(f'------------------\nAbout\n------------------')
+  print(about)
+  utility.printSeperator()
 
   UDCursor.execute("SELECT * FROM Educations WHERE User = ?", (user_profile,))
   educations = UDCursor.fetchall()

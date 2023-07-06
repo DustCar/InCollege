@@ -343,11 +343,11 @@ def add_education():
   elif degree_type.lower() == 'h':
     degree_type = 'High School Diploma'
   elif degree_type.lower() == 'b':
-    degree_type = 'Bachelors'
+    degree_type = 'Bachelors Degree'
   elif degree_type.lower() == 'm':
-    degree_type = 'Masters'
+    degree_type = 'Masters Degree'
   elif degree_type.lower() == 'd':
-    degree_type = 'Doctorate'
+    degree_type = 'Doctorate Degree'
   elif degree_type.lower() == 'o':
     while True:
       degree_type = input('Enter the type of degree or "c" to cancel: ')
@@ -471,7 +471,7 @@ def ManageEducationSection():
   ).fetchall()
 
   for i, edu_experience in enumerate(edu_experiences):
-    print(f"Press {i+1} to Manage {edu_experience[2]} in {edu_experience[1]}")
+    print(f"Press {i+1} to Manage {edu_experience[1]} at {edu_experience[2]}")
 
   print(f'Press {len(edu_experiences)+1} to add a new education experience')
   print(f"Press {len(edu_experiences)+2} to go back")

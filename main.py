@@ -141,11 +141,11 @@ def learnSkill():
   while True:
     utility.pageTitle("Learn a New Skill")
     skills = {
-      "Skill1": utility.construction,
-      "Skill2": utility.construction,
-      "Skill3": utility.construction,
-      "Skill4": utility.construction,
-      "Skill5": utility.construction
+      "Leadership": utility.construction,
+      "Communication": utility.construction,
+      "Time Management": utility.construction,
+      "Professionalism": utility.construction,
+      "Teamwork": utility.construction
     }
 
     utility.printMenu(skills)

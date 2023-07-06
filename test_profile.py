@@ -14,8 +14,7 @@ def database():
 EmailFeat TEXT, SMSFeat TEXT, TargetAdFeat TEXT,
 Language TEXT, UNIQUE (Username, FirstName, LastName));
     CREATE TABLE IF NOT EXISTS Profiles(User TEXT,
-Title VARCHAR(50), University TEXT, Major TEXT,
-years_attended TEXT, About TEXT, Published INT, UNIQUE (User));
+Title VARCHAR(50), University TEXT, Major TEXT, About TEXT, Published INT, UNIQUE (User));
     CREATE TABLE IF NOT EXISTS Experiences(e_id integer primary key autoincrement, User TEXT, Title VARCHAR(50),
 Employer TEXT, Date_started DATE, Date_ended DATE, Location TEXT, Description TEXT);
   """)
@@ -35,7 +34,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 0);""")
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', 0);""")
   # test page with user profile not published yet
   monkeypatch.setattr('builtins.input', lambda _: '4')
   userprofile.MyProfile()
@@ -48,7 +47,7 @@ def test_MyProfile(capfd, monkeypatch, database):
   # test page with user profile already published
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', '', 1);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', 1);
   """)
   monkeypatch.setattr('builtins.input', lambda _: '4')
   userprofile.MyProfile()
@@ -66,7 +65,7 @@ def test_getColumn(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University Of South Florida', 'Computer Science', '', 'Aspiring game developer', 0);
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '4th Year Computer Science student', 'University Of South Florida', 'Computer Science', 'Aspiring game developer', 0);
   """)
   # test getColumn with title
   result = userprofile.getColumn("Title")

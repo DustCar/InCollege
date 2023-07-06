@@ -87,10 +87,18 @@ def passwordCreation():
 
 # function to ensure unique first,last combo
 def name():
-  first = input("Enter your first name: ").capitalize()
+  first = input("Enter your first name: ")
+  while utility.hasDigit(first) or utility.hasSpecialCharacter(first):
+    print("Invalid input.")
+    first = input("Enter your first name: ")
+  first.capitalize()
   if first == "c":
     return [first, "c"]
-  last = input("Enter your last name: ").capitalize()
+  last = input("Enter your last name: ")
+  while utility.hasDigit(last) or utility.hasSpecialCharacter(last):
+    print("Invalid input.")
+    last = input("Enter your last name: ")
+  last.capitalize()
   if last == "c":
     return ["c", last]
   # Checks if first,last pair already exists
@@ -109,7 +117,7 @@ def ValidateUniversity(university):
   if university.lower() == "c":
     return 1
     
-  if len(university) < 4:
+  if len(university) < 2:
     utility.printMessage("Add more characters for your university.")
     return 0
 
@@ -150,6 +158,8 @@ def createAccount():
     print("----------------------------")
     utility.printMessage("To cancel, press 'c' at any time")
 
+    utility.printSeparator()
+    
     username = usernameCreation()
     if username == "c":
       utility.clearConsole()
@@ -157,14 +167,18 @@ def createAccount():
     password = passwordCreation()
     if password == "c":
       utility.clearConsole()
-
       return
+
+    utility.printSeparator()
+    
     fullName = name()
     firstName = fullName[0]
     lastName = fullName[1]
     if firstName == "c" or lastName == "c":
       utility.clearConsole()
       return
+
+    utility.printSeparator()
 
     university = input("Enter the current university you are attending: ").title()
     while not ValidateUniversity(university):
@@ -185,6 +199,7 @@ def createAccount():
       return
 
     major = major.strip()
+    
 
     UDCursor.execute(f"""
     INSERT INTO userData VALUES

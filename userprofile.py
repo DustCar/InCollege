@@ -98,6 +98,17 @@ def getNumExperiences():
 # this function handles the My Profile page option
 def MyProfile():
   while True:
+    # automatically unpublish profile if student does not meet all criteria
+    if getColumn("Published") == 1:
+      numEducation = len(UDCursor.execute(f"SELECT User FROM Educations WHERE User = '{config.currUser}'").fetchall())
+      if getColumn("Title") == None or getColumn("About") == None or numEducation == 0:
+        published = 0
+        UDCursor.execute(f'''UPDATE Profiles
+                            SET Published = {published}
+                            WHERE User = '{config.currUser}'
+                            ''')
+        userData.commit()
+    
     utility.pageTitle("Manage Your Profile")
 
     publishText = "Publish"

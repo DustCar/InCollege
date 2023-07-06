@@ -10,7 +10,6 @@ except ImportError:
   readline = Readline()
 import re
 from datetime import date, datetime
-from functools import partial
 
 # Connect to SQL database
 userData = sql.connect(config.database)
@@ -23,7 +22,6 @@ try:
                              Title VARCHAR({config.maxTitleLen}), 
                              University TEXT,
                              Major TEXT,
-                             years_attended TEXT,
                              About TEXT,
                              Published INT, UNIQUE (User)
                             )''')
@@ -42,12 +40,9 @@ try:
   UDCursor.execute('''CREATE TABLE IF NOT EXISTS Educations(
                               edu_id integer primary key autoincrement,
                               User TEXT,
-                              degree_type TEXT,
-                              study TEXT,
-                              university TEXT,
-                              start_date DATE,
-                              end_date DATE,
-                              description TEXT)''')
+                              school TEXT,
+                              degree TEXT,
+                              years_attended TEXT)''')
 
 except:
   pass
@@ -242,7 +237,7 @@ def get_education_column(column, education_id):
 # Updates Educations table
 def update_education(edu_id, newData, type):
   type = type.replace(" ", "_")
-  UDCursor.execute(f'''UPDATE Experiences
+  UDCursor.execute(f'''UPDATE Educations
                 SET {type} = '{newData}'
                 WHERE User = '{config.currUser}' AND edu_id = {edu_id}
                 ''')
@@ -256,7 +251,7 @@ def degree_type_entry(edu_id):
   alters the type of degree for a saved education experience
   """
   utility.pageTitle('Degree Type Management')
-  utility.printMessage(f'Current Degree Type is: {get_education_column("degree_type", education_id=edu_id)}')
+  utility.printMessage(f'Current Degree Type is: {get_education_column("degree", education_id=edu_id)}')
   print('H - High School\nB - Bachelors\nM - Masters\nD - Doctorate\nO - Other')
   degree_type = input('Edit the Type of Degree or "c" to cancel: ')
 
@@ -264,13 +259,13 @@ def degree_type_entry(edu_id):
   if degree_type.lower() == 'c':
     return
   elif degree_type.lower() == 'h':
-    degree_type = 'High School'
+    degree_type = 'High School Diploma'
   elif degree_type.lower() == 'b':
-    degree_type = 'Bachelors'
+    degree_type = 'Bachelors Degree'
   elif degree_type.lower() == 'm':
-    degree_type = 'Masters'
+    degree_type = 'Masters Degree'
   elif degree_type.lower() == 'd':
-    degree_type = 'Doctorate'
+    degree_type = 'Doctorate Degree'
   elif degree_type.lower() == 'o':
     while True:
       degree_type = input('Enter the type of degree or "c" to cancel: ')
@@ -288,28 +283,8 @@ def degree_type_entry(edu_id):
     utility.printMessage(f'"{degree_type}" is an Invalid input')
     return degree_type_entry(edu_id)
 
-  update_education(edu_id=edu_id, newData=capitalize_words(degree_type), type='degree_type')
-
-
-# discipline of the degree
-def degree_study(edu_id):
-  """
-  edu_id: the id of the education experience in the table
-
-  adjusts the discipline of the degree  
-  """
-
-  utility.pageTitle('Discipline Management')
-  utility.printMessage(f'The Current Discipline is: {get_education_column("study", education_id=edu_id)}')
-  study = input('Edit the Discipline or "c" to cancel: ')
-
-  if study.lower() == 'c':
-    return
-
-  if confirmDetails(f'Do you confirm "{study}" as the name of the University?(y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=capitalize_words(study), type='study')
-  else:
-    return degree_study(edu_id=edu_id)
+  update_education(edu_id=edu_id, newData=capitalize_words(degree_type), type='degree')
+    
   
 # name of the university degree is obtained from (DONE)
 def edu_university(edu_id):
@@ -318,78 +293,38 @@ def edu_university(edu_id):
   """
 
   utility.pageTitle('University Management')
-  utility.printMessage(f'The Current name of the University is: {get_education_column("university", education_id=edu_id)}')
-  university_name = input('Edit the name of the University or "c" to cancel: ')
+  utility.printMessage(f'The Current name of the School is: {get_education_column("school", education_id=edu_id)}')
+  university_name = input('Edit the name of the School or "c" to cancel: ')
 
   if university_name.lower() == 'c':
     return
 
-  if confirmDetails(f'Do you confirm "{university_name}" as the name of the University?(y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=capitalize_words(university_name), type='university')
+  if confirmDetails(f'Do you confirm "{university_name}" as the name of the school? (y/n): ') == 'y':
+    update_education(edu_id=edu_id, newData=capitalize_words(university_name), type='school')
   else:
     return edu_university(edu_id)
 
-# start date of degree (DONE)
-def degree_start_date(edu_id):
+# name of the university degree is obtained from (DONE)
+def years_attended_education(edu_id):
   """
   edu_id: the id of the education experience in the table
   """
-  utility.pageTitle('Start Date Management')
-  utility.printMessage(f'The Current Start Date is: {get_education_column("start_date", education_id=edu_id)}')
 
-  dateStarted = input(f"Edit Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
-  
-  if dateStarted == "c":
-    return
-  
-  while not VerifyExperienceDate(dateStarted):
-    dateStarted = input(f"Enter Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
+  utility.pageTitle('Years Attended Management')
+  utility.printMessage(f'The Current years attended: {get_education_column("years_attended", education_id=edu_id)}')
+  yearsAttended = input(f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: ")
 
-  if confirmDetails(f'Do you confirm {dateStarted} is the correct starting date?(y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=dateStarted, type='start_date')
-  else:
-    degree_start_date(edu_id)
+  while not ValidateYearsAttended(yearsAttended):
+    yearsAttended = input(f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: ")
 
-# end date/expected date for degree (DONE)
-def degree_end_date(edu_id):
-  """
-  edu_id: the id of the education experience in the table
-  """
-  utility.pageTitle('End Date Management')
-  utility.printMessage(f'The Current End Date is: {get_education_column("end_date", education_id=edu_id)}')
-
-  dateEnded = input(f"Edit End/Expected Date as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
-
-  if dateEnded == "c":
+  if yearsAttended.lower() == "c":
     return
 
-  while not VerifyExperienceDate(dateEnded):
-    dateEnded = input(f"Enter Date Ended as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
-
-  if confirmDetails(f'Do you confirm {dateEnded} is the correct end/expected date?(y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=dateEnded, type='end_date')
+  if confirmDetails(f'Do you confirm your years attended as {yearsAttended}? (y/n): ') == 'y':
+    update_education(edu_id=edu_id, newData=yearsAttended, type="years_attended")
   else:
-    degree_end_date(edu_id)
+    return edu_university(edu_id)
 
-# Description about degree (DONE)
-def degree_description(edu_id):
-  """
-  edu_id: the id of the education experience in the table
-  """
-  utility.pageTitle('Description Management')
-  utility.printMessage(f'The current Description is: {get_education_column("description", education_id=edu_id)}')
-  description = input('Edit the description or "c" to cancel: ')
-
-  if description.lower() == 'c':
-    return
-
-  utility.clearConsole()
-  utility.pageTitle('Description Management')
-  print(description)
-  if confirmDetails('Do you confirm this as the description?(y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=description, type='description')
-  else:
-    return degree_description
 
 # Add a new education experience
 def add_education():
@@ -406,7 +341,7 @@ def add_education():
   if degree_type.lower() == 'c':
     return
   elif degree_type.lower() == 'h':
-    degree_type = 'High School'
+    degree_type = 'High School Diploma'
   elif degree_type.lower() == 'b':
     degree_type = 'Bachelors'
   elif degree_type.lower() == 'm':
@@ -430,56 +365,31 @@ def add_education():
     utility.printMessage(f'"{degree_type}" is an Invalid input')
     return add_education()
 
-  # degree field of study
-  study = input('Enter the Discipline/Field of Study or "c" to cancel: ')
-
-  if study.lower() == 'c':
-    return
-
   # degree university
-  university_name = input('Enter the name of the University or "c" to cancel: ')
+  university_name = input('Enter the name of the School or "c" to cancel: ')
 
   if university_name.lower() == 'c':
     return
-  
-  # start date
-  dateStarted = input(f"Enter Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
-  
-  if dateStarted == "c":
-    return
-  
-  while not VerifyExperienceDate(dateStarted):
-    dateStarted = input(f"Enter Date Started as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
 
-  # End Date
-  dateEnded = input(f"Enter End/Expected Date as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
+  yearsAttended = input(f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: ")
 
-  if dateEnded == "c":
-    return
+  while not ValidateYearsAttended(yearsAttended):
+    yearsAttended = input(f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: ")
 
-  while not VerifyExperienceDate(dateEnded):
-    dateEnded = input(f"Enter Date Ended as (mm-dd-yyyy) ex. {date.today().strftime('%m-%d-%Y')}: ")
-
-  # Degree description
-  description = input('Edit the description or "c" to cancel: ')
-
-  if description.lower() == 'c':
+  if yearsAttended.lower() == "c":
     return
 
   # confirm all information
   utility.pageTitle('Confirm Education Details')
   print(f'Degree type: {degree_type}')
-  print(f'Field of study: {study}')
-  print(f'University: {university_name}')
-  print(f'Start Date: {dateStarted}')
-  print(f'End/Expected Date: {dateEnded}')
-  print(f'Description: {description}')
+  print(f'School Name: {university_name}')
+  print(f'Years Attended: {yearsAttended}')
 
-  if confirmDetails('Is all this information correct?(y/n)') == 'y':
+  if confirmDetails('Is all this information correct?(y/n): ') == 'y':
     UDCursor.execute(f"""
-    INSERT INTO Educations (User, degree_type, study, university, start_date, end_date, Description)
-    VALUES ('{config.currUser}', '{capitalize_words(study)}', '{capitalize_words(degree_type)}', '{capitalize_words(university_name)}', '{dateStarted}', '{dateEnded}', '{description}')
-    """)
+    INSERT INTO Educations (User, school, degree, years_attended)
+    VALUES (?,?,?,?)
+    """, (config.currUser, university_name, degree_type, yearsAttended))
     userData.commit()
   else:
     add_education()
@@ -522,14 +432,14 @@ def education_settings(edu_id):
   """
   edu_id: the id of the education experience in the table
   """
-  utility.pageTitle(f'Manage {get_education_column("degree_type", edu_id)} in {get_education_column("study", edu_id)}')
+
   while True:
+    utility.clearConsole()
+    utility.pageTitle(f'Manage {get_education_column("degree", edu_id)} at {get_education_column("school", edu_id)}')
     edu_options = {
-      'Manage Degree Type' : partial(degree_type_entry, edu_id),
-      'Manage Field of Study' : partial(degree_study, edu_id),
-      'Manage Start Date' : partial(degree_start_date, edu_id),
-      'Manage End Date' : partial(degree_end_date, edu_id),
-      'Manage Degree Description' : partial(degree_description, edu_id)
+      'Manage School Name' : 1,
+      'Manage Degree type' : 1,
+      'Manage years attended' : 1,
     }
 
     utility.printMenu(edu_options)
@@ -537,12 +447,17 @@ def education_settings(edu_id):
 
     option = input("Input: ")
     optionNum = utility.choiceValidation(option, edu_options)
-
+    utility.clearConsole()
     if optionNum == len(edu_options) + 1:
       utility.clearConsole()
       break
-    else:
-      utility.call(optionNum, edu_options)
+    elif optionNum == 1:
+      edu_university(edu_id)
+    elif optionNum == 2:
+      degree_type_entry(edu_id)
+    elif optionNum == 3:
+      years_attended_education(edu_id)
+      
   return
 
 # this function is the page that allows users to create, edit, or remove parts of their education history like school name, degree, and years attended
@@ -552,7 +467,7 @@ def ManageEducationSection():
   """
   utility.pageTitle("Manages Education Experience")
   edu_experiences = UDCursor.execute(
-    f"SELECT edu_id, degree_type, study FROM Educations WHERE User = '{config.currUser}'"
+    f"SELECT edu_id, degree, school FROM Educations WHERE User = '{config.currUser}'"
   ).fetchall()
 
   for i, edu_experience in enumerate(edu_experiences):
@@ -561,8 +476,7 @@ def ManageEducationSection():
   print(f'Press {len(edu_experiences)+1} to add a new education experience')
   print(f"Press {len(edu_experiences)+2} to go back")
   option = input("Input: ")
-
-  if partial(utility.choiceValidation, option, edu_experiences) == len(edu_experiences) + 1:
+  if int(option) == len(edu_experiences) + 1:
     add_education()    
   elif int(option) == len(edu_experiences) + 2:
     utility.clearConsole()
@@ -572,7 +486,7 @@ def ManageEducationSection():
     utility.printMessage('Invalid input')
     return ManageEducationSection()
   else:
-    education_settings(get_education_column(edu_experiences[partial(utility.choiceValidation, option, edu_experiences)-1][0]))
+    education_settings(edu_experiences[int(option) - 1][0])
 
 #this function will update the specified column in the profiles table with the data
 def UpdateProfileData(profileData, type):
@@ -705,10 +619,6 @@ def ManageMajor():
 # this function allows a user to create or edit an about section
 def ManageAbout():
   ManageColumnData("About")
-
-
-def ManageYearsAttended():
-  ManageColumnData("years_attended")
 
 
 # this function provides the menu options to add, edit, and remove experiences
@@ -1150,7 +1060,7 @@ def ViewProfileUser():
 # this function will allow a user to view their current profile
 def ViewProfile(user_profile):
   print('  O\n--|--\n / \\\n-------')
-  user, title, university, major, years_attended, about, published = UDCursor.execute("SELECT * FROM Profiles WHERE User = ?", (user_profile,)).fetchone()
+  user, title, university, major, about, published = UDCursor.execute("SELECT * FROM Profiles WHERE User = ?", (user_profile,)).fetchone()
   first, last = UDCursor.execute("SELECT FirstName, LastName FROM userData WHERE Username = ?", (user_profile,)).fetchone()
   
   print(f"{first} {last}, {title}")
@@ -1164,12 +1074,11 @@ def ViewProfile(user_profile):
     print('Education:')
 
     for education in educations:
-      edu_id, user, degree_type, study, university, start_date, end_date, description = education        
+      edu_id, user, school, degree, years_attended = education        
       print('------------------')
-      print(university)
-      print(f'{study}, {degree_type}')
-      print(f'{start_date} to {end_date}\n')
-      print(description)
+      print(school)
+      print(f'{degree}')
+      print(f'Years Attended: {years_attended}')
       print('------------------')
 
   UDCursor.execute("SELECT * FROM Experiences WHERE User = ?", (user_profile,))

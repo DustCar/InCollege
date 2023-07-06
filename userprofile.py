@@ -327,9 +327,11 @@ def add_education():
   """
   utility.pageTitle('Add Education Experience')
 
+  utility.printMessage("To cancel, enter 'c' at any time")
+  
   # Degree type
   print('H - High School\nB - Bachelors\nM - Masters\nD - Doctorate\nO - Other')
-  degree_type = input('Enter the Type of Degree or "c" to cancel: ')
+  degree_type = input('Enter the Type of Degree: ')
 
   # Checks degree type
   if degree_type.lower() == 'c':
@@ -344,7 +346,7 @@ def add_education():
     degree_type = 'Doctorate Degree'
   elif degree_type.lower() == 'o':
     while True:
-      degree_type = input('Enter the type of degree or "c" to cancel: ')
+      degree_type = input('Enter the type of degree: ')
 
       if degree_type.lower() == 'c':
         return
@@ -360,7 +362,7 @@ def add_education():
     return add_education()
 
   # degree university
-  university_name = input('Enter the name of the School or "c" to cancel: ')
+  university_name = input('Enter the name of the School: ')
 
   if university_name.lower() == 'c':
     return

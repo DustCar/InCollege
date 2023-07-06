@@ -471,17 +471,24 @@ def ManageEducationSection():
   for i, edu_experience in enumerate(edu_experiences):
     print(f"Press {i+1} to Manage {edu_experience[1]} at {edu_experience[2]}")
 
-  print(f'Press {len(edu_experiences)+1} to add a new education experience')
-  print(f'Press {len(edu_experiences)+2} to remove an education experience')
-  print(f"Press {len(edu_experiences)+3} to go back")
-  
+  if len(edu_experiences) > 0:
+    print(f'Press {len(edu_experiences)+1} to add a new education experience'.title())
+    print(f'Press {len(edu_experiences)+2} to remove an education experience'.title())
+    print(f"Press {len(edu_experiences)+3} to go back".title())
+  else :
+    print(f'Press {len(edu_experiences)+1} to add a new education experience'.title())
+    print(f"Press {len(edu_experiences)+2} to go back".title())
+    
   option = input("Input: ")
   if int(option) == len(edu_experiences) + 1:
     utility.clearConsole()
     add_education()    
-  elif int(option) == len(edu_experiences) + 2:
+  elif int(option) == len(edu_experiences) + 2 and len(edu_experiences) > 0:
     utility.clearConsole()
     remove_education()
+  elif int(option) == len(edu_experiences) + 2 and len(edu_experiences) == 0:
+    utility.clearConsole()
+    return
   elif int(option) == len(edu_experiences) + 3:
     utility.clearConsole()
     return

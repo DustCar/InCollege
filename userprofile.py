@@ -219,12 +219,6 @@ def ManageProfile():
       utility.call(optionNum, options)
   return
 
-def capitalize_words(sentence):
-    words = sentence.split()
-    capitalized_words = [word.capitalize() for word in words]
-    return ' '.join(capitalized_words)
-
-
 
 def get_education_column(column, education_id):
   result = UDCursor.execute(f"SELECT {column} FROM Educations WHERE User = '{config.currUser}' and edu_id = '{education_id}'").fetchone()
@@ -272,7 +266,7 @@ def degree_type_entry(edu_id):
 
       if degree_type.lower() == 'c':
         return
-      
+      degree_type = degree_type.title()
       if confirmDetails(f'Do you confirm {degree_type} as the degree type?(y/n): ') == 'y':
         break
       else:
@@ -283,7 +277,7 @@ def degree_type_entry(edu_id):
     utility.printMessage(f'"{degree_type}" is an Invalid input')
     return degree_type_entry(edu_id)
 
-  update_education(edu_id=edu_id, newData=capitalize_words(degree_type), type='degree')
+  update_education(edu_id=edu_id, newData=degree_type, type='degree')
     
   
 # name of the university degree is obtained from (DONE)
@@ -298,9 +292,9 @@ def edu_university(edu_id):
 
   if university_name.lower() == 'c':
     return
-
+  university_name = university_name.title()
   if confirmDetails(f'Do you confirm "{university_name}" as the name of the school? (y/n): ') == 'y':
-    update_education(edu_id=edu_id, newData=capitalize_words(university_name), type='school')
+    update_education(edu_id=edu_id, newData=university_name, type='school')
   else:
     return edu_university(edu_id)
 
@@ -370,6 +364,8 @@ def add_education():
 
   if university_name.lower() == 'c':
     return
+
+  university_name = university_name.title()
 
   yearsAttended = input(f"Enter your years attended as yyyy-yyyy. ex: {date.today().year-4}-{date.today().year}: ")
 

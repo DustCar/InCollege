@@ -397,13 +397,13 @@ def remove_education():
   """
   utility.pageTitle("Remove An Education Experience")
   edu_experiences = UDCursor.execute(
-    f"SELECT edu_id, degree_type, study FROM Educations WHERE User = '{config.currUser}'"
+    f"SELECT edu_id, degree, school FROM Educations WHERE User = '{config.currUser}'"
   ).fetchall()
 
   for i, edu_experience in enumerate(edu_experiences):
-    print(f"Press {i+1} to delete {edu_experience[1]} in {edu_experience[2]}")
+    print(f"Press {i+1} to delete {edu_experience[1]} at {edu_experience[2]}")
 
-  print(f"Press {len(edu_experience)+1} to go back")
+  print(f"Press {len(edu_experiences)+1} to go back")
 
   option = input("Input: ")
   optionNum = utility.choiceValidation(option, edu_experiences)
@@ -470,14 +470,20 @@ def ManageEducationSection():
     print(f"Press {i+1} to Manage {edu_experience[1]} at {edu_experience[2]}")
 
   print(f'Press {len(edu_experiences)+1} to add a new education experience')
-  print(f"Press {len(edu_experiences)+2} to go back")
+  print(f'Press {len(edu_experiences)+2} to remove an education experience')
+  print(f"Press {len(edu_experiences)+3} to go back")
+  
   option = input("Input: ")
   if int(option) == len(edu_experiences) + 1:
+    utility.clearConsole()
     add_education()    
   elif int(option) == len(edu_experiences) + 2:
     utility.clearConsole()
+    remove_education()
+  elif int(option) == len(edu_experiences) + 3:
+    utility.clearConsole()
     return
-  elif int(option) > len(edu_experiences) or int(option)< len(edu_experiences):
+  elif int(option) > len(edu_experiences) or int(option) < 1:
     utility.clearConsole()
     utility.printMessage('Invalid input')
     return ManageEducationSection()
@@ -1025,6 +1031,11 @@ def PublishProfile():
     utility.quickGoBack()
   elif getColumn("About") == None:
     utility.printMessage("You cannot publish your profile without an about.")
+    utility.quickGoBack()
+  elif len(UDCursor.execute(
+    f"SELECT User FROM Educations WHERE User = '{config.currUser}'"
+  ).fetchall()) == 0:
+    utility.printMessage("You must have at least one education history in your profile before you can publish.")
     utility.quickGoBack()
 
   else:

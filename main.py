@@ -3,7 +3,7 @@ including the different pages and relevant functions."""
 
 
 # imports
-import account, jobsearch, findsomeone, usefullinks, implinks, utility, friends
+import account, jobsearch, findsomeone, usefullinks, implinks, utility, friends, userprofile
 import config
 import getpass as gp
 
@@ -112,7 +112,8 @@ def loggedin():
       "Learn a New Skill": learnSkill,
       "Useful Links": usefullinks.UsefulLinksPage,
       "InCollege Important Links": implinks.ImportantLinksPage,
-      "My Friends": friends.MyFriendsPage
+      "My Friends": friends.MyFriendsPage,
+      "My Profile": userprofile.MyProfile
     }
 
     utility.printMenu(home)
@@ -140,11 +141,11 @@ def learnSkill():
   while True:
     utility.pageTitle("Learn a New Skill")
     skills = {
-      "Skill1": utility.construction,
-      "Skill2": utility.construction,
-      "Skill3": utility.construction,
-      "Skill4": utility.construction,
-      "Skill5": utility.construction
+      "Leadership": utility.construction,
+      "Communication": utility.construction,
+      "Time Management": utility.construction,
+      "Professionalism": utility.construction,
+      "Teamwork": utility.construction
     }
 
     utility.printMenu(skills)

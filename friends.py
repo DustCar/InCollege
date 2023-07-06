@@ -1,7 +1,7 @@
 # this file will contain the functions that manage the
 # friends list for InCollege users
 
-import utility, config
+import utility, config, userprofile
 import sqlite3 as sql
 
 # Connect to SQL database
@@ -54,7 +54,8 @@ def CanSendRequest(friendToAdd):
     f"SELECT * FROM FriendRequests WHERE Sender = '{config.currUser}' AND Receiver = '{friendToAdd}'"
   ).fetchone()
   if existing_request is not None:
-    utility.printMessage("You have already sent a friend request to this user.")
+    utility.printMessage(
+      "You have already sent a friend request to this user.")
     return False
 
   # Check if the other user has already sent a request to the current user
@@ -80,28 +81,28 @@ def CanSendRequest(friendToAdd):
 # this function handles search by function
 def SearchStudent(searchCritera):
   display = searchCritera
-  
+
   if searchCritera == "LastName":
     display = "Last Name"
-    
+
   while True:
     utility.pageTitle(f"Search by {display}")
     utility.printMessage("Type 'c' to cancel the search and go back")
     utility.printSeparator()
     userInput = input(f"Enter a {display} to search: ").lower()
-      
+
     if userInput == "c":
       break
 
     # search for the users based on last name and store into list
     users = UDCursor.execute(
-      f"SELECT Username, FirstName, LastName, University, Major FROM userData WHERE LOWER({searchCritera}) = '{userInput}'"
+      f"SELECT Username, FirstName, LastName, University, Major FROM userData, Profiles WHERE LOWER({searchCritera}) = '{userInput}' AND Username = User"
     ).fetchall()
     if len(users) > 0:
       print("\n")
       utility.printMessage(f"Matches Found: {len(users)}")
       print("\n")
-      
+
       for i, user in enumerate(users):
         print(f"{i+1}: {user[1]} {user[2]}, {user[3]}, {user[4]}\n")
       while True:
@@ -139,17 +140,19 @@ def SearchStudent(searchCritera):
         return
       else:
         utility.printMessage("Invalid input. try again")
-    
+
     utility.clearConsole()
-    
+
 
 # Search students by lastname
 def SearchStudentLN():
   SearchStudent("LastName")
 
+
 # Search students by University
 def SearchStudentU():
   SearchStudent("University")
+
 
 # Search students by major
 def SearchStudentM():
@@ -183,10 +186,83 @@ def SearchStudentPage():
   return
 
 
+def show_friends_profile():
+  """
+  shows friends profiles if available
+  """
+  friends = UDCursor.execute(
+    f"SELECT Friend FROM Friends WHERE User = '{config.currUser}'").fetchall()
+  # check if they have any friends
+  if len(friends) > 0:
+
+    # Dictionary to map friends' usernames to their names
+    friend_names = {}
+
+    # Print all friends
+    print("Your current friends are:")
+    for i, friend in enumerate(friends):
+      # Get the friend's first and last name from the userData table
+      friend_info = UDCursor.execute(
+        f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend[0]}'"
+      ).fetchone()
+      friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
+      if userprofile.is_published(friend[0]) == 1:
+        print(f"\n{i + 1}. {friend_names[friend[0]]}    (Profile is Viewable)")
+      else:
+        print(f"\n{i + 1}. {friend_names[friend[0]]}")
+
+    # Ask user to select a friend to remove
+    utility.printSeparator()
+    selected_friend = input(
+      f"\nEnter the number of your friends profile you want to visit or press {len(friends)+1} to go back: "
+    )
+
+    selected_friend = utility.choiceValidation(selected_friend, friends)
+
+    if selected_friend == len(friends) + 1:
+      return
+    selected_friend = int(selected_friend) - 1
+    friend_profile = friends[selected_friend][0]
+
+    if userprofile.is_published(friend_profile) == 1:
+      utility.clearConsole()
+      userprofile.ViewProfile(friend_profile)
+    else:
+      friend_info = UDCursor.execute(
+        f"SELECT FirstName, LastName FROM userData WHERE Username = '{friend_profile}'"
+      ).fetchone()
+      utility.clearConsole()
+      utility.printMessage(
+        f'{friend_info[0]} {friend_info[1]} does not have a viewable profile')
+      show_friends_profile()
+
+  else:
+    utility.printMessage("You currently have no friends.")
+    utility.quickGoBack()
+
+
 #Handles Pending Friends
 def ShowMyNetworkPage():
   #RemoveFriend shows all students and allows you to remove one
-  RemoveFriend()
+  while True:
+    utility.pageTitle("Manage Your Network")
+    network_options = {
+      'View Friends Profiles': show_friends_profile,
+      'Remove Friends': RemoveFriend
+    }
+    utility.printMenu(network_options)
+    print(f"Press {len(network_options)+1} for Back.")
+
+    option = input("Input: ")
+    optionNum = utility.choiceValidation(option, network_options)
+
+    if optionNum == len(network_options) + 1:
+      utility.clearConsole()
+      break
+    else:
+      utility.call(optionNum, network_options)
+  return
+
 
 def ShowSentRequests():
   # query the database for requests sent by the current user
@@ -197,7 +273,7 @@ def ShowSentRequests():
   # print all sent requests
   utility.printMessage("Sent Friend Requests")
   utility.printSeparator()
-  
+
   if len(sent_requests) > 0:
     for i, request in enumerate(sent_requests):
       print(f"{i+1}: {request[0]}")
@@ -205,15 +281,15 @@ def ShowSentRequests():
     print("You have no pending requests.")
   print("\n")
 
-  
+
 def ShowRecievedRequests():
   # query the database for requests received by the current user
   received_requests = UDCursor.execute(
     f"SELECT Sender FROM FriendRequests WHERE Receiver = '{config.currUser}'"
   ).fetchall()
 
-    # print all received requests
-  utility.printMessage("Recieved Friend Requests")
+  # print all received requests
+  utility.printMessage("Received Friend Requests")
   utility.printSeparator()
   if len(received_requests) > 0:
     for i, request in enumerate(received_requests):
@@ -270,12 +346,13 @@ def ShowRecievedRequests():
   utility.quickGoBack()
   utility.clearConsole()
 
+
 def ShowMyPendingRequestsPage():
   utility.pageTitle("Your Friend Requests")
   print("\n")
   ShowSentRequests()
   ShowRecievedRequests()
-    
+
 
 #Function shows all friends, and allows you to remove one.
 def RemoveFriend():
@@ -288,7 +365,7 @@ def RemoveFriend():
 
     # Dictionary to map friends' usernames to their names
     friend_names = {}
-  
+
     # Print all friends
     print("Your current friends are:")
     for i, friend in enumerate(friends):
@@ -298,24 +375,24 @@ def RemoveFriend():
       ).fetchone()
       friend_names[friend[0]] = f"{friend_info[0]} {friend_info[1]}"
       print(f"\n{i + 1}. {friend_names[friend[0]]}")
-  
+
     # Ask user to select a friend to remove
     utility.printSeparator()
     selected_friend = input(
       f"\nEnter the number of the friend you want to remove or press {len(friends)+1} to go back: "
     )
     selected_friend = utility.choiceValidation(selected_friend, friends)
-    
-    if selected_friend == len(friends)+1:
+
+    if selected_friend == len(friends) + 1:
       return
     selected_friend = int(selected_friend) - 1
     friend_to_remove = friends[selected_friend][0]
-  
+
     # Ask for confirmation
     confirmation = input(
       f"Are you sure you want to remove {friend_names[friend_to_remove]} from your friends list? (Y/N): "
     )
-  
+
     # If confirmed, remove the friend
     if confirmation.lower() == 'y':
       UDCursor.execute(
@@ -326,7 +403,7 @@ def RemoveFriend():
         f"{friend_names[friend_to_remove]} has been removed from your friends list."
       )
       utility.quickGoBack()
-      
+
     else:
       utility.printMessage("Friend removal cancelled.")
       utility.quickGoBack()
@@ -334,7 +411,7 @@ def RemoveFriend():
   else:
     utility.printMessage("You currently have no friends.")
     utility.quickGoBack()
-  
+
 
 # send a logged in user to pending request page if they have any pending requests
 def FriendRequestNotification():

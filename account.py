@@ -10,7 +10,7 @@ UDCursor = userData.cursor()
 # check if the table exists and if not create it
 try:
   UDCursor.execute(
-    "CREATE TABLE userData(Username, Password, FirstName, LastName, University, Major, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
+    "CREATE TABLE userData(Username, Password, FirstName, LastName, EmailFeat, SMSFeat, TargetAdFeat, Language, UNIQUE (Username, FirstName, LastName))"
   )
 
 except:
@@ -87,10 +87,18 @@ def passwordCreation():
 
 # function to ensure unique first,last combo
 def name():
-  first = input("Enter your first name: ").capitalize()
+  first = input("Enter your first name: ")
+  while utility.hasDigit(first) or utility.hasSpecialCharacter(first):
+    print("Invalid input.")
+    first = input("Enter your first name: ")
+  first.capitalize()
   if first == "c":
     return [first, "c"]
-  last = input("Enter your last name: ").capitalize()
+  last = input("Enter your last name: ")
+  while utility.hasDigit(last) or utility.hasSpecialCharacter(last):
+    print("Invalid input.")
+    last = input("Enter your last name: ")
+  last.capitalize()
   if last == "c":
     return ["c", last]
   # Checks if first,last pair already exists
@@ -104,15 +112,36 @@ def name():
   return [first, last]
 
 # this function asks the user to input their university
-def getUniversity():
-  university = input("Enter the current university you are attending: ")
-  return university
+def ValidateUniversity(university):
+  university = university.strip()
+  if university.lower() == "c":
+    return 1
+    
+  if len(university) < 2:
+    utility.printMessage("Add more characters for your university.")
+    return 0
 
+  if utility.hasSpecialCharacter(university):
+    utility.printMessage("Your university cannot contain any special characters.")
+    return 0
+    
+  return 1
 
-# this function asks the user to input their major
-def getMajor():
-  major = input("Enter your major: ")
-  return major
+# this function asks the user to input their university
+def ValidateMajor(major):
+  major = major.strip()
+  if major.lower() == "c":
+    return 1
+    
+  if len(major) < 4:
+    utility.printMessage("Add more characters for your major.")
+    return 0
+
+  if utility.hasSpecialCharacter(major):
+    utility.printMessage("Your major cannot contain any special characters.")
+    return 0
+    
+  return 1
 
 
 # function to create a user account
@@ -121,7 +150,7 @@ def createAccount():
   Creates a new account for the user
   """
   # checks if max number of accounts have been made
-  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < 10):
+  if (len(UDCursor.execute("SELECT Username FROM userData").fetchall()) < config.maxAccounts):
     print("PASSWORD REQUIREMENTS\n----------------------------")
     print(
       "Between 8-12 Characters\nAt least 1 Capital Letter\nAt least 1 Digit\nAt least 1 Special Character"
@@ -129,6 +158,8 @@ def createAccount():
     print("----------------------------")
     utility.printMessage("To cancel, press 'c' at any time")
 
+    utility.printSeparator()
+    
     username = usernameCreation()
     if username == "c":
       utility.clearConsole()
@@ -136,8 +167,10 @@ def createAccount():
     password = passwordCreation()
     if password == "c":
       utility.clearConsole()
-
       return
+
+    utility.printSeparator()
+    
     fullName = name()
     firstName = fullName[0]
     lastName = fullName[1]
@@ -145,17 +178,40 @@ def createAccount():
       utility.clearConsole()
       return
 
-    university = getUniversity()
-    major = getMajor()
+    utility.printSeparator()
 
-    if university == "c" or major == "c":
+    university = input("Enter the current university you are attending: ").title()
+    while not ValidateUniversity(university):
+      university = input("Enter the current university you are attending: ").title()
+      
+    if university.lower() == "c":
       utility.clearConsole()
       return
 
+    university = university.strip()
+    
+    major = input("Enter your major: ").title()
+    while not ValidateMajor(major):
+      major = input("Enter your major: ").title()
+
+    if major.lower() == "c":
+      utility.clearConsole()
+      return
+
+    major = major.strip()
+    
+
     UDCursor.execute(f"""
     INSERT INTO userData VALUES
-      ('{username}', '{password}', '{firstName}', '{lastName}', '{university}', '{major}', 'ON', 'ON', 'ON', 'English')
+      ('{username}', '{password}', '{firstName}', '{lastName}', 'ON', 'ON', 'ON', 'English')
     """)
+
+    # insert the username and university and major into the profiles table
+    UDCursor.execute(f"""
+    INSERT INTO Profiles (User, University, Major, Published)
+    VALUES ('{username}', '{university}', '{major}', 0)
+    """)
+    
     userData.commit()
     utility.clearConsole()
   else:

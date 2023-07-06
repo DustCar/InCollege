@@ -17,6 +17,7 @@ Language TEXT, UNIQUE (Username, FirstName, LastName));
 Title VARCHAR(50), University TEXT, Major TEXT, About TEXT, Published INT, UNIQUE (User));
     CREATE TABLE IF NOT EXISTS Experiences(e_id integer primary key autoincrement, User TEXT, Title VARCHAR(50),
 Employer TEXT, Date_started DATE, Date_ended DATE, Location TEXT, Description TEXT);
+    CREATE TABLE IF NOT EXISTS Educations(edu_id integer primary key autoincrement, User TEXT, school TEXT, degree TEXT, years_attended TEXT);
   """)
   except:
     pass
@@ -34,7 +35,8 @@ def test_MyProfile(capfd, monkeypatch, database):
   cursor = database.cursor()
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', 0);""")
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', 0);
+  """)
   # test page with user profile not published yet
   monkeypatch.setattr('builtins.input', lambda _: '4')
   userprofile.MyProfile()
@@ -47,7 +49,9 @@ def test_MyProfile(capfd, monkeypatch, database):
   # test page with user profile already published
   cursor.executescript("""
   DELETE FROM Profiles WHERE User LIKE 'user%';
-  INSERT OR IGNORE INTO Profiles VALUES ('user1', '', 'University Of South Florida', 'Computer Science', '', 1);
+  DELETE FROM Educations WHERE User LIKE 'user%';
+  INSERT OR IGNORE INTO Profiles VALUES ('user1', 'TEST TITLE', 'University Of South Florida', 'Computer Science', 'TEST ABOUT', 1);
+  INSERT INTO Educations (User, school, degree, years_attended) VALUES ('user1', 'University of TEST', 'TESTING DEGREE', '3000-4000');
   """)
   monkeypatch.setattr('builtins.input', lambda _: '4')
   userprofile.MyProfile()

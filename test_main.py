@@ -41,7 +41,7 @@ def test_inCollege(password, capfd, monkeypatch, database):
     (Username, Password, FirstName, LastName) VALUES 
     ('Test','Testing!123', 'Test', 'Test');
   INSERT OR IGNORE INTO Profiles VALUES ('Test', '', 
-  'University Of Testing', 'Test Science', '', '', 0);"""
+  'University Of Testing', 'Test Science', '', 0);"""
   cursor.executescript(sqlite_insert_query)
   
   inputs = iter(['1', 'Test', 'Testing!123', '1', '3', '2', '2', '3', '6', '4', '5', '5', '10', '6', '4', '7', '4', '8', '7'])
